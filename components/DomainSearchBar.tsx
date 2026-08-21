@@ -1,1 +1,36 @@
-'use client';import {Search} from 'lucide-react';import {useState} from 'react';export default function DomainSearchBar(){const[q,setQ]=useState('');const[done,setDone]=useState(false);return <div className="max-w-2xl"><form onSubmit={e=>{e.preventDefault();setDone(true)}} className="bg-white/90 rounded-full overflow-hidden shadow-xl flex items-center p-1.5"><Search className="ml-4 text-muted-fg" size={20}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search your domain" className="font-semibold placeholder:font-semibold flex-1 bg-transparent outline-none px-3 py-3"/><button className="bg-primary text-white rounded-full px-5 py-3 text-sm font-semibold">Search Domain</button></form>{done&&<div className="bg-white rounded-2xl p-4 mt-3 text-dark text-sm">{/* MOCK_BACKEND: replace with live Cloudflare availability check */}<b>{q||'yourdomain'}</b> is available in this demo.</div>}</div>}
+'use client'
+import { Search } from 'lucide-react'
+import { useState } from 'react'
+
+export default function DomainSearchBar() {
+  const [q, setQ] = useState('')
+  const [done, setDone] = useState(false)
+  return (
+    <div className="w-full">
+      <form
+        onSubmit={(e) => {
+          e.preventDefault()
+          setDone(true)
+        }}
+        className="flex items-center gap-1 rounded-full border border-white/10 bg-surface2/90 p-1.5 shadow-[0_10px_30px_rgba(0,0,0,0.4)] backdrop-blur-sm focus-within:border-primary/60"
+      >
+        <Search className="ml-3 text-zinc-500" size={20} />
+        <input
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          placeholder="Search for your domain"
+          aria-label="Search for a domain name"
+          className="flex-1 bg-transparent px-3 py-2.5 font-medium text-white placeholder:text-zinc-500 outline-none"
+        />
+        <button className="rounded-full bg-brand-gradient px-5 py-2.5 text-sm font-semibold text-white transition-transform duration-200 hover:scale-[1.03]">
+          Search
+        </button>
+      </form>
+      {done && (
+        <div className="mt-3 rounded-2xl border border-white/10 bg-surface2 p-4 text-sm text-zinc-300">
+          <b className="text-white">{q || 'yourdomain'}</b> is available. Contact us to register it.
+        </div>
+      )}
+    </div>
+  )
+}
