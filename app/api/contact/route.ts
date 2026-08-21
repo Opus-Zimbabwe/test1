@@ -1,5 +1,7 @@
 import { NextResponse } from 'next/server'
 import { z } from 'zod'
+import { db } from '@/lib/db'
+import { contactSubmissions } from '@/lib/db/schema'
 
 const contactSchema = z.object({
   name: z.string().trim().min(2).max(100),
@@ -19,7 +21,15 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Please check the form and try again.' }, { status: 400 })
     }
 
-    // TODO: Persist the enquiry and notify the team through the chosen production integrations.
+    await db.insert(contactSubmissions).values({
+      name: result.data.name,
+      email: result.data.email,
+      phone: result.data.phone || null,
+      service: result.data.service,
+      message: result.data.message,
+      consent: result.data.consent,
+    })
+
     return NextResponse.json({ ok: true, message: 'Your enquiry has been received.' }, { status: 202 })
   } catch {
     return NextResponse.json({ error: 'We could not process your enquiry.' }, { status: 400 })
