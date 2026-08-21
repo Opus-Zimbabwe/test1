@@ -1,3 +1,3 @@
 /** @type {import('next').NextConfig} */
-const nextConfig = { trailingSlash: true, images: { unoptimized: true } };
+const nextConfig = { images: { unoptimized: true }, webpack: (config) => { config.cache = false; return config; } };
 module.exports = nextConfig;
