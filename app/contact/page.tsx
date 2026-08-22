@@ -1,13 +1,175 @@
 'use client'
+import { useState } from 'react'
+import { Phone, Mail, MapPin, Clock, ArrowRight } from 'lucide-react'
+import Reveal from '@/components/Reveal'
 
-import { FormEvent, useState } from 'react'
-import { ArrowRight, Mail, MessageCircle, Phone } from 'lucide-react'
+const info = [
+  { icon: Phone,   label: 'WhatsApp / Phone', value: '0776 396 530',           href: 'https://wa.me/263776396530' },
+  { icon: Mail,    label: 'Email',             value: 'info.opuszim@gmail.com', href: 'mailto:info.opuszim@gmail.com' },
+  { icon: MapPin,  label: 'Location',          value: 'Harare, Zimbabwe',       href: undefined },
+  { icon: Clock,   label: 'Business Hours',    value: 'Mon–Fri, 8am–5pm',      href: undefined },
+]
 
-function Field({ label, children }: { label: string; children: React.ReactNode }) { return <label className="block"><span className="mb-2 block text-sm font-semibold text-fg">{label}</span>{children}</label> }
+export default function ContactPage() {
+  const [form, setForm] = useState({ name: '', email: '', phone: '', service: '', message: '' })
+  const [status, setStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
 
-export default function Contact() {
-  const [status, setStatus] = useState<'idle' | 'pending' | 'success' | 'error'>('idle')
-  const input = 'w-full rounded-xl border border-border bg-white px-4 py-3 text-sm text-fg placeholder:text-muted-fg outline-none shadow-sm transition-all focus:border-primary focus:ring-4 focus:ring-primary/10'
-  async function handleSubmit(event: FormEvent<HTMLFormElement>) { event.preventDefault(); if (status === 'pending') return; setStatus('pending'); const form = event.currentTarget; const data = Object.fromEntries(new FormData(form).entries()); data.consent = data.consent === 'on' ? 'true' : 'false'; try { const response = await fetch('/api/contact', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(data) }); setStatus(response.ok ? 'success' : 'error'); if (response.ok) form.reset() } catch { setStatus('error') } }
-  return <main className="py-16 md:py-24"><section className="mx-auto max-w-7xl px-6"><div className="grid gap-10 rounded-[2rem] bg-dark p-8 text-white md:grid-cols-[.8fr_1.2fr] md:p-14"><div><p className="text-sm font-semibold uppercase tracking-[.14em] text-primary">Start a conversation</p><h1 className="mt-4 text-balance text-4xl font-bold leading-tight md:text-6xl">Bring us the problem. We will help shape the next step.</h1><p className="mt-6 leading-7 text-white/70">You do not need a polished brief. Share what you are trying to improve, who it affects and what success would look like.</p><div className="mt-10 flex flex-col gap-4 text-sm"><a className="flex items-center gap-3 text-white/80 hover:text-white" href="https://wa.me/263776396530" target="_blank" rel="noreferrer"><span className="flex size-10 items-center justify-center rounded-full border border-primary text-primary"><MessageCircle size={19} /></span><span><b className="block text-white">Chat on WhatsApp</b><small>Message our representative</small></span></a><a className="flex items-center gap-3 text-white/80 hover:text-white" href="mailto:info.opuszim@gmail.com"><span className="flex size-10 items-center justify-center rounded-full border border-primary text-primary"><Mail size={19} /></span><span><b className="block text-white">Email us</b><small>info.opuszim@gmail.com</small></span></a><a className="flex items-center gap-3 text-white/80 hover:text-white" href="tel:+263776396530"><span className="flex size-10 items-center justify-center rounded-full border border-primary text-primary"><Phone size={19} /></span><span><b className="block text-white">Call representative</b><small>0776 396 530</small></span></a></div></div><form className="motion-rise motion-delay-2 rounded-[1.5rem] border border-black/5 bg-background p-6 text-fg shadow-xl shadow-black/10 md:p-8" onSubmit={handleSubmit}><div className="grid gap-5 md:grid-cols-2"><Field label="Name"><input className={input} name="name" required maxLength={100} /></Field><Field label="Email"><input className={input} name="email" type="email" required maxLength={254} /></Field></div><div className="mt-5 grid gap-5 md:grid-cols-2"><Field label="Phone (optional)"><input className={input} name="phone" type="tel" maxLength={40} /></Field><Field label="What can we help with?"><select className={input} name="service" required defaultValue=""><option value="" disabled>Select a service</option><option>Web design</option><option>Software development</option><option>AI automation</option><option>Branding</option><option>Domains and hosting</option></select></Field></div><div className="mt-5"><Field label="Tell us about your goal"><textarea className={input} name="message" rows={6} required minLength={10} maxLength={4000} placeholder="What are you trying to improve? Who is it for?" /></Field></div><label className="mt-5 flex items-start gap-3 text-sm"><input className="mt-1" name="consent" type="checkbox" required /><span>I agree to be contacted about this enquiry.</span></label>{status === 'success' && <p role="status" className="mt-4 text-sm text-success">Thanks — your enquiry has been received.</p>}{status === 'error' && <p role="alert" className="mt-4 text-sm text-destructive">Please check your details and try again.</p>}<button className="mt-6 inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 font-semibold text-primary-foreground disabled:cursor-not-allowed disabled:opacity-60" type="submit" disabled={status === 'pending'}>{status === 'pending' ? 'Sending…' : 'Send project details'}{status !== 'pending' && <ArrowRight size={17} />}</button></form></div></section></main>
+  async function handleSubmit(e: React.FormEvent) {
+    e.preventDefault()
+    setStatus('sending')
+    try {
+      const res = await fetch('/api/contact', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(form),
+      })
+      setStatus(res.ok ? 'sent' : 'error')
+    } catch {
+      setStatus('error')
+    }
+  }
+
+  const field = (id: keyof typeof form, label: string, type = 'text', placeholder = '') => (
+    <div>
+      <label htmlFor={id} className="mb-1.5 block text-sm font-semibold text-zinc-700">
+        {label}
+      </label>
+      <input
+        id={id}
+        type={type}
+        value={form[id]}
+        onChange={(e) => setForm({ ...form, [id]: e.target.value })}
+        placeholder={placeholder}
+        className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+      />
+    </div>
+  )
+
+  return (
+    <main className="bg-white">
+      {/* Header */}
+      <section className="bg-zinc-50 py-20">
+        <div className="mx-auto max-w-7xl px-6">
+          <Reveal>
+            <p className="text-[.8rem] font-semibold uppercase tracking-[.12em] text-primary">Get in touch</p>
+            <h1 className="mt-2 text-4xl font-extrabold text-zinc-900 md:text-5xl">Let&apos;s talk about your project.</h1>
+            <p className="mt-4 max-w-xl text-lg text-zinc-500">
+              Tell us what you need. We&apos;ll get back to you within one business day.
+            </p>
+          </Reveal>
+        </div>
+      </section>
+
+      {/* Content */}
+      <section className="mx-auto max-w-7xl px-6 py-16">
+        <div className="grid gap-12 lg:grid-cols-[1fr_360px]">
+
+          {/* Form */}
+          <Reveal>
+            <div className="rounded-3xl border border-zinc-200 bg-white p-8 shadow-card">
+              {status === 'sent' ? (
+                <div className="py-12 text-center">
+                  <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-green-50">
+                    <ArrowRight className="text-green-500" size={28} />
+                  </div>
+                  <h3 className="text-xl font-bold text-zinc-900">Message sent!</h3>
+                  <p className="mt-2 text-zinc-500">We&apos;ll get back to you within one business day.</p>
+                </div>
+              ) : (
+                <form onSubmit={handleSubmit} className="grid gap-5">
+                  <div className="grid gap-5 sm:grid-cols-2">
+                    {field('name', 'Full name', 'text', 'Your full name')}
+                    {field('email', 'Email address', 'email', 'you@example.com')}
+                  </div>
+                  {field('phone', 'Phone / WhatsApp', 'tel', '+263 77 …')}
+                  <div>
+                    <label htmlFor="service" className="mb-1.5 block text-sm font-semibold text-zinc-700">
+                      Service you&apos;re interested in
+                    </label>
+                    <select
+                      id="service"
+                      value={form.service}
+                      onChange={(e) => setForm({ ...form, service: e.target.value })}
+                      className="w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                    >
+                      <option value="">Select a service…</option>
+                      <option>Website Design &amp; Development</option>
+                      <option>Software &amp; Systems</option>
+                      <option>AI Solutions &amp; Automation</option>
+                      <option>Graphic Design &amp; Branding</option>
+                      <option>Domain &amp; Hosting</option>
+                      <option>API &amp; Integrations</option>
+                      <option>Other</option>
+                    </select>
+                  </div>
+                  <div>
+                    <label htmlFor="message" className="mb-1.5 block text-sm font-semibold text-zinc-700">
+                      Your message
+                    </label>
+                    <textarea
+                      id="message"
+                      rows={5}
+                      value={form.message}
+                      onChange={(e) => setForm({ ...form, message: e.target.value })}
+                      placeholder="Describe your project or question…"
+                      className="w-full resize-none rounded-xl border border-zinc-300 bg-white px-4 py-3 text-sm text-zinc-900 placeholder:text-zinc-400 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/20 transition-colors"
+                    />
+                  </div>
+                  {status === 'error' && (
+                    <p className="text-sm text-red-500">Something went wrong. Please try again or WhatsApp us directly.</p>
+                  )}
+                  <button
+                    type="submit"
+                    disabled={status === 'sending'}
+                    className="rounded-full bg-brand-gradient px-7 py-3.5 font-semibold text-white shadow-glow transition-transform duration-200 hover:scale-[1.03] disabled:opacity-60"
+                  >
+                    {status === 'sending' ? 'Sending…' : 'Send message'}
+                  </button>
+                </form>
+              )}
+            </div>
+          </Reveal>
+
+          {/* Contact info cards */}
+          <Reveal delay={0.1}>
+            <div className="grid gap-4">
+              {info.map(({ icon: Icon, label, value, href }) => (
+                <div
+                  key={label}
+                  className="flex items-start gap-4 rounded-2xl border border-zinc-200 bg-white p-5 shadow-card border-l-4 border-l-primary"
+                >
+                  <div className="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-primary/10">
+                    <Icon className="text-primary" size={20} />
+                  </div>
+                  <div>
+                    <p className="text-xs font-semibold uppercase tracking-wider text-zinc-400">{label}</p>
+                    {href ? (
+                      <a href={href} className="mt-0.5 font-semibold text-zinc-800 hover:text-primary transition-colors">
+                        {value}
+                      </a>
+                    ) : (
+                      <p className="mt-0.5 font-semibold text-zinc-800">{value}</p>
+                    )}
+                  </div>
+                </div>
+              ))}
+
+              {/* WhatsApp CTA */}
+              <a
+                href="https://wa.me/263776396530"
+                target="_blank"
+                rel="noreferrer"
+                className="mt-2 flex items-center justify-center gap-2 rounded-2xl bg-brand-gradient px-6 py-4 font-semibold text-white shadow-glow transition-transform hover:scale-[1.02]"
+              >
+                <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
+                  <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+                </svg>
+                Chat on WhatsApp
+              </a>
+            </div>
+          </Reveal>
+        </div>
+      </section>
+    </main>
+  )
 }

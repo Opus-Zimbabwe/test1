@@ -1,1 +1,41 @@
-'use client';import {Search} from 'lucide-react';import {useState} from 'react';export default function DomainSearchBar(){const[q,setQ]=useState('');const[done,setDone]=useState(false);return <div className="max-w-2xl"><form onSubmit={e=>{e.preventDefault();setDone(true)}} className="bg-white/90 rounded-full overflow-hidden shadow-xl flex items-center p-1.5"><Search className="ml-4 text-muted-fg" size={20}/><input value={q} onChange={e=>setQ(e.target.value)} placeholder="Search your domain" className="font-semibold placeholder:font-semibold flex-1 bg-transparent outline-none px-3 py-3"/><button className="bg-primary text-white rounded-full px-5 py-3 text-sm font-semibold">Search Domain</button></form>{done&&<div className="bg-white rounded-2xl p-4 mt-3 text-dark text-sm">{/* MOCK_BACKEND: replace with live Cloudflare availability check */}<b>{q||'yourdomain'}</b> is available in this demo.</div>}</div>}
+'use client'
+import { useState } from 'react'
+import { Search } from 'lucide-react'
+
+export default function DomainSearchBar({ dark = false }: { dark?: boolean }) {
+  const [query, setQuery] = useState('')
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault()
+    if (query.trim()) {
+      window.location.href = `/domains?search=${encodeURIComponent(query.trim())}`
+    }
+  }
+
+  return (
+    <form
+      onSubmit={handleSubmit}
+      className={`flex items-center overflow-hidden rounded-full border shadow-sm ${
+        dark
+          ? 'border-white/15 bg-white/10 backdrop-blur-sm'
+          : 'border-zinc-200 bg-white'
+      }`}
+    >
+      <input
+        type="text"
+        value={query}
+        onChange={(e) => setQuery(e.target.value)}
+        placeholder="Search for a domain, e.g. yourbusiness.co.zw"
+        className={`flex-1 bg-transparent px-5 py-3.5 text-sm outline-none ${
+          dark ? 'text-white placeholder:text-white/40' : 'text-zinc-800 placeholder:text-zinc-400'
+        }`}
+      />
+      <button
+        type="submit"
+        className="m-1 flex items-center gap-1.5 rounded-full bg-brand-gradient px-4 py-2.5 text-sm font-semibold text-white shadow-glow transition-transform hover:scale-[1.03]"
+      >
+        <Search size={15} /> Search
+      </button>
+    </form>
+  )
+}

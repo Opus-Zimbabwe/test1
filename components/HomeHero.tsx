@@ -1,1 +1,87 @@
-'use client';import Image from 'next/image';import Link from 'next/link';import {useEffect,useState} from 'react';import {ArrowRight} from 'lucide-react';import DomainSearchBar from '@/components/DomainSearchBar';const services=[['Website Design & Development','/images/hero-website-design.png','/services/web-design'],['Software & System Development','/images/hero-software-systems.png','/services/software-development'],['AI Solutions & Automation','/images/hero-ai-automation.png','/services/ai-automation'],['Graphic Design & Branding','/images/hero-graphic-design.png','/services/graphic-design'],['Domain Registration & Web Hosting','/images/hero-domains-hosting.png','/services/domains-hosting'],['API & System Integrations','/images/hero-api-integrations.png','/services/api-integrations']];export default function HomeHero(){const[i,setI]=useState(0);useEffect(()=>{const t=setInterval(()=>setI(x=>(x+1)%services.length),4000);return()=>clearInterval(t)},[]);const [name,img,href]=services[i];return <section className="min-h-screen bg-dark relative flex items-center overflow-hidden"><div className="absolute inset-0"><Image src="/images/hero-bg.jpg" alt="" fill priority className="object-cover"/><div className="absolute inset-0 bg-gradient-to-r from-black/75 via-black/45 to-black/15"/></div><div className="relative max-w-7xl mx-auto px-6 py-20 w-full grid md:grid-cols-2 gap-10 items-center"><div><p className="text-white/80 font-semibold uppercase tracking-[.12em] text-[.8rem]">Opus Zimbabwe digital services</p><h1 className="text-[clamp(2rem,4vw+1rem,3.25rem)] font-extrabold text-white max-w-2xl mt-4 transition-all duration-500">{name}</h1><p className="text-white/85 max-w-xl mt-5 text-lg">Practical digital systems, services and infrastructure for Zimbabwean businesses and organisations.</p><div className="mt-7"><DomainSearchBar/></div><div className="flex gap-4 mt-6"><Link href={href} className="bg-primary text-white rounded-full px-6 py-3 font-semibold">Explore this service</Link><Link href="/services" className="border border-white/50 text-white rounded-full px-6 py-3 font-semibold">View all services</Link></div></div><Link href={href} aria-label={name} className="relative h-[320px] block bg-center bg-contain bg-no-repeat transition-all duration-500" style={{backgroundImage:`url(${img})`}}><div className="absolute bottom-5 left-5 right-5 bg-white rounded-2xl p-4 text-dark font-semibold flex justify-between shadow-sm">{name}<ArrowRight/></div></Link></div></section>}
+'use client'
+import Link from 'next/link'
+import { useEffect, useState } from 'react'
+import { ArrowRight } from 'lucide-react'
+import { motion } from 'framer-motion'
+import DomainSearchBar from '@/components/DomainSearchBar'
+import HeroBackground from '@/components/HeroBackground'
+
+const services = [
+  ['Website Design & Development',         '/services/web-design'],
+  ['Software & System Development',        '/services/software-development'],
+  ['AI Solutions & Automation',            '/services/ai-automation'],
+  ['Graphic Design & Branding',            '/services/graphic-design'],
+  ['Domain Registration & Web Hosting',    '/services/domains-hosting'],
+  ['API & System Integrations',            '/services/api-integrations'],
+]
+
+export default function HomeHero() {
+  const [i, setI] = useState(0)
+  useEffect(() => {
+    const t = setInterval(() => setI((x) => (x + 1) % services.length), 3500)
+    return () => clearInterval(t)
+  }, [])
+  const [name, href] = services[i]
+
+  const fade = {
+    hidden: { opacity: 0, y: 26 },
+    show: (d: number) => ({ opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1], delay: d } }),
+  }
+
+  return (
+    // Hero keeps a rich dark background — this is intentional as the top section of the page
+    <section className="relative flex min-h-[88vh] items-center overflow-hidden bg-zinc-900">
+      <HeroBackground />
+      <div className="relative mx-auto w-full max-w-7xl px-6 py-24">
+        <div className="max-w-3xl">
+          <motion.p
+            variants={fade} custom={0} initial="hidden" animate="show"
+            className="inline-flex items-center gap-2 rounded-full border border-white/15 bg-white/8 px-4 py-1.5 text-[.8rem] font-semibold uppercase tracking-[.12em] text-primary"
+          >
+            <span className="h-1.5 w-1.5 rounded-full bg-primary" />
+            Opus Zimbabwe digital services
+          </motion.p>
+
+          <motion.h1
+            variants={fade} custom={0.1} initial="hidden" animate="show"
+            className="mt-6 text-balance text-[clamp(2.2rem,4.5vw+1rem,3.75rem)] font-extrabold leading-[1.05] text-white"
+          >
+            Digital systems built for{' '}
+            <span className="bg-brand-gradient bg-clip-text text-transparent">Zimbabwean businesses.</span>
+          </motion.h1>
+
+          <motion.p
+            variants={fade} custom={0.2} initial="hidden" animate="show"
+            className="mt-6 max-w-xl text-lg leading-7 text-zinc-300"
+          >
+            Websites, software, AI automation, branding and hosting — practical infrastructure for the way your organisation
+            actually works. Currently featuring{' '}
+            <Link href={href} className="font-semibold text-primary transition-colors hover:text-white">
+              {name}
+            </Link>
+            .
+          </motion.p>
+
+          <motion.div variants={fade} custom={0.3} initial="hidden" animate="show" className="mt-8 max-w-xl">
+            <DomainSearchBar dark />
+          </motion.div>
+
+          <motion.div variants={fade} custom={0.4} initial="hidden" animate="show" className="mt-7 flex flex-wrap gap-4">
+            <Link
+              href="/services"
+              className="inline-flex items-center gap-2 rounded-full bg-brand-gradient px-6 py-3 font-semibold text-white shadow-glow transition-transform duration-200 hover:scale-[1.03]"
+            >
+              Explore services <ArrowRight size={17} />
+            </Link>
+            <Link
+              href="/contact"
+              className="rounded-full border border-white/25 px-6 py-3 font-semibold text-white transition-colors hover:border-primary hover:text-primary"
+            >
+              Start a project
+            </Link>
+          </motion.div>
+        </div>
+      </div>
+    </section>
+  )
+}
