@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useMemo } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import { X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Reveal } from "./Reveal";
+import { PHOTOS } from "./assets";
 import { useGalleryImages, useSignedImageUrl } from "@/lib/db";
 
 function SignedImage({
@@ -22,7 +23,10 @@ function SignedImage({
 export function Gallery() {
   const [open, setOpen] = useState<number | null>(null);
   const { rows: custom } = useGalleryImages();
-  const images = useMemo(() => custom.map((item) => item.src), [custom]);
+  const images = useMemo(
+    () => [...new Set([...custom.map((item) => item.src), ...PHOTOS])],
+    [custom],
+  );
 
   const close = useCallback(() => setOpen(null), []);
   const prev = useCallback(
@@ -65,6 +69,7 @@ export function Gallery() {
             {images.map((src, imageIndex) => (
               <button
                 key={`${imageIndex}-${src}`}
+                aria-label={`Open gallery photograph ${imageIndex + 1}`}
                 onClick={() => setOpen(imageIndex)}
                 className="mb-4 block w-full overflow-hidden rounded-2xl bg-white shadow-[0_12px_28px_-22px_rgba(42,18,70,.4)] ring-1 ring-primary/7 transition hover:-translate-y-1 hover:shadow-[0_18px_35px_-22px_rgba(42,18,70,.5)]"
               >

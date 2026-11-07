@@ -36,10 +36,15 @@ export function Contact() {
       setPending(false);
       return;
     }
-    // Local submission — surfaces success. Wire to backend when Cloud is enabled.
-    await new Promise((resolve) => setTimeout(resolve, 500));
-    setState({ status: "ok", msg: "Thank you — we'll reach out shortly." });
-    event.currentTarget.reset();
+    const subject = encodeURIComponent(`Great Couples enquiry from ${parsed.data.name}`);
+    const body = encodeURIComponent(
+      `Name: ${parsed.data.name}\nEmail: ${parsed.data.email}\n\n${parsed.data.message}`,
+    );
+    window.location.href = `mailto:greatcouplestrust@gmail.com?subject=${subject}&body=${body}`;
+    setState({
+      status: "ok",
+      msg: "Your email app will open with your enquiry. Send it there to contact our team.",
+    });
     setPending(false);
   }
 
@@ -172,7 +177,7 @@ export function Contact() {
                   type="submit"
                   className="inline-flex items-center justify-center gap-2 rounded-full bg-accent px-6 py-3.5 text-sm font-bold text-accent-foreground shadow-lg shadow-accent/20 transition hover:-translate-y-0.5 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  <Send className="h-4 w-4" /> {pending ? "Sending…" : "Send Message"}
+                  <Send className="h-4 w-4" /> {pending ? "Preparing…" : "Open email to send"}
                 </button>
               </div>
             </form>

@@ -6,10 +6,18 @@ const variants: Variants = {
   show: { opacity: 1, y: 0, transition: { type: "spring", stiffness: 90, damping: 18, mass: 0.6 } },
 };
 
-export function Reveal({ children, delay = 0, className }: { children: ReactNode; delay?: number; className?: string }) {
+export function Reveal({
+  children,
+  delay = 0,
+  className,
+}: {
+  children: ReactNode;
+  delay?: number;
+  className?: string;
+}) {
   return (
     <motion.div
-      initial="hidden"
+      initial={false}
       whileInView="show"
       viewport={{ once: true, margin: "-80px" }}
       variants={variants}

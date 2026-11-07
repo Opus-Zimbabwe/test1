@@ -1,5 +1,4 @@
 import { Facebook, Youtube, Instagram, Phone, Mail, MapPin } from "lucide-react";
-import { LOGO } from "./assets";
 
 export function Footer() {
   return (
@@ -7,15 +6,12 @@ export function Footer() {
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20">
         <div className="grid gap-12 md:grid-cols-[1.35fr_.7fr_1fr]">
           <div>
-            <div className="flex items-center gap-3">
-              <img src={LOGO} alt="Great Couples" className="h-12 w-12 object-contain" />
-              <div>
-                <p className="text-xl font-bold leading-none text-white">Great Couples</p>
-                <p className="mt-1 text-[.63rem] font-bold uppercase tracking-[.16em] text-white/55">
-                  International Trust
-                </p>
-              </div>
-            </div>
+            <a className="gc-footer-brand" href="#top" aria-label="Great Couples home">
+              <img
+                src="/cdn/cbb32bda-7bdd-4316-8ee2-a08473075ba3/gc-logo.png"
+                alt="Great Couples — Building & Promoting Marriage Foundations"
+              />
+            </a>
             <p className="mt-5 max-w-md text-sm leading-6 text-white/65">
               Building &amp; Promoting Marriage Foundations — restoring families across Africa and
               beyond through Christ-centered counselling, outreach and seminars.
@@ -55,6 +51,11 @@ export function Footer() {
             <ul className="mt-4 space-y-2 text-sm text-white/65">
               {[
                 ["About", "#about"],
+                ["Values", "#values"],
+                ["Gallery", "#gallery"],
+                ["Social videos", "#videos"],
+                ["Announcements", "#announcements"],
+                ["Groups", "#community"],
 
                 ["Services", "#services"],
 
