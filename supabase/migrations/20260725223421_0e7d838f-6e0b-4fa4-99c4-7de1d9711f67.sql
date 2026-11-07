@@ -1,0 +1,1 @@
+DELETE FROM public.books WHERE title = 'QA Test Book';

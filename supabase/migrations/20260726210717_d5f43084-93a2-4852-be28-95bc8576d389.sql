@@ -1,0 +1,2 @@
+ALTER FUNCTION public.create_paynow_checkout(text, text, text, text, jsonb, text) SET search_path TO 'public', 'extensions';
+ALTER FUNCTION public.apply_paynow_result(uuid, jsonb, text[]) SET search_path TO 'public', 'extensions';
