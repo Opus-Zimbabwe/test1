@@ -2279,3 +2279,18 @@
 .gc-announcements-separated .gc-announcement-entry{border-top:1px solid #5a236924;padding-top:55px}
 .gc-announcements-separated .gc-announcement-entry h3{font-size:clamp(30px,3.3vw,52px);line-height:1.12;letter-spacing:-.04em}
 @media(max-width:600px){.gc-rotation-heading{gap:10px}.gc-rotation-heading>div{gap:10px}.gc-rotation-heading button{width:38px;height:38px}.gc-podcast-rail{gap:16px}}
+
+.gc-podcast-rotations .gc-rotation-heading h3{color:#fff}
+.gc-channel-follow{display:inline-flex;align-items:center;justify-content:center;gap:10px;min-height:50px;padding:12px 25px;border-radius:999px;background:#e51053;color:#fff!important;font-size:17px;font-weight:900;text-decoration:none;border:2px solid transparent;transition:transform .2s,background .2s}
+.gc-channel-follow:hover{background:#bc1049;transform:translateY(-2px)}
+.gc-channel-follow:focus-visible,.gc-facebook-follow:focus-visible{outline:3px solid #ae70d7;outline-offset:5px}
+.gc-social-channel.youtube .gc-channel-follow{background:#da1717}
+.gc-social-channel.tiktok .gc-channel-follow{background:#211525}
+.gc-editorial .gc-facebook-follow{background:#0866ff;color:white;border:0;font-size:19px;font-weight:900;padding:18px 30px}
+.gc-facebook-reels{display:flex;gap:22px;overflow-x:auto;min-width:0;overscroll-behavior-x:contain;scrollbar-width:thin;scroll-snap-type:x proximity;padding-bottom:15px}
+.gc-facebook-reels .gc-facebook-frame{flex:0 0 100%;scroll-snap-align:start}
+@media(max-width:650px){.gc-rotation-heading{flex-wrap:wrap}.gc-rotation-actions{width:100%;justify-content:flex-end}.gc-rotation-actions .gc-channel-follow{margin-right:auto}.gc-social-channel-heading{flex-wrap:wrap;gap:18px}.gc-channel-follow{font-size:16px;min-height:46px;padding:10px 20px}}
+.gc-video-library{display:inline-flex;align-items:center;gap:12px;font-size:18px;font-weight:900;text-decoration:none;color:inherit;padding:16px 0;border-bottom:2px solid currentColor}
+.gc-facebook .gc-video-library{display:flex;width:fit-content;margin-top:18px;color:#552064}
+.gc-video-library:hover{color:#d90e53}
+.gc-reel-controls{flex-wrap:wrap;gap:15px}

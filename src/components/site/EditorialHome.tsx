@@ -18,7 +18,7 @@ import { MediaTheatre } from "./MediaTheatre";
 import { Footer } from "./Footer";
 import "./editorial.css";
 import "./experience.css";
-const reel = "https://www.facebook.com/reel/29635817456011458/";
+const facebookVideos = ["https://www.facebook.com/reel/29635817456011458/"];
 export function EditorialHome() {
   return (
     <main className="gc-editorial" id="top">
@@ -46,26 +46,37 @@ export function EditorialHome() {
             Keep up with our stories and join the conversation.
           </p>
           <a
-            className="gc-button gc-button-light"
+            className="gc-button gc-facebook-follow"
             href="https://www.facebook.com/share/1DMYvcv24u/?mibextid=wwXIfr"
             target="_blank"
             rel="noopener noreferrer"
           >
-            Visit our Facebook <ArrowRight size={17} />
+            Follow on Facebook <ArrowRight size={17} />
+          </a>
+          <a
+            className="gc-video-library"
+            href="https://www.facebook.com/gr8couples/videos/"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            Explore all Facebook videos <ArrowRight size={19} />
           </a>
         </div>
-        <div className="gc-facebook-frame">
-          <iframe
-            title="Great Couples Facebook Reel"
-            src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(reel)}&show_text=false&width=360`}
-            loading="lazy"
-            allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen"
-            allowFullScreen
-          />
-          <a href={reel} target="_blank" rel="noopener noreferrer">
-            Watch the shared Reel on Facebook <ArrowRight size={17} />
-          </a>
-          <p>Can't play the Reel? Open it on Facebook.</p>
+        <div className="gc-facebook-reels" aria-label="Great Couples Facebook videos">
+          {facebookVideos.map((video, index) => (
+            <div className="gc-facebook-frame" key={video}>
+              <iframe
+                title={`Great Couples Facebook Reel ${index + 1}`}
+                src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(video)}&show_text=false&width=360`}
+                loading="lazy"
+                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen"
+                allowFullScreen
+              />
+              <a href={video} target="_blank" rel="noopener noreferrer">
+                Watch on Facebook <ArrowRight size={17} />
+              </a>
+            </div>
+          ))}
         </div>
         <img
           className="gc-facebook-photo"

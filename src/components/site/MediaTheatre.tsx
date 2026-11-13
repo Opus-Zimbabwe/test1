@@ -93,7 +93,19 @@ function PodcastRotation({
           <BrandLogo brand={platform} size={42} />
           <h3 id={`podcast-${platform}-title`}>{name}</h3>
         </div>
-        <div>
+        <div className="gc-rotation-actions">
+          <a
+            className="gc-channel-follow"
+            href={
+              platform === "youtube"
+                ? "https://youtube.com/@greatcouples"
+                : "https://www.tiktok.com/@greatcouplestrust"
+            }
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {platform === "youtube" ? "Subscribe" : "Follow"} ↗
+          </a>
           <button
             aria-label={`Previous ${name} podcast videos`}
             onClick={() =>

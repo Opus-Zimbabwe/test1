@@ -1,16 +1,21 @@
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
-const SITE_ADMIN_PASSCODE = "Google!password7";
-
-function assertPasscode(code: string) {
-  if (code !== SITE_ADMIN_PASSCODE) throw new Error("Invalid passcode");
+// Only the verifier is stored in source; never send it to the browser.
+async function assertPasscode(code: string) {
+  const { createHash, timingSafeEqual } = await import("node:crypto");
+  const expected = Buffer.from(
+    "094fb170f2881ac8006d8a3bafdacf695062b6cd24a00e62b43eb50b856ac1f8",
+    "hex",
+  );
+  const actual = createHash("sha256").update(code).digest();
+  if (!timingSafeEqual(actual, expected)) throw new Error("Invalid passcode");
 }
 
 export const verifySiteAdminPasscode = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ passcode: z.string() }).parse(d))
   .handler(async ({ data }) => {
-    assertPasscode(data.passcode);
+    await assertPasscode(data.passcode);
     return { ok: true };
   });
 
@@ -25,14 +30,16 @@ function extFromMime(mime: string) {
 
 export const uploadSiteImage = createServerFn({ method: "POST" })
   .inputValidator((d) =>
-    z.object({
-      passcode: z.string(),
-      bucket: z.enum(["gallery", "announcements"]),
-      data_url: z.string().startsWith("data:"),
-    }).parse(d),
+    z
+      .object({
+        passcode: z.string(),
+        bucket: z.enum(["gallery", "announcements"]),
+        data_url: z.string().startsWith("data:"),
+      })
+      .parse(d),
   )
   .handler(async ({ data }) => {
-    assertPasscode(data.passcode);
+    await assertPasscode(data.passcode);
     const m = data.data_url.match(/^data:([^;]+);base64,(.+)$/);
     if (!m) throw new Error("Unsupported image data");
     const mime = m[1];
@@ -50,7 +57,6 @@ export const uploadSiteImage = createServerFn({ method: "POST" })
     return { path };
   });
 
-
 // Gallery
 const gallerySchema = z.object({
   passcode: z.string(),
@@ -62,10 +68,14 @@ const gallerySchema = z.object({
 export const saveGalleryImage = createServerFn({ method: "POST" })
   .inputValidator((d) => gallerySchema.parse(d))
   .handler(async ({ data }) => {
-    assertPasscode(data.passcode);
+    await assertPasscode(data.passcode);
     const { createServerPublicSupabase } = await import("./supabase-public.server");
     const supabase = createServerPublicSupabase();
-    const payload = { src: data.src, caption: data.caption ?? null, sort_order: data.sort_order ?? 0 };
+    const payload = {
+      src: data.src,
+      caption: data.caption ?? null,
+      sort_order: data.sort_order ?? 0,
+    };
     if (data.id) {
       const { data: row, error } = await (supabase as any).rpc("site_admin_save_gallery_image", {
         _passcode: data.passcode,
@@ -91,10 +101,13 @@ export const saveGalleryImage = createServerFn({ method: "POST" })
 export const deleteGalleryImage = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ passcode: z.string(), id: z.string() }).parse(d))
   .handler(async ({ data }) => {
-    assertPasscode(data.passcode);
+    await assertPasscode(data.passcode);
     const { createServerPublicSupabase } = await import("./supabase-public.server");
     const supabase = createServerPublicSupabase();
-    const { error } = await (supabase as any).rpc("site_admin_delete_gallery_image", { _passcode: data.passcode, _id: data.id });
+    const { error } = await (supabase as any).rpc("site_admin_delete_gallery_image", {
+      _passcode: data.passcode,
+      _id: data.id,
+    });
     if (error) throw error;
     return { ok: true };
   });
@@ -113,12 +126,15 @@ const annSchema = z.object({
 export const saveAnnouncement = createServerFn({ method: "POST" })
   .inputValidator((d) => annSchema.parse(d))
   .handler(async ({ data }) => {
-    assertPasscode(data.passcode);
+    await assertPasscode(data.passcode);
     const { createServerPublicSupabase } = await import("./supabase-public.server");
     const supabase = createServerPublicSupabase();
     const payload = {
-      title: data.title, body: data.body, date_text: data.date_text,
-      location: data.location ?? null, image_url: data.image_url ?? null,
+      title: data.title,
+      body: data.body,
+      date_text: data.date_text,
+      location: data.location ?? null,
+      image_url: data.image_url ?? null,
       sort_order: data.sort_order ?? 0,
     };
     if (data.id) {
@@ -152,10 +168,13 @@ export const saveAnnouncement = createServerFn({ method: "POST" })
 export const deleteAnnouncement = createServerFn({ method: "POST" })
   .inputValidator((d) => z.object({ passcode: z.string(), id: z.string() }).parse(d))
   .handler(async ({ data }) => {
-    assertPasscode(data.passcode);
+    await assertPasscode(data.passcode);
     const { createServerPublicSupabase } = await import("./supabase-public.server");
     const supabase = createServerPublicSupabase();
-    const { error } = await (supabase as any).rpc("site_admin_delete_announcement", { _passcode: data.passcode, _id: data.id });
+    const { error } = await (supabase as any).rpc("site_admin_delete_announcement", {
+      _passcode: data.passcode,
+      _id: data.id,
+    });
     if (error) throw error;
     return { ok: true };
   });

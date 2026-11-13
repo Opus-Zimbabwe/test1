@@ -35,14 +35,14 @@ const assert = require("node:assert/strict");
     }
     await p.locator("#videos").scrollIntoViewIfNeeded();
     assert.equal(await p.locator("#videos-youtube .gc-social-video").count(), 4);
-    assert.equal(await p.locator("#videos-tiktok .gc-social-video").count(), 3);
+    assert.equal(await p.locator("#videos-tiktok .gc-social-video").count(), 8);
     await p.getByRole("button", { name: "Play youtube video 1", exact: true }).click();
     await p.getByRole("dialog").waitFor();
     await p.getByRole("button", { name: "Close video player" }).click();
     await p.getByRole("button", { name: "Play tiktok video 1", exact: true }).click();
     assert.ok(
       (await p.getByRole("dialog").locator("iframe").getAttribute("src")).includes(
-        "7662832812252204308",
+        "7707735777718930706",
       ),
     );
     await p.keyboard.press("Escape");

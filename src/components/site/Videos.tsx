@@ -7,6 +7,7 @@ import { PODCAST_CLIPS, type MediaClip } from "./media";
 const clips: MediaClip[] = [
   ...PODCAST_CLIPS.filter((clip) => clip.platform === "youtube"),
   { id: "im1SsciswOE", platform: "youtube", title: "Great Couples — Outreach" },
+  ...PODCAST_CLIPS.filter((clip) => clip.platform === "tiktok"),
   ...["7662832812252204308", "7664308578534034696", "7661685641851227413"].map((id, i) => ({
     id,
     platform: "tiktok" as const,
@@ -52,6 +53,7 @@ function SocialChannel({
           <h3 id={`social-${platform}-title`}>{name}</h3>
         </div>
         <a
+          className="gc-channel-follow"
           href={
             platform === "youtube"
               ? "https://youtube.com/@greatcouples"
@@ -87,6 +89,18 @@ function SocialChannel({
           ))}
       </div>
       <div className="gc-reel-controls">
+        <a
+          className="gc-video-library"
+          href={
+            platform === "youtube"
+              ? "https://www.youtube.com/@greatcouples/videos"
+              : "https://www.tiktok.com/@greatcouplestrust"
+          }
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Explore all {name} videos <ArrowRight size={19} />
+        </a>
         <div>
           <button
             aria-label={`Previous ${name} social videos`}

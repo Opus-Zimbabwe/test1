@@ -70,3 +70,10 @@ Verified: production build; changed-file lint and type checks; desktop/mobile/ta
 - A discreet, accessible footer lock opens `/admin`; hiding the link does not replace authentication.
 - Podcast channels now pan slowly as horizontal rails, stop on hover/focus/open player, respect reduced motion, and use provider media rather than unrelated website photos for TikTok previews. Provider availability still controls external playback.
 - Marriage counselling copy no longer promises that counselling is free.
+
+### Channel visibility and admin verifier
+- Confirmed the requested admin password is already accepted by the live database verifier, while an incorrect password is rejected. Replaced the plaintext server copy with a SHA-256 verifier and timing-safe comparison; client bundles contain no verifier. Included a matching SQL migration to replace the database's existing plaintext comparison when migrations are applied; it preserves the accepted credential.
+- Podcast channel headings are white, with prominent Subscribe/Follow actions. General TikTok shelf now includes all five supplied podcast clips plus three original clips (eight total).
+- Strengthened YouTube/TikTok/Facebook follow actions and added direct links to each channel's full video library.
+- The supplied Facebook share link resolves to the already embedded Reel; it is not repeated. Additional YouTube/Facebook embeds require verified links: YouTube listing requests were blocked and Facebook's public channel listing did not expose additional video IDs. Existing four YouTube videos and original Facebook Reel are retained.
+- Validation: production build; browser password acceptance/rejection (no content mutations); white headings and channel actions; public experience suite at desktop/mobile widths.
