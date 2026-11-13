@@ -1,4 +1,6 @@
 import { useState } from "react";
+import { SignatureHero } from "./SignatureHero";
+import { WhoWeAre } from "./WhoWeAre";
 import { ArrowRight, Menu, X } from "lucide-react";
 import { About } from "./About";
 import { Values } from "./Values";
@@ -56,32 +58,8 @@ export function EditorialHome() {
           </button>
         </div>
       </header>
-      <section className="gc-intro" aria-labelledby="gc-intro-title">
-        <p className="gc-eyebrow">Great Couples International Trust · Zimbabwe & beyond</p>
-        <h1 id="gc-intro-title">
-          Great marriages.
-          <br />
-          <em>Strong foundations.</em>
-        </h1>
-        <p className="gc-intro-description">
-          Faith at the centre. Family at the heart.
-          <br />
-          Guidance, connection and community for a lifetime together.
-        </p>
-        <div className="gc-intro-actions">
-          <a className="gc-button" href="#contact">
-            Let’s talk <ArrowRight size={18} />
-          </a>
-          <a className="gc-button gc-button-light" href="#about">
-            Discover Great Couples
-          </a>
-        </div>
-        <div className="gc-intro-bottom">
-          <span>Marriage counselling</span>
-          <span>Pre-marital counselling</span>
-          <span>Family & community outreach</span>
-        </div>
-      </section>
+      <SignatureHero />
+      <WhoWeAre />
       <Services />
       <Marquee />
       <About />

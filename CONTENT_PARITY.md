@@ -19,3 +19,9 @@ Compared the homepage at https://www.greatcouples.org.zw/ with the original repo
 | Bookshop, authentication, admin and payment routes | Existing route files retained |
 
 Validation: production build and targeted ESLint passed. Chromium checks confirmed all sections, three service photographs, at least ten gallery images, five groups, social video embeds, announcements, gallery controls and podcast selection/dialog/pause controls. Mobile navigation and overflow checked at 390, 760 and 1024 pixels. No broken local images or JavaScript page errors were observed. External media playback, payment processing and admin operations were not exercised.
+
+## 13 November reference update
+
+Replaced the static opening with an inset, rounded photo carousel with a bottom-to-transparent teal gradient. Added a Who We Are photo carousel with blurred neighbours. Rebuilt the three service cards around the supplied pale-blue photographic reference, including curved description panels. Rounded Nunito typography is bundled locally with its OFL licence; service headings retain the reference's serif treatment. Removed decorative heading labels and decorative icon badges while keeping functional controls, social links and accessibility labels. Original content sections and Supabase support remain.
+
+The production build without Supabase settings passed the public-page regression at 1440px and 390px. Separate browser checks covered carousel arrows, blur navigation, service images, original sections, groups and no horizontal overflow at 390/760/1024px. The previous Supabase crash fix remains unchanged.

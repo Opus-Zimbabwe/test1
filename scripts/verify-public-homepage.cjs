@@ -21,7 +21,7 @@ const { chromium } = require("playwright");
         waitUntil: "domcontentloaded",
       });
       assert.equal(response.status(), 200);
-      await page.getByRole("heading", { name: /Great marriages/ }).waitFor();
+      await page.getByRole("heading", { name: /A stronger love/ }).waitFor();
       await page.waitForTimeout(1500);
       assert.equal(await page.getByRole("heading", { name: "This page didn't load" }).count(), 0);
       for (const id of [
