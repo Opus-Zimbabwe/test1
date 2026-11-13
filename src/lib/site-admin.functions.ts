@@ -43,6 +43,7 @@ export const uploadSiteImage = createServerFn({ method: "POST" })
     const m = data.data_url.match(/^data:([^;]+);base64,(.+)$/);
     if (!m) throw new Error("Unsupported image data");
     const mime = m[1];
+    if (!mime || !m[2]) throw new Error("Invalid image data");
     if (!mime.startsWith("image/")) throw new Error("Only image files are allowed");
     const bytes = Buffer.from(m[2], "base64");
     if (bytes.byteLength > 12 * 1024 * 1024) throw new Error("Image is larger than 12MB");
@@ -177,4 +178,49 @@ export const deleteAnnouncement = createServerFn({ method: "POST" })
     });
     if (error) throw error;
     return { ok: true };
+  });
+
+const videoSchema = z.object({
+  passcode: z.string(),
+  id: z.string().uuid().optional(),
+  origin_key: z
+    .string()
+    .regex(/^(podcast|social):(youtube|tiktok|facebook):[\w-]{5,80}$/)
+    .nullable()
+    .optional(),
+  url: z.string().url().max(2048),
+  title: z.string().trim().min(1).max(180),
+  placement: z.enum(["podcast", "social"]),
+  sort_order: z.number().int().min(-10000).max(10000),
+  active: z.boolean(),
+});
+export const saveContentVideo = createServerFn({ method: "POST" })
+  .inputValidator((data) => videoSchema.parse(data))
+  .handler(async ({ data }) => {
+    await assertPasscode(data.passcode);
+    const { parseVideoLink } = await import("./video-library");
+    const parsed = parseVideoLink(data.url);
+    const { createServerPublicSupabase } = await import("./supabase-public.server");
+    const client = createServerPublicSupabase();
+    const { passcode, ...fields } = data;
+    const { data: record, error } = await client.rpc(
+      "site_admin_save_video" as never,
+      {
+        _passcode: passcode,
+        _video: {
+          ...fields,
+          platform: parsed.platform,
+          video_id: parsed.id,
+          url: parsed.url,
+          origin_key: fields.origin_key || `${fields.placement}:${parsed.platform}:${parsed.id}`,
+        },
+      } as never,
+    );
+    if (error)
+      throw new Error(
+        error.code === "PGRST202"
+          ? "Video publishing needs the content_videos database migration. Your changes have not been published."
+          : error.message,
+      );
+    return record as unknown as import("./video-library").VideoRecord;
   });

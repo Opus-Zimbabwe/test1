@@ -1,3 +1,5 @@
+import { useVideos } from "@/lib/use-video-library";
+import { clipLink } from "./media";
 import { SiteNavigation } from "./SiteNavigation";
 import { AmbientBackdrop } from "./AmbientBackdrop";
 import { BrandLogo } from "./BrandLogo";
@@ -18,8 +20,8 @@ import { MediaTheatre } from "./MediaTheatre";
 import { Footer } from "./Footer";
 import "./editorial.css";
 import "./experience.css";
-const facebookVideos = ["https://www.facebook.com/reel/29635817456011458/"];
 export function EditorialHome() {
+  const facebookVideos = useVideos("social", "facebook");
   return (
     <main className="gc-editorial" id="top">
       <AmbientBackdrop />
@@ -63,20 +65,23 @@ export function EditorialHome() {
           </a>
         </div>
         <div className="gc-facebook-reels" aria-label="Great Couples Facebook videos">
-          {facebookVideos.map((video, index) => (
-            <div className="gc-facebook-frame" key={video}>
-              <iframe
-                title={`Great Couples Facebook Reel ${index + 1}`}
-                src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(video)}&show_text=false&width=360`}
-                loading="lazy"
-                allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen"
-                allowFullScreen
-              />
-              <a href={video} target="_blank" rel="noopener noreferrer">
-                Watch on Facebook <ArrowRight size={17} />
-              </a>
-            </div>
-          ))}
+          {facebookVideos.map((clip, index) => {
+            const video = clipLink(clip);
+            return (
+              <div className="gc-facebook-frame" key={video}>
+                <iframe
+                  title={`Great Couples Facebook Reel ${index + 1}`}
+                  src={`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(video)}&show_text=false&width=360`}
+                  loading="lazy"
+                  allow="autoplay; clipboard-write; encrypted-media; picture-in-picture; web-share; fullscreen"
+                  allowFullScreen
+                />
+                <a href={video} target="_blank" rel="noopener noreferrer">
+                  Watch on Facebook <ArrowRight size={17} />
+                </a>
+              </div>
+            );
+          })}
         </div>
         <img
           className="gc-facebook-photo"

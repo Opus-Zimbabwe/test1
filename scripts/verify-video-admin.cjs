@@ -1,0 +1,35 @@
+// Local-only integration: all database reads/writes go to a disposable loopback fixture.
+// GC_TEST_ADMIN_PASSCODE must match the website verifier. It is never printed or persisted.
+const {createServer}=require('node:http');
+const {spawn}=require('node:child_process');
+const {randomUUID}=require('node:crypto');
+const assert=require('node:assert/strict');
+const {chromium}=require('playwright');
+const passcode=process.env.GC_TEST_ADMIN_PASSCODE;
+if(!passcode)throw Error('Set GC_TEST_ADMIN_PASSCODE before running this local-only integration check.');
+(async()=>{
+ const records=[];let writes=0;
+ const backend=createServer(async(req,res)=>{res.setHeader('Content-Type','application/json');res.setHeader('Access-Control-Allow-Origin','*');if(req.method==='OPTIONS'){res.writeHead(204,{'Access-Control-Allow-Headers':'*'}).end();return;}if(req.url.startsWith('/rest/v1/content_videos'))return res.end(JSON.stringify(records));if(req.url.startsWith('/rest/v1/rpc/site_admin_save_video')){let text='';for await(const chunk of req)text+=chunk;const payload=JSON.parse(text);if(payload._passcode!==passcode){res.statusCode=403;return res.end(JSON.stringify({message:'Invalid fixture passcode'}));}writes++;const draft=payload._video;const existing=records.find(row=>draft.id?row.id===draft.id:row.platform===draft.platform&&row.video_id===draft.video_id&&row.placement===draft.placement);if(existing)Object.assign(existing,draft);else records.push({...draft,id:randomUUID(),created_at:new Date().toISOString()});return res.end(JSON.stringify(existing||records.at(-1)));}res.end('[]');});
+ await new Promise(resolve=>backend.listen(0,'127.0.0.1',resolve));const database=`http://127.0.0.1:${backend.address().port}`;
+ const app=spawn(process.execPath,['node_modules/vite/bin/vite.js','--host','127.0.0.1','--port','3003','--strictPort'],{cwd:process.cwd(),detached:true,stdio:'ignore',env:{...process.env,SUPABASE_URL:database,VITE_SUPABASE_URL:database,SUPABASE_PUBLISHABLE_KEY:'sb_publishable_local_fixture',VITE_SUPABASE_PUBLISHABLE_KEY:'sb_publishable_local_fixture'}});
+ let browser;
+ try{
+  let ready=false;for(let i=0;i<45;i++){try{const response=await fetch('http://127.0.0.1:3003/admin',{signal:AbortSignal.timeout(1000)});if(response.ok){ready=true;break;}}catch{}await new Promise(resolve=>setTimeout(resolve,500));}assert.ok(ready,'Local app starts');
+  browser=await chromium.launch({executablePath:'/usr/bin/chromium',args:['--no-sandbox']});const p=await browser.newPage({viewport:{width:1440,height:1050},reducedMotion:'reduce'});
+  await p.addInitScript(code=>sessionStorage.setItem('gc_site_admin',code),passcode);
+  await p.route(/https:\/\/(www\.)?(tiktok|facebook|youtube-nocookie)\.com\//,route=>route.abort());
+  await p.goto('http://127.0.0.1:3003/admin');await p.getByRole('button',{name:/^Videos & podcast/}).click();
+  await p.getByRole('button',{name:'Add video',exact:true}).click();await p.getByLabel('Video link',{exact:true}).fill('https://youtu.be/q5FlDKsrzQk');await p.getByLabel('Video title',{exact:true}).fill('Fixture conversation');await p.getByLabel('Position',{exact:false}).fill('-2');
+  await p.getByRole('button',{name:'Publish video',exact:true}).waitFor({state:'visible'});await p.waitForFunction(()=>!document.querySelector('.gc-admin-video-editor button.gc-admin-primary').disabled);await p.getByRole('button',{name:'Publish video',exact:true}).click();await p.getByRole('dialog').waitFor({state:'detached'});assert.equal(writes,1);await p.getByRole('heading',{name:'Fixture conversation',exact:true}).waitFor();
+  assert.equal(await p.evaluate(()=>localStorage.getItem('gc-video-draft-v1:new')),null);
+  await p.screenshot({path:'/tmp/gc-admin-videos-desktop.png',fullPage:true});
+  const row=p.locator('.gc-admin-video-list article').filter({has:p.getByRole('heading',{name:'Fixture conversation',exact:true})});await row.getByRole('button',{name:'Edit video',exact:true}).click();await p.getByLabel('Video title',{exact:true}).fill('Edited conversation');await p.getByLabel('Video link',{exact:true}).fill('https://www.youtube.com/watch?v=im1SsciswOE');await p.getByRole('button',{name:'Publish video',exact:true}).click();await p.getByRole('dialog').waitFor({state:'detached'});assert.equal(records.length,1);assert.equal(records[0].title,'Edited conversation');assert.equal(records[0].origin_key,'podcast:youtube:q5FlDKsrzQk');
+  await p.goto('http://127.0.0.1:3003');await p.getByText('Edited conversation',{exact:true}).waitFor();assert.equal(await p.locator('#podcast-youtube .gc-podcast-clip').count(),3);assert.equal(await p.locator('#podcast-youtube [data-preview-id="q5FlDKsrzQk"]').count(),0);
+  await p.goto('http://127.0.0.1:3003/admin');await p.getByRole('button',{name:/^Videos & podcast/}).click();const edited=p.locator('.gc-admin-video-list article').filter({has:p.getByRole('heading',{name:'Edited conversation',exact:true})});await edited.getByRole('button',{name:'Hide',exact:true}).click();await p.getByRole('heading',{name:'Edited conversation',exact:true}).waitFor({state:'detached'});assert.equal(records[0].active,false);await p.getByLabel('Show hidden').check();await p.getByRole('heading',{name:'Edited conversation',exact:true}).waitFor();
+  await p.getByRole('button',{name:'Add video',exact:true}).click();await p.getByLabel('Video link',{exact:true}).fill('https://evil.test/watch?v=q5FlDKsrzQk');await p.getByText('Only YouTube, TikTok and Facebook video links are supported.').waitFor();assert.equal(await p.getByRole('button',{name:'Publish video',exact:true}).isDisabled(),true);await p.getByLabel('Video link',{exact:true}).fill('https://www.tiktok.com/@greatcouplestrust/video/7707735777718930706');await p.getByLabel('Video title',{exact:true}).fill('Recoverable draft');await p.waitForTimeout(800);await p.getByRole('button',{name:'Close video editor'}).click();await p.getByRole('button',{name:'Add video',exact:true}).click();await p.getByRole('button',{name:'Restore draft',exact:true}).click();assert.equal(await p.getByLabel('Video title',{exact:true}).inputValue(),'Recoverable draft');
+  await p.setViewportSize({width:390,height:844});assert.ok(await p.getByRole('dialog').evaluate(el=>el.scrollWidth<=el.clientWidth+1));await p.screenshot({path:'/tmp/gc-admin-videos-mobile.png',fullPage:true});
+  // The UI session flag alone cannot authorize a mutation.
+  await p.evaluate(()=>sessionStorage.setItem('gc_site_admin','incorrect-fixture-passcode'));const before=writes;await p.getByRole('button',{name:'Publish video',exact:true}).click();await p.getByRole('dialog').getByRole('alert').waitFor();assert.equal(writes,before);
+  console.log('PASS local video publishing/editing/hiding; public rotation updates; duplicate upsert; invalid URL validation; draft recovery; mobile layout; server rejects unauthorized writes. No live database writes.');
+ }finally{if(browser)await browser.close();try{process.kill(-app.pid,'SIGTERM')}catch{}await new Promise(resolve=>backend.close(resolve));}
+})().catch(error=>{console.error(error.name,error.message.replaceAll(passcode,'[redacted]'));process.exit(1)});

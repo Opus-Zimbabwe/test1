@@ -1,11 +1,13 @@
+import { useVideos } from "@/lib/use-video-library";
 import { useEffect, useRef, useState } from "react";
 import { useInView, useReducedMotion } from "framer-motion";
 import { ArrowLeft, ArrowRight, Play } from "lucide-react";
-import { PODCAST_CLIPS, type MediaClip } from "./media";
+import { type MediaClip } from "./media";
 import { BrandLogo } from "./BrandLogo";
 import { MediaArtwork } from "./MediaArtwork";
 import { VideoDialog } from "./VideoDialog";
 export function MediaTheatre() {
+  const clips = useVideos("podcast");
   const [active, setActive] = useState<MediaClip | null>(null);
   return (
     <section id="podcast" className="gc-podcast-studio gc-podcast-separated gc-podcast-rotations">
@@ -23,15 +25,17 @@ export function MediaTheatre() {
           <br />
           <span>Podcast.</span>
         </h2>
-        {(["youtube", "tiktok"] as const).map((platform) => (
-          <PodcastRotation
-            key={platform}
-            platform={platform}
-            clips={PODCAST_CLIPS.filter((clip) => clip.platform === platform)}
-            paused={!!active}
-            onPlay={setActive}
-          />
-        ))}
+        {(["youtube", "tiktok", "facebook"] as const)
+          .filter((platform) => clips.some((clip) => clip.platform === platform))
+          .map((platform) => (
+            <PodcastRotation
+              key={platform}
+              platform={platform}
+              clips={clips.filter((clip) => clip.platform === platform)}
+              paused={!!active}
+              onPlay={setActive}
+            />
+          ))}
       </div>
       <VideoDialog clip={active} onClose={() => setActive(null)} />
     </section>
@@ -53,7 +57,7 @@ function PodcastRotation({
   const [focused, setFocused] = useState(false);
   const visible = useInView(container, { amount: 0.15 });
   const reduced = useReducedMotion();
-  const name = platform === "youtube" ? "YouTube" : "TikTok";
+  const name = platform === "youtube" ? "YouTube" : platform === "tiktok" ? "TikTok" : "Facebook";
   useEffect(() => {
     const el = container.current;
     if (!el || paused || hovered || focused || reduced || !visible) return;
@@ -99,7 +103,9 @@ function PodcastRotation({
             href={
               platform === "youtube"
                 ? "https://youtube.com/@greatcouples"
-                : "https://www.tiktok.com/@greatcouplestrust"
+                : platform === "tiktok"
+                  ? "https://www.tiktok.com/@greatcouplestrust"
+                  : "https://www.facebook.com/gr8couples/"
             }
             target="_blank"
             rel="noopener noreferrer"
@@ -147,7 +153,7 @@ function PodcastRotation({
             <span className="gc-rotation-play">
               <Play size={24} fill="currentColor" />
             </span>
-            <span className="gc-rotation-title">Conversation {String(i + 1).padStart(2, "0")}</span>
+            <span className="gc-rotation-title">{clip.title}</span>
           </button>
         ))}
       </div>

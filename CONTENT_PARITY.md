@@ -77,3 +77,9 @@ Verified: production build; changed-file lint and type checks; desktop/mobile/ta
 - Strengthened YouTube/TikTok/Facebook follow actions and added direct links to each channel's full video library.
 - The supplied Facebook share link resolves to the already embedded Reel; it is not repeated. Additional YouTube/Facebook embeds require verified links: YouTube listing requests were blocked and Facebook's public channel listing did not expose additional video IDs. Existing four YouTube videos and original Facebook Reel are retained.
 - Validation: production build; browser password acceptance/rejection (no content mutations); white headings and channel actions; public experience suite at desktop/mobile widths.
+
+### YouTube automation and editable video library
+- Added YouTube public-feed discovery, cache/retry, retained feed snapshots, and an hourly GitHub Actions workflow. New uploads go into the YouTube social section; podcast selection stays curated.
+- Added shared video metadata/RPC migration and an admin video workspace with link validation, preview, device-local draft recovery, title/position/placement controls, hide/show, search, and Add to podcast.
+- Homepage podcast/social/Facebook sections merge curated records with existing content and YouTube imports; hidden/manual overrides survive refreshes. No original default videos were removed.
+- Database migration activation and a successful live YouTube workflow remain unverified/blocked by current access. See VIDEO_AUTOMATION_SETUP.md. The admin page does not claim to publish before database setup.

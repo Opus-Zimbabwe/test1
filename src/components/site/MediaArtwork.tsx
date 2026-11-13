@@ -1,4 +1,5 @@
 import type { MediaClip } from "./media";
+import { clipEmbed } from "./media";
 import { BrandLogo } from "./BrandLogo";
 export function MediaArtwork({ clip }: { clip: MediaClip }) {
   return (
@@ -18,8 +19,12 @@ export function MediaArtwork({ clip }: { clip: MediaClip }) {
         <iframe
           key={clip.id}
           className="gc-provider-preview"
-          title={`TikTok preview ${clip.id}`}
-          src={`https://www.tiktok.com/player/v1/${clip.id}?autoplay=0&muted=1&controls=0&description=0&music_info=0`}
+          title={`${clip.platform} preview ${clip.id}`}
+          src={
+            clip.platform === "facebook"
+              ? clipEmbed(clip)
+              : `https://www.tiktok.com/player/v1/${clip.id}?autoplay=0&muted=1&controls=0&description=0&music_info=0`
+          }
           loading="lazy"
           tabIndex={-1}
           aria-hidden="true"

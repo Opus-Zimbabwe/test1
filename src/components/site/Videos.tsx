@@ -1,19 +1,10 @@
+import { useVideos } from "@/lib/use-video-library";
 import { useRef, useState } from "react";
 import { ArrowLeft, ArrowRight, Play } from "lucide-react";
 import { BrandLogo } from "./BrandLogo";
 import { MediaArtwork } from "./MediaArtwork";
 import { VideoDialog } from "./VideoDialog";
-import { PODCAST_CLIPS, type MediaClip } from "./media";
-const clips: MediaClip[] = [
-  ...PODCAST_CLIPS.filter((clip) => clip.platform === "youtube"),
-  { id: "im1SsciswOE", platform: "youtube", title: "Great Couples — Outreach" },
-  ...PODCAST_CLIPS.filter((clip) => clip.platform === "tiktok"),
-  ...["7662832812252204308", "7664308578534034696", "7661685641851227413"].map((id, i) => ({
-    id,
-    platform: "tiktok" as const,
-    title: `Great Couples social video ${i + 1}`,
-  })),
-];
+import { type MediaClip } from "./media";
 export function Videos() {
   const [active, setActive] = useState<MediaClip | null>(null);
   return (
@@ -39,6 +30,7 @@ function SocialChannel({
   platform: MediaClip["platform"];
   onPlay: (clip: MediaClip) => void;
 }) {
+  const clips = useVideos("social", platform);
   const shelf = useRef<HTMLDivElement>(null);
   const name = platform === "youtube" ? "YouTube" : "TikTok";
   return (

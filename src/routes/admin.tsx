@@ -1,3 +1,5 @@
+import { useVideos } from "@/lib/use-video-library";
+import { AdminVideos } from "@/components/site/AdminVideos";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import * as Dialog from "@radix-ui/react-dialog";
 import { useEffect, useState } from "react";
@@ -45,7 +47,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type Tab = "announcements" | "gallery";
+type Tab = "announcements" | "gallery" | "videos";
 type GalleryRow = GalleryImage;
 type AnnouncementRow = Announcement;
 
@@ -143,6 +145,8 @@ function LoginGate({ onOk }: { onOk: () => void }) {
 }
 
 function Dashboard({ onLogout }: { onLogout: () => void }) {
+  const podcastVideos = useVideos("podcast");
+  const socialVideos = useVideos("social");
   const [tab, setTab] = useState<Tab>("announcements");
   const { rows: announcements } = useAnnouncements();
   const { rows: gallery } = useGalleryImages();
@@ -216,6 +220,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             [
               ["announcements", "Announcements", Megaphone, announcements.length],
               ["gallery", "Gallery", ImageIcon, gallery.length],
+              ["videos", "Videos & podcast", Images, podcastVideos.length + socialVideos.length],
             ] as [Tab, string, typeof Megaphone, number][]
           ).map(([id, label, Icon, count]) => (
             <button
@@ -236,6 +241,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
         <div className="mt-6">
           {tab === "announcements" && <AnnouncementsTab />}
           {tab === "gallery" && <GalleryTab />}
+          {tab === "videos" && <AdminVideos />}
         </div>
       </div>
     </main>
