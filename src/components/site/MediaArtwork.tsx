@@ -1,14 +1,8 @@
 import type { MediaClip } from "./media";
 import { BrandLogo } from "./BrandLogo";
-import { PHOTOS } from "./assets";
 export function MediaArtwork({ clip }: { clip: MediaClip }) {
-  const artwork =
-    PHOTOS[
-      Array.from(clip.id).reduce((sum, character) => sum + character.charCodeAt(0), 0) %
-        PHOTOS.length
-    ]!;
   return (
-    <div className="gc-media-artwork">
+    <div className={`gc-media-artwork provider-${clip.platform}`} data-preview-id={clip.id}>
       {clip.platform === "youtube" ? (
         <img
           key={clip.id}
@@ -16,14 +10,24 @@ export function MediaArtwork({ clip }: { clip: MediaClip }) {
           src={`https://i.ytimg.com/vi/${clip.id}/hqdefault.jpg`}
           alt=""
           loading="lazy"
-          onError={(e) => {
-            e.currentTarget.style.display = "none";
+          onError={(event) => {
+            event.currentTarget.style.display = "none";
           }}
         />
-      ) : null}
+      ) : (
+        <iframe
+          key={clip.id}
+          className="gc-provider-preview"
+          title={`TikTok preview ${clip.id}`}
+          src={`https://www.tiktok.com/player/v1/${clip.id}?autoplay=0&muted=1&controls=0&description=0&music_info=0`}
+          loading="lazy"
+          tabIndex={-1}
+          aria-hidden="true"
+          allow="encrypted-media"
+        />
+      )}
       <div className="gc-media-fallback">
-        <img className="gc-context-art" src={artwork} alt="" loading="lazy" />
-        <BrandLogo brand={clip.platform} size={38} />
+        <BrandLogo brand={clip.platform} size={50} />
       </div>
     </div>
   );

@@ -1,3 +1,4 @@
+import { LockKeyhole } from "lucide-react";
 import BeamWordmarkFooter from "@/components/ui/beam-wordmark-footer";
 export function Footer() {
   return (
@@ -15,6 +16,7 @@ export function Footer() {
       fontSans="Nunito, Arial, sans-serif"
       cut={0.03}
       className="gc-beam-footer"
+      utility={<a href="/admin" className="gc-admin-entry" aria-label="Content admin sign in" title="Content admin sign in"><LockKeyhole size={15}/></a>}
       socials={[
         {
           label: "Facebook",

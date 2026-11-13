@@ -63,3 +63,10 @@ YouTube and TikTok are now separate visible sections in both the podcast and gen
 Every announcement now has its own independent image-and-details presentation. Original portrait and square proportions are retained using natural sizing and contain fitting, without an arch mask or cropping. Full-size image dialogs and meaningful archive context remain. Navigation highlights the parent Podcast/Social videos entry while browsing a nested channel.
 
 Verified: production build; changed-file lint and type checks; desktop/mobile/tablet section separation and image fitting; all five TikTok embed IDs; mutually exclusive podcast playback; flyer dialogs; preview advance and hover pause in production; and public-page regression without Supabase variables. External media playback and the live deployment are not claimed verified.
+
+### Content publishing workflow
+- Announcement composer now includes live wide/mobile previews, browser-local autosaved drafts with explicit recovery, reusable formats, and reuse of existing posts.
+- Existing server-authorized publication remains the only publish path. No background scheduling, social publishing, payment automation, or live upload has been enabled or claimed by this change.
+- A discreet, accessible footer lock opens `/admin`; hiding the link does not replace authentication.
+- Podcast channels now pan slowly as horizontal rails, stop on hover/focus/open player, respect reduced motion, and use provider media rather than unrelated website photos for TikTok previews. Provider availability still controls external playback.
+- Marriage counselling copy no longer promises that counselling is free.

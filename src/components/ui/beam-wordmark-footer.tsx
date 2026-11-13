@@ -114,6 +114,7 @@ export type BeamWordmarkFooterProps = {
   /** `false` holds the beam still (the pointer glow still follows). */
   animate?: boolean;
   className?: string;
+  utility?: React.ReactNode;
 };
 
 const DEFAULT_SOCIALS: FooterSocial[] = [
@@ -324,6 +325,7 @@ export default function BeamWordmarkFooter({
   wordWeight = 500,
   animate = true,
   className = "",
+  utility,
 }: BeamWordmarkFooterProps) {
   const word = (wordmark ?? brand).trim() || brand;
   const letters = React.useMemo(() => Array.from(word), [word]);
@@ -600,8 +602,8 @@ export default function BeamWordmarkFooter({
               ))}
             </div>
           )}
+          {utility && <div className="bwf-utility">{utility}</div>}
         </div>
-
         {columns.map((col, ci) => (
           <nav key={col.title + ci} className="bwf-col" aria-label={col.title}>
             <p className="bwf-label" style={delay()}>

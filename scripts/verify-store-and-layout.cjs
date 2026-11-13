@@ -16,7 +16,7 @@ const assert = require("node:assert/strict");
     );
     assert.equal(await p.locator(".gc-filmstrip").count(), 0);
     assert.equal(await p.locator(".gc-playlist-image").count(), 0);
-    assert.equal(await p.locator(".gc-studio-playlist button").count(), 8);
+    assert.equal(await p.locator(".gc-podcast-clip").count(), 8);
     await p.locator("#about").scrollIntoViewIfNeeded();
     assert.equal(await p.locator(".gc-principle-mark").count(), 3);
     for (const svg of await p.locator(".gc-principle-mark").all())

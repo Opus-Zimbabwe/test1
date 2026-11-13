@@ -4,7 +4,7 @@ import { Reveal } from "./Reveal";
 import { PHOTOS } from "./assets";
 
 const SERVICES = [
-  "Free marriage counselling",
+  "Marriage counselling",
   "Couple & family counselling",
   "Prison outreach programs",
   "Rural outreach programs",

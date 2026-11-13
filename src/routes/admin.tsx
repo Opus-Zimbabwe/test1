@@ -1,4 +1,5 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
+import * as Dialog from "@radix-ui/react-dialog";
 import { useEffect, useState } from "react";
 import {
   AlertCircle,
@@ -384,6 +385,16 @@ function AnnouncementsTab() {
                   <Pencil className="h-3 w-3" /> Edit
                 </button>
                 <button
+                  type="button"
+                  onClick={() => {
+                    const { id: _id, created_at: _created, ...draft } = item;
+                    setEditing({ ...draft, title: `${item.title} (copy)` });
+                  }}
+                  className="rounded-full border border-primary/10 px-3 py-2 text-xs font-bold"
+                >
+                  Reuse
+                </button>
+                <button
                   onClick={() => deleteItem(item.id)}
                   aria-label={`Delete ${item.title}`}
                   className="grid h-8 w-8 place-items-center rounded-full border border-accent/20 text-accent transition hover:bg-accent hover:text-white"
@@ -634,6 +645,35 @@ function AnnouncementModal({
     sort_order: 0,
     ...initial,
   });
+  const draftKey = `gc-announcement-draft-v1:${initial.id || "new"}`;
+  const [savedDraft, setSavedDraft] = useState<Partial<AnnouncementRow> | null>(null);
+  const [draftStatus, setDraftStatus] = useState("Drafts stay on this device.");
+  const [mobilePreview, setMobilePreview] = useState(false);
+  const preview = useSignedImageUrl(form.image_url || "", "announcements");
+  useEffect(() => {
+    try {
+      const raw = localStorage.getItem(draftKey);
+      if (raw) {
+        const draft = JSON.parse(raw);
+        if (draft && typeof draft === "object" && typeof draft.title === "string")
+          setSavedDraft(draft);
+      }
+    } catch {
+      setDraftStatus("Draft storage is unavailable on this device.");
+    }
+  }, [draftKey]);
+  useEffect(() => {
+    if (savedDraft) return;
+    const timer = window.setTimeout(() => {
+      try {
+        localStorage.setItem(draftKey, JSON.stringify(form));
+        setDraftStatus("Draft saved on this device.");
+      } catch {
+        setDraftStatus("Could not save draft. Keep this window open.");
+      }
+    }, 700);
+    return () => window.clearTimeout(timer);
+  }, [form, draftKey, savedDraft]);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const submit = async (event: React.FormEvent) => {
@@ -641,7 +681,14 @@ function AnnouncementModal({
     setBusy(true);
     setError("");
     try {
-      await onSave(form);
+      if (!form.title?.trim() || !form.date_text?.trim())
+        throw new Error("Add a title and date before publishing.");
+      await onSave({ ...form, title: form.title.trim(), date_text: form.date_text.trim() });
+      try {
+        localStorage.removeItem(draftKey);
+      } catch {
+        /* Publishing succeeded even if device storage is unavailable. */
+      }
     } catch (saveError: unknown) {
       setError(
         saveError instanceof Error ? saveError.message : "Could not save this announcement.",
@@ -652,108 +699,226 @@ function AnnouncementModal({
   };
 
   return (
-    <div
-      className="fixed inset-0 z-50 grid place-items-center overflow-y-auto bg-charcoal/55 p-4 backdrop-blur-[2px]"
-      onClick={onClose}
-      role="presentation"
+    <Dialog.Root
+      open
+      onOpenChange={(open) => {
+        if (!open && !busy) onClose();
+      }}
     >
-      <form
-        onClick={(event) => event.stopPropagation()}
-        onSubmit={submit}
-        className="my-8 w-full max-w-2xl rounded-2xl bg-background p-5 shadow-2xl sm:p-7"
-        role="dialog"
-        aria-modal="true"
-        aria-label={initial.id ? "Edit announcement" : "Add announcement"}
-      >
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <p className="text-[.6rem] font-bold uppercase tracking-[.14em] text-accent">
-              Announcement
+      <Dialog.Portal>
+        <Dialog.Overlay className="fixed inset-0 z-50 bg-charcoal/65 backdrop-blur-sm" />
+        <Dialog.Content
+          aria-describedby="composer-help"
+          onEscapeKeyDown={(event) => {
+            if (busy) event.preventDefault();
+          }}
+          onPointerDownOutside={(event) => event.preventDefault()}
+          className="fixed inset-3 z-50 overflow-y-auto rounded-3xl bg-background p-5 sm:inset-8 sm:p-8"
+        >
+          <form onSubmit={submit} className="mx-auto max-w-6xl">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <p className="text-[.6rem] font-bold uppercase tracking-[.14em] text-accent">
+                  Announcement
+                </p>
+                <Dialog.Title className="mt-1 text-3xl font-extrabold">
+                  {initial.id ? "Edit announcement" : "New announcement"}
+                </Dialog.Title>
+                <Dialog.Description
+                  id="composer-help"
+                  className="mt-2 text-sm text-muted-foreground"
+                >
+                  Compose, preview and publish to your website.
+                </Dialog.Description>
+              </div>
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={busy}
+                aria-label="Close"
+                className="grid h-9 w-9 place-items-center rounded-full bg-muted text-primary"
+              >
+                <X className="h-4 w-4" />
+              </button>
+            </div>
+            <p role="status" className="mt-5 text-sm text-muted-foreground">
+              {draftStatus}
             </p>
-            <h3 className="mt-1 text-2xl font-semibold">
-              {initial.id ? "Edit announcement" : "New announcement"}
-            </h3>
-          </div>
-          <button
-            type="button"
-            onClick={onClose}
-            aria-label="Close"
-            className="grid h-9 w-9 place-items-center rounded-full bg-muted text-primary"
-          >
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-        <div className="mt-6 grid gap-4 sm:grid-cols-2">
-          <FormField
-            label="Title"
-            value={form.title || ""}
-            onChange={(value) => setForm({ ...form, title: value })}
-            required
-          />
-          <FormField
-            label="Date text"
-            value={form.date_text || ""}
-            onChange={(value) => setForm({ ...form, date_text: value })}
-            required
-          />
-          <FormField
-            label="Location"
-            value={form.location || ""}
-            onChange={(value) => setForm({ ...form, location: value })}
-          />
-          <FormField
-            label="Sort order"
-            type="number"
-            value={String(form.sort_order ?? 0)}
-            onChange={(value) => setForm({ ...form, sort_order: Number(value) })}
-          />
-          <label className="block sm:col-span-2">
-            <span className="mb-1.5 block text-[.62rem] font-bold uppercase tracking-[.1em] text-muted-foreground">
-              Body
-            </span>
-            <textarea
-              value={form.body || ""}
-              onChange={(event) => setForm({ ...form, body: event.target.value })}
-              rows={5}
-              className="w-full resize-y rounded-xl border border-primary/10 bg-muted/55 px-3 py-2.5 text-sm outline-none transition focus:border-primary/35 focus:bg-white focus:ring-4 focus:ring-primary/8"
-            />
-          </label>
-          <div className="sm:col-span-2">
-            <ImagePicker
-              label="Announcement image"
-              bucket="announcements"
-              value={form.image_url || ""}
-              onChange={(value) => setForm({ ...form, image_url: value })}
-              onUpload={onUpload}
-            />
-          </div>
-        </div>
-        {error && (
-          <p
-            role="alert"
-            className="mt-4 rounded-xl bg-accent/8 px-3.5 py-3 text-xs font-medium text-accent"
-          >
-            {error}
-          </p>
-        )}
-        <div className="mt-6 flex justify-end gap-2">
-          <button
-            type="button"
-            onClick={onClose}
-            className="rounded-full border border-primary/10 px-4 py-2.5 text-xs font-bold text-primary"
-          >
-            Cancel
-          </button>
-          <button
-            disabled={busy}
-            className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-xs font-bold text-accent-foreground disabled:opacity-60"
-          >
-            {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
-            {busy ? "Saving…" : "Save announcement"}
-          </button>
-        </div>
-      </form>
-    </div>
+            {savedDraft && (
+              <div className="mt-3 flex flex-wrap items-center gap-3 rounded-xl border border-primary/20 p-4">
+                <p>A previous draft is available.</p>
+                <button
+                  type="button"
+                  className="font-bold text-primary"
+                  onClick={() => {
+                    setForm({ ...savedDraft, ...(initial.id ? { id: initial.id } : {}) });
+                    setSavedDraft(null);
+                  }}
+                >
+                  Restore draft
+                </button>
+                <button type="button" onClick={() => setSavedDraft(null)}>
+                  Keep current version
+                </button>
+              </div>
+            )}
+            <div className="mt-6 grid gap-8 lg:grid-cols-2">
+              <div>
+                <label className="mb-5 block text-sm font-bold">
+                  Start with a format
+                  <select
+                    aria-label="Announcement format"
+                    defaultValue=""
+                    className="mt-2 w-full rounded-xl border p-3"
+                    onChange={(event) => {
+                      const kind = event.target.value;
+                      if (!kind) return;
+                      if (
+                        (form.title || form.body) &&
+                        !confirm(
+                          "Replace the title and body with this format? Your other fields will be kept.",
+                        )
+                      )
+                        return;
+                      setForm({
+                        ...form,
+                        title:
+                          kind === "event"
+                            ? "Marriage seminar"
+                            : kind === "outreach"
+                              ? "Community outreach"
+                              : "An update from Great Couples",
+                        body:
+                          kind === "event"
+                            ? "Join us for a conversation that strengthens marriage and family.\n\nWhat to expect:\n\nHow to attend:"
+                            : kind === "outreach"
+                              ? "Together, we are supporting families in our community.\n\nWhere we are going:\n\nHow to take part:"
+                              : "Share your news with the Great Couples community.",
+                      });
+                    }}
+                  >
+                    <option value="">Choose a format</option>
+                    <option value="event">Seminar or gathering</option>
+                    <option value="outreach">Community outreach</option>
+                    <option value="news">Community update</option>
+                  </select>
+                </label>
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <FormField
+                    label="Title"
+                    value={form.title || ""}
+                    onChange={(value) => setForm({ ...form, title: value })}
+                    required
+                  />
+                  <FormField
+                    label="Date text"
+                    value={form.date_text || ""}
+                    onChange={(value) => setForm({ ...form, date_text: value })}
+                    required
+                  />
+                  <FormField
+                    label="Location"
+                    value={form.location || ""}
+                    onChange={(value) => setForm({ ...form, location: value })}
+                  />
+                  <FormField
+                    label="Sort order"
+                    type="number"
+                    value={String(form.sort_order ?? 0)}
+                    onChange={(value) => setForm({ ...form, sort_order: Number(value) })}
+                  />
+                  <label className="block sm:col-span-2">
+                    <span className="mb-1.5 block text-[.62rem] font-bold uppercase tracking-[.1em] text-muted-foreground">
+                      Body
+                    </span>
+                    <textarea
+                      value={form.body || ""}
+                      onChange={(event) => setForm({ ...form, body: event.target.value })}
+                      rows={5}
+                      className="w-full resize-y rounded-xl border border-primary/10 bg-muted/55 px-3 py-2.5 text-sm outline-none transition focus:border-primary/35 focus:bg-white focus:ring-4 focus:ring-primary/8"
+                    />
+                  </label>
+                  <div className="sm:col-span-2">
+                    <ImagePicker
+                      label="Announcement image"
+                      bucket="announcements"
+                      value={form.image_url || ""}
+                      onChange={(value) => setForm({ ...form, image_url: value })}
+                      onUpload={onUpload}
+                    />
+                  </div>
+                </div>
+              </div>
+              <aside
+                className="rounded-2xl bg-primary/5 p-5 lg:sticky lg:top-0 lg:self-start"
+                aria-label="Announcement preview"
+              >
+                <div className="mb-5 flex items-center justify-between">
+                  <h4 className="text-lg font-extrabold">Website preview</h4>
+                  <button
+                    type="button"
+                    aria-pressed={mobilePreview}
+                    className="rounded-full border px-3 py-2 text-sm"
+                    onClick={() => setMobilePreview(!mobilePreview)}
+                  >
+                    {mobilePreview ? "Show wide preview" : "Show mobile preview"}
+                  </button>
+                </div>
+                <article
+                  className={`mx-auto overflow-hidden rounded-2xl bg-white p-5 ${mobilePreview ? "max-w-[320px]" : "w-full"}`}
+                >
+                  {preview && (
+                    <img
+                      src={preview}
+                      alt="Announcement artwork preview"
+                      className="mb-5 max-h-96 w-full object-contain"
+                    />
+                  )}
+                  <p className="text-sm font-bold text-accent">
+                    {form.date_text || "Event date"}
+                    {form.location && ` · ${form.location}`}
+                  </p>
+                  <h4 className="mt-3 break-words text-3xl font-extrabold">
+                    {form.title || "Your announcement title"}
+                  </h4>
+                  <p className="mt-4 whitespace-pre-wrap break-words text-base leading-7 text-muted-foreground">
+                    {form.body || "Your announcement will appear here as you write."}
+                  </p>
+                </article>
+                <p className="mt-4 text-sm text-muted-foreground">
+                  Publishing updates the website. It does not post to social media.
+                </p>
+              </aside>
+            </div>
+            {error && (
+              <p
+                role="alert"
+                className="mt-4 rounded-xl bg-accent/8 px-3.5 py-3 text-xs font-medium text-accent"
+              >
+                {error}
+              </p>
+            )}
+            <div className="mt-6 flex justify-end gap-2">
+              <button
+                type="button"
+                onClick={onClose}
+                disabled={busy}
+                className="rounded-full border border-primary/10 px-4 py-2.5 text-xs font-bold text-primary"
+              >
+                Cancel
+              </button>
+              <button
+                disabled={busy}
+                className="inline-flex items-center gap-2 rounded-full bg-accent px-5 py-2.5 text-xs font-bold text-accent-foreground disabled:opacity-60"
+              >
+                {busy && <Loader2 className="h-3.5 w-3.5 animate-spin" />}
+                {busy ? "Publishing…" : "Publish to website"}
+              </button>
+            </div>
+          </form>
+        </Dialog.Content>
+      </Dialog.Portal>
+    </Dialog.Root>
   );
 }
 

@@ -1,20 +1,14 @@
 import { useEffect, useRef, useState } from "react";
-import { Play, Square, Expand, ArrowLeft, ArrowRight } from "lucide-react";
-import { PODCAST_CLIPS, clipEmbed, clipLink, type MediaClip } from "./media";
-import { MediaArtwork } from "./MediaArtwork";
-import { BrandLogo } from "./BrandLogo";
 import { useInView, useReducedMotion } from "framer-motion";
+import { ArrowLeft, ArrowRight, Play } from "lucide-react";
+import { PODCAST_CLIPS, type MediaClip } from "./media";
+import { BrandLogo } from "./BrandLogo";
+import { MediaArtwork } from "./MediaArtwork";
+import { VideoDialog } from "./VideoDialog";
 export function MediaTheatre() {
-  const [activePlatform, setActivePlatform] = useState<MediaClip["platform"] | null>(null);
-  useEffect(() => {
-    const stop = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setActivePlatform(null);
-    };
-    window.addEventListener("keydown", stop);
-    return () => window.removeEventListener("keydown", stop);
-  }, []);
+  const [active, setActive] = useState<MediaClip | null>(null);
   return (
-    <section id="podcast" className="gc-podcast-studio gc-podcast-separated">
+    <section id="podcast" className="gc-podcast-studio gc-podcast-separated gc-podcast-rotations">
       <svg
         className="gc-curve-edge"
         viewBox="0 0 1440 65"
@@ -30,166 +24,120 @@ export function MediaTheatre() {
           <span>Podcast.</span>
         </h2>
         {(["youtube", "tiktok"] as const).map((platform) => (
-          <PodcastChannel
+          <PodcastRotation
             key={platform}
             platform={platform}
             clips={PODCAST_CLIPS.filter((clip) => clip.platform === platform)}
-            playing={activePlatform === platform}
-            rotationPaused={activePlatform !== null}
-            onPlay={() => setActivePlatform(platform)}
-            onStop={() => setActivePlatform(null)}
+            paused={!!active}
+            onPlay={setActive}
           />
         ))}
       </div>
+      <VideoDialog clip={active} onClose={() => setActive(null)} />
     </section>
   );
 }
-function PodcastChannel({
+function PodcastRotation({
   platform,
   clips,
-  playing,
-  rotationPaused,
+  paused,
   onPlay,
-  onStop,
 }: {
   platform: MediaClip["platform"];
   clips: MediaClip[];
-  playing: boolean;
-  rotationPaused: boolean;
-  onPlay: () => void;
-  onStop: () => void;
+  paused: boolean;
+  onPlay: (clip: MediaClip) => void;
 }) {
-  const [index, setIndex] = useState(0);
-  const selected = clips[index] || clips[0]!;
-  const [message, setMessage] = useState("");
-  const player = useRef<HTMLDivElement>(null);
-  const name = platform === "youtube" ? "YouTube" : "TikTok";
+  const container = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
-  const engaged = hovered || focused;
-  const channel = useRef<HTMLElement>(null);
-  const visible = useInView(channel, { amount: 0.15 });
+  const visible = useInView(container, { amount: 0.15 });
   const reduced = useReducedMotion();
+  const name = platform === "youtube" ? "YouTube" : "TikTok";
   useEffect(() => {
-    if (platform !== "tiktok" || rotationPaused || engaged || reduced || !visible) return;
-    const timer = window.setInterval(() => setIndex((i) => (i + 1) % clips.length), 8500);
-    return () => window.clearInterval(timer);
-  }, [platform, rotationPaused, engaged, reduced, clips.length, visible]);
-
-  const step = (direction: number) => {
-    setIndex((i) => (i + direction + clips.length) % clips.length);
-    onStop();
-    setMessage("");
-  };
+    const el = container.current;
+    if (!el || paused || hovered || focused || reduced || !visible) return;
+    let frame = 0;
+    let last = performance.now();
+    let position = el.scrollLeft;
+    let direction = 1;
+    const move = (now: number) => {
+      const dt = Math.min((now - last) / 1000, 0.05);
+      last = now;
+      const maximum = el.scrollWidth - el.clientWidth;
+      if (maximum > 0) {
+        position += direction * 18 * dt;
+        if (position >= maximum) {
+          position = maximum;
+          direction = -1;
+        }
+        if (position <= 0) {
+          position = 0;
+          direction = 1;
+        }
+        el.scrollLeft = position;
+      }
+      frame = requestAnimationFrame(move);
+    };
+    frame = requestAnimationFrame(move);
+    return () => cancelAnimationFrame(frame);
+  }, [paused, hovered, focused, reduced, visible]);
   return (
     <section
-      ref={channel}
       id={`podcast-${platform}`}
-      className={`gc-podcast-channel ${platform}`}
+      className={`gc-podcast-channel gc-rotation-channel ${platform}`}
       aria-labelledby={`podcast-${platform}-title`}
-      onMouseEnter={() => setHovered(true)}
-      onMouseLeave={() => setHovered(false)}
-      onFocusCapture={() => setFocused(true)}
-      onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
-      }}
     >
-      <div className="gc-podcast-channel-heading">
-        <BrandLogo brand={platform} size={42} />
-        <h3 id={`podcast-${platform}-title`}>{name}</h3>
-      </div>
-      <div className="gc-studio-layout">
+      <div className="gc-rotation-heading">
         <div>
-          <div
-            ref={player}
-            className={`gc-studio-player ${platform === "tiktok" ? "is-portrait" : ""}`}
+          <BrandLogo brand={platform} size={42} />
+          <h3 id={`podcast-${platform}-title`}>{name}</h3>
+        </div>
+        <div>
+          <button
+            aria-label={`Previous ${name} podcast videos`}
+            onClick={() =>
+              container.current?.scrollBy({ left: -450, behavior: reduced ? "auto" : "smooth" })
+            }
           >
-            {playing ? (
-              <iframe
-                title={`${name} Great Couples podcast`}
-                src={clipEmbed(selected)}
-                allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-                allowFullScreen
-              />
-            ) : (
-              <button
-                className="gc-studio-poster"
-                onClick={onPlay}
-                aria-label={`Play ${name} conversation ${index + 1}`}
-              >
-                <MediaArtwork clip={selected} />
-                <span className="gc-large-play">
-                  <Play fill="currentColor" size={26} />
-                </span>
-                <span className="gc-poster-title">
-                  Conversation {String(index + 1).padStart(2, "0")}
-                </span>
-              </button>
-            )}
-          </div>
-          <div className="gc-studio-transport">
-            <div>
-              <button aria-label={`Previous ${name} podcast`} onClick={() => step(-1)}>
-                <ArrowLeft size={20} />
-              </button>
-              <button
-                aria-label={
-                  playing ? `Stop ${name} podcast playback` : `Play selected ${name} podcast`
-                }
-                onClick={playing ? onStop : onPlay}
-              >
-                {playing ? <Square size={20} /> : <Play size={20} />}
-              </button>
-              <button aria-label={`Next ${name} podcast`} onClick={() => step(1)}>
-                <ArrowRight size={20} />
-              </button>
-            </div>
-            <button
-              aria-label={`Fullscreen ${name} podcast`}
-              onClick={async () => {
-                try {
-                  await player.current?.requestFullscreen();
-                } catch {
-                  setMessage(
-                    "Fullscreen is unavailable in this browser. You can continue watching here.",
-                  );
-                }
-              }}
-            >
-              <Expand size={18} /> Fullscreen
-            </button>
-          </div>
-          {playing && (
-            <a
-              className="gc-player-fallback"
-              href={clipLink(selected)}
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Open original video if playback is unavailable ↗
-            </a>
-          )}
-          {message && <p role="status">{message}</p>}
+            <ArrowLeft size={21} />
+          </button>
+          <button
+            aria-label={`Next ${name} podcast videos`}
+            onClick={() =>
+              container.current?.scrollBy({ left: 450, behavior: reduced ? "auto" : "smooth" })
+            }
+          >
+            <ArrowRight size={21} />
+          </button>
         </div>
-        <div className="gc-studio-playlist" aria-label={`${name} podcast conversations`}>
-          {clips.map((clip, i) => (
-            <button
-              key={clip.id}
-              aria-pressed={index === i}
-              className={index === i ? "is-selected" : ""}
-              aria-label={`Select ${name} podcast ${i + 1}`}
-              onClick={() => {
-                setIndex(i);
-                setMessage("");
-                onPlay();
-              }}
-            >
-              <span className="gc-playlist-number">{String(i + 1).padStart(2, "0")}</span>
-              <span>Conversation {String(i + 1).padStart(2, "0")}</span>
-              <Play size={16} />
-            </button>
-          ))}
-        </div>
+      </div>
+      <div
+        ref={container}
+        className={`gc-podcast-rail ${platform}`}
+        aria-label={`${name} podcast rotation`}
+        tabIndex={0}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
+        onFocusCapture={() => setFocused(true)}
+        onBlurCapture={(event) => {
+          if (!event.currentTarget.contains(event.relatedTarget)) setFocused(false);
+        }}
+      >
+        {clips.map((clip, i) => (
+          <button
+            key={clip.id}
+            className="gc-podcast-clip"
+            onClick={() => onPlay(clip)}
+            aria-label={`Play ${name} podcast ${i + 1}`}
+          >
+            <MediaArtwork clip={clip} />
+            <span className="gc-rotation-play">
+              <Play size={24} fill="currentColor" />
+            </span>
+            <span className="gc-rotation-title">Conversation {String(i + 1).padStart(2, "0")}</span>
+          </button>
+        ))}
       </div>
     </section>
   );

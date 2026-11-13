@@ -2258,3 +2258,24 @@
     margin-bottom: 35px;
   }
 }
+
+/* Podcast rotations use real provider media, with one focused player at a time. */
+.gc-rotation-heading,.gc-rotation-heading>div{display:flex;align-items:center;gap:18px}
+.gc-rotation-heading{justify-content:space-between;margin:0 0 25px}
+.gc-rotation-heading h3{font-size:clamp(28px,4vw,46px);margin:0;font-weight:900}
+.gc-rotation-heading button{width:48px;height:48px;border:1px solid #ffffff45;border-radius:50%;display:grid;place-items:center;background:transparent;color:inherit}
+.gc-podcast-rail{display:flex;gap:24px;overflow-x:auto;overscroll-behavior-x:contain;scrollbar-width:thin;scrollbar-color:#db2667 transparent;padding:8px 0 24px}
+.gc-podcast-clip{position:relative;flex:0 0 min(520px,85vw);aspect-ratio:16/10;border:0;border-radius:26px;overflow:hidden;padding:0;background:#281231;color:white;text-align:left}
+.gc-podcast-rail.tiktok .gc-podcast-clip{flex-basis:min(290px,70vw);aspect-ratio:9/16}
+.gc-rotation-channel{margin-top:55px;min-width:0}
+.gc-rotation-play{position:absolute;inset:0;z-index:3;display:grid;place-content:center;pointer-events:none;background:linear-gradient(0deg,#1c102c99,transparent 45%)}
+.gc-rotation-play svg{box-sizing:content-box;padding:19px;border-radius:50%;background:#e51053;transition:transform .3s}
+.gc-podcast-clip:hover .gc-rotation-play svg{transform:scale(1.12)}
+.gc-rotation-title{position:absolute;bottom:20px;left:24px;z-index:4;font-size:21px;font-weight:800}
+.gc-provider-preview{position:absolute;inset:0;width:100%;height:100%;border:0;pointer-events:none;z-index:1}
+.gc-podcast-clip:focus-visible,.gc-admin-entry:focus-visible{outline:3px solid #ff9fbd;outline-offset:4px}
+.gc-admin-entry{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;border-radius:50%;color:inherit;opacity:.5;margin-top:14px;transition:opacity .2s}
+.gc-admin-entry:hover,.gc-admin-entry:focus-visible{opacity:1}
+.gc-announcements-separated .gc-announcement-entry{border-top:1px solid #5a236924;padding-top:55px}
+.gc-announcements-separated .gc-announcement-entry h3{font-size:clamp(30px,3.3vw,52px);line-height:1.12;letter-spacing:-.04em}
+@media(max-width:600px){.gc-rotation-heading{gap:10px}.gc-rotation-heading>div{gap:10px}.gc-rotation-heading button{width:38px;height:38px}.gc-podcast-rail{gap:16px}}
