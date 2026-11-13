@@ -1,4 +1,5 @@
-import { Facebook, Youtube, Instagram, ArrowUpRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
+import { BrandLogo, type BrandName } from "./BrandLogo";
 import { Reveal } from "./Reveal";
 
 function WhatsAppIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -11,25 +12,21 @@ function WhatsAppIcon(props: React.SVGProps<SVGSVGElement>) {
 
 const SOCIALS = [
   {
-    icon: Facebook,
     label: "Facebook",
     handle: "Great Couples",
     url: "https://www.facebook.com/share/1DMYvcv24u/?mibextid=wwXIfr",
   },
   {
-    icon: Youtube,
     label: "YouTube",
     handle: "@greatcouples",
     url: "https://youtube.com/@greatcouples?si=DvHsuAbCXt7t9uLR",
   },
   {
-    icon: TikTokIcon,
     label: "TikTok",
     handle: "@greatcouplestrust",
     url: "https://www.tiktok.com/@greatcouplestrust",
   },
   {
-    icon: Instagram,
     label: "Instagram",
     handle: "@great.couplestrust",
     url: "https://instagram.com/great.couplestrust",
@@ -69,14 +66,6 @@ const WHATSAPP = [
   },
 ];
 
-function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
-      <path d="M19.6 6.9a5.6 5.6 0 0 1-3.4-1.2 5.6 5.6 0 0 1-2.2-3.7h-3.3v13a2.7 2.7 0 1 1-2.7-2.7c.3 0 .5 0 .8.1v-3.3a6 6 0 0 0-.8-.1 6 6 0 1 0 6 6V9.6a8.9 8.9 0 0 0 5.6 1.9V8.2c-.1 0-.1 0 0-1.3z" />
-    </svg>
-  );
-}
-
 export function Community() {
   return (
     <section id="community" className="bg-muted py-16 sm:py-24 lg:py-28">
@@ -92,7 +81,7 @@ export function Community() {
           </div>
         </Reveal>
 
-        <div className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <div className="gc-social-profile-grid mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {SOCIALS.map((social, index) => (
             <Reveal key={social.label} delay={index * 0.04}>
               <a
@@ -104,7 +93,7 @@ export function Community() {
                 <span
                   className={`grid h-11 w-11 place-items-center rounded-xl ${index % 2 ? "bg-accent/10 text-accent" : "bg-primary/9 text-primary"}`}
                 >
-                  <social.icon className="h-5 w-5" />
+                  <BrandLogo brand={social.label.toLowerCase() as BrandName} size={28} />
                 </span>
                 <div className="min-w-0">
                   <p className="text-[.65rem] font-bold uppercase tracking-[.14em] text-muted-foreground">
@@ -120,6 +109,7 @@ export function Community() {
         <Reveal delay={0.1}>
           <div className="gc-groups" aria-labelledby="gc-groups-heading">
             <div className="gc-groups-heading">
+              <BrandLogo brand="whatsapp" className="gc-whatsapp-emblem" size={100} />
               <h3 id="gc-groups-heading">
                 Find your people.
                 <br />

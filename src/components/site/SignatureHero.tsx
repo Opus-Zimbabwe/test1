@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { ArrowLeft, ArrowRight, Pause, Play } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { useReducedMotion } from "framer-motion";
 import { PHOTOS } from "./assets";
 const slides = [
@@ -21,17 +21,16 @@ const slides = [
 ];
 export function SignatureHero() {
   const [index, setIndex] = useState(0);
-  const [paused, setPaused] = useState(false);
   const [focused, setFocused] = useState(false);
   const reduced = useReducedMotion();
   const touchStart = useRef<number | null>(null);
   const step = (direction: number) =>
     setIndex((i) => (i + direction + slides.length) % slides.length);
   useEffect(() => {
-    if (paused || focused || reduced) return;
+    if (focused || reduced) return;
     const timer = window.setInterval(() => setIndex((i) => (i + 1) % slides.length), 6500);
     return () => clearInterval(timer);
-  }, [paused, focused, reduced]);
+  }, [focused, reduced]);
   const slide = slides[index]!;
   return (
     <section
@@ -48,6 +47,8 @@ export function SignatureHero() {
           step(end > start ? -1 : 1);
         touchStart.current = null;
       }}
+      onMouseEnter={() => setFocused(true)}
+      onMouseLeave={() => setFocused(false)}
       onFocusCapture={() => setFocused(true)}
       onBlurCapture={(e) => {
         if (!e.currentTarget.contains(e.relatedTarget)) setFocused(false);
@@ -66,7 +67,7 @@ export function SignatureHero() {
         ))}
       </div>
       <div className="gc-hero-tint" />
-      <div className="gc-signature-copy" aria-live={paused || focused ? "polite" : "off"}>
+      <div className="gc-signature-copy" aria-live={focused ? "polite" : "off"}>
         <h1>
           {slide.title.split("\n").map((line, i) => (
             <span key={line}>
@@ -90,20 +91,6 @@ export function SignatureHero() {
               onClick={() => setIndex(i)}
             />
           ))}
-        </div>
-        <div>
-          <button aria-label="Previous hero slide" onClick={() => step(-1)}>
-            <ArrowLeft size={18} />
-          </button>
-          <button
-            aria-label={paused ? "Resume hero slideshow" : "Pause hero slideshow"}
-            onClick={() => setPaused((p) => !p)}
-          >
-            {paused ? <Play size={16} /> : <Pause size={16} />}
-          </button>
-          <button aria-label="Next hero slide" onClick={() => step(1)}>
-            <ArrowRight size={18} />
-          </button>
         </div>
       </div>
     </section>

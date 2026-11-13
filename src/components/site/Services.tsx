@@ -25,7 +25,7 @@ export function Services() {
   return (
     <section id="services" className="gc-reference-services">
       <div className="gc-services-heading">
-        <h2>Care for every season.</h2>
+        <h2>Our Services.</h2>
       </div>
       <div className="gc-reference-grid">
         {services.map((service) => (

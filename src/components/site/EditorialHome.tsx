@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { SiteNavigation } from "./SiteNavigation";
+import { AmbientBackdrop } from "./AmbientBackdrop";
+import { BrandLogo } from "./BrandLogo";
 import { SignatureHero } from "./SignatureHero";
 import { WhoWeAre } from "./WhoWeAre";
-import { ArrowRight, Menu, X } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { About } from "./About";
 import { Values } from "./Values";
 import { Services } from "./Services";
@@ -11,60 +13,17 @@ import { Announcements } from "./Announcements";
 import { Community } from "./Community";
 import { Contact } from "./Contact";
 import { Marquee } from "./Marquee";
-import { BookNowBubble } from "./BookNowBubble";
+
 import { MediaTheatre } from "./MediaTheatre";
 import { Footer } from "./Footer";
 import "./editorial.css";
-const links = [
-  ["#about", "Our story"],
-  ["#services", "Counselling"],
-  ["#gallery", "Gallery"],
-  ["#podcast", "Podcast"],
-  ["#videos", "Social videos"],
-  ["#announcements", "Announcements"],
-  ["#community", "Groups"],
-  ["/store", "Bookshop"],
-];
+import "./experience.css";
 const reel = "https://www.facebook.com/reel/29635817456011458/";
 export function EditorialHome() {
-  const [open, setOpen] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
-  useEffect(() => {
-    const update = () => setScrolled(window.scrollY > 24);
-    update();
-    window.addEventListener("scroll", update, { passive: true });
-    return () => window.removeEventListener("scroll", update);
-  }, []);
   return (
     <main className="gc-editorial" id="top">
-      <header className={`gc-nav${scrolled ? " is-scrolled" : ""}`}>
-        <div className="gc-nav-main">
-          <a className="gc-brand" href="#top" aria-label="Great Couples home">
-            <img
-              src="/images/gc-logo-transparent.png"
-              alt="Great Couples — Building & Promoting Marriage Foundations"
-            />
-          </a>
-          <nav className={open ? "is-open" : ""} aria-label="Main navigation">
-            {links.map(([href, label]) => (
-              <a href={href} key={href} onClick={() => setOpen(false)}>
-                {label}
-              </a>
-            ))}
-          </nav>
-          <a className="gc-button gc-book" href="#contact">
-            Book a session <ArrowRight size={17} />
-          </a>
-          <button
-            className="gc-menu"
-            aria-label={open ? "Close navigation" : "Open navigation"}
-            aria-expanded={open}
-            onClick={() => setOpen(!open)}
-          >
-            {open ? <X /> : <Menu />}
-          </button>
-        </div>
-      </header>
+      <AmbientBackdrop />
+      <SiteNavigation />
       <SignatureHero />
       <WhoWeAre />
       <Services />
@@ -76,9 +35,7 @@ export function EditorialHome() {
       <Videos />
       <section id="facebook" className="gc-facebook">
         <div>
-          <p className="gc-eyebrow">
-            <span className="gc-facebook-mark">f</span> Facebook community
-          </p>
+          <BrandLogo brand="facebook" className="gc-facebook-emblem" size={52} />
           <h2>
             More than a feed.
             <br />
@@ -121,7 +78,6 @@ export function EditorialHome() {
       <Community />
       <Contact />
       <Footer />
-      <BookNowBubble />
     </main>
   );
 }

@@ -1,148 +1,134 @@
-import { useEffect, useState, useCallback, useMemo } from "react";
-import { AnimatePresence, motion } from "framer-motion";
-import { X, ChevronLeft, ChevronRight } from "lucide-react";
-import { Reveal } from "./Reveal";
+import { useMemo, useRef, useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { useInView } from "framer-motion";
+import { ArrowLeft, ArrowRight, Pause, Play, X } from "lucide-react";
 import { PHOTOS } from "./assets";
 import { useGalleryImages, useSignedImageUrl } from "@/lib/db";
-
-function SignedImage({
-  src,
-  bucket,
-  alt,
-  className,
-}: {
-  src: string;
-  bucket: string;
-  alt: string;
-  className?: string;
-}) {
-  const url = useSignedImageUrl(src, bucket);
-  return <img src={url || src} alt={alt} loading="lazy" className={className} />;
+function Photo({ src, alt }: { src: string; alt: string }) {
+  const url = useSignedImageUrl(src, "gallery");
+  return <img src={url || src} alt={alt} loading="lazy" />;
 }
-
 export function Gallery() {
+  const { rows } = useGalleryImages();
+  const images = useMemo(() => [...new Set([...rows.map((v) => v.src), ...PHOTOS])], [rows]);
   const [open, setOpen] = useState<number | null>(null);
-  const { rows: custom } = useGalleryImages();
-  const images = useMemo(
-    () => [...new Set([...custom.map((item) => item.src), ...PHOTOS])],
-    [custom],
-  );
-
-  const close = useCallback(() => setOpen(null), []);
-  const prev = useCallback(
-    () =>
-      setOpen((value) => (value === null ? value : (value - 1 + images.length) % images.length)),
-    [images.length],
-  );
-  const next = useCallback(
-    () => setOpen((value) => (value === null ? value : (value + 1) % images.length)),
-    [images.length],
-  );
-
-  useEffect(() => {
-    if (open === null) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") close();
-      if (event.key === "ArrowLeft") prev();
-      if (event.key === "ArrowRight") next();
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [open, close, prev, next]);
-
+  const [paused, setPaused] = useState(false);
+  const section = useRef<HTMLElement>(null);
+  const visible = useInView(section, { amount: 0.1 });
+  const rails = useRef<(HTMLDivElement | null)[]>([]);
+  const move = (d: number) =>
+    rails.current.forEach((r) => r?.scrollBy({ left: d * 350, behavior: "smooth" }));
   return (
-    <section id="gallery" className="bg-muted py-16 sm:py-24 lg:py-28">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <Reveal>
-          <div className="max-w-2xl">
-            <p className="section-kicker">In the field</p>
-            <h2 className="mt-4 text-4xl font-bold sm:text-5xl">
-              Moments of <span className="text-gradient-brand">restoration.</span>
-            </h2>
-            <p className="mt-4 text-[.98rem] leading-7 text-muted-foreground">
-              Snapshots from prisons, rural outreach, seminars and moments of restoration.
-            </p>
-          </div>
-        </Reveal>
-        <Reveal delay={0.08}>
-          <div className="mt-12 columns-2 gap-4 sm:columns-3 lg:columns-4 [column-fill:_balance]">
-            {images.map((src, imageIndex) => (
-              <button
-                key={`${imageIndex}-${src}`}
-                aria-label={`Open gallery photograph ${imageIndex + 1}`}
-                onClick={() => setOpen(imageIndex)}
-                className="mb-4 block w-full overflow-hidden rounded-2xl bg-white shadow-[0_12px_28px_-22px_rgba(42,18,70,.4)] ring-1 ring-primary/7 transition hover:-translate-y-1 hover:shadow-[0_18px_35px_-22px_rgba(42,18,70,.5)]"
-              >
-                <SignedImage
-                  src={src}
-                  bucket="gallery"
-                  alt={`Great Couples outreach ${imageIndex + 1}`}
-                  className={`w-full transition duration-500 hover:scale-[1.03] ${imageIndex === 0 ? "aspect-[3/4]" : imageIndex % 3 === 0 ? "aspect-[3/4]" : imageIndex % 2 ? "aspect-[4/5]" : "aspect-square"} object-cover ${imageIndex === 0 ? "bg-white object-contain" : "[object-position:center_20%]"}`}
-                />
-              </button>
-            ))}
-          </div>
-        </Reveal>
-      </div>
-
-      <AnimatePresence>
-        {open !== null && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-[100] grid place-items-center bg-black/90 p-4"
-            onClick={close}
+    <section
+      id="gallery"
+      ref={section}
+      className={`gc-restoration ${paused || open !== null || !visible ? "motion-paused" : ""}`}
+    >
+      <div className="gc-restoration-heading">
+        <h2>
+          Moments of
+          <br />
+          <span>restoration.</span>
+        </h2>
+        <div>
+          <button
+            aria-label={paused ? "Resume gallery motion" : "Pause gallery motion"}
+            onClick={() => setPaused(!paused)}
           >
+            {paused ? <Play size={19} /> : <Pause size={19} />}
+          </button>
+          <button aria-label="Scroll gallery left" onClick={() => move(-1)}>
+            <ArrowLeft size={21} />
+          </button>
+          <button aria-label="Scroll gallery right" onClick={() => move(1)}>
+            <ArrowRight size={21} />
+          </button>
+        </div>
+      </div>
+      {[0, 1].map((row) => {
+        const subset = images
+          .map((src, index) => ({ src, index }))
+          .filter((v) => v.index % 2 === row);
+        return (
+          <div
+            key={row}
+            ref={(e) => {
+              rails.current[row] = e;
+            }}
+            className={`gc-gallery-ribbon row-${row}`}
+            tabIndex={0}
+            aria-label={`Gallery row ${row + 1}; scroll or pause to browse`}
+          >
+            <div className="gc-gallery-track">
+              {[...subset, ...subset].map((v, i) => (
+                <button
+                  key={v.src + i}
+                  className="gc-gallery-photo"
+                  aria-label={`Open gallery photograph ${v.index + 1}`}
+                  aria-hidden={i >= subset.length || undefined}
+                  tabIndex={i >= subset.length ? -1 : 0}
+                  onClick={() => setOpen(v.index)}
+                >
+                  <Photo src={v.src} alt={`Great Couples photograph ${v.index + 1}`} />
+                </button>
+              ))}
+            </div>
+          </div>
+        );
+      })}
+      <Dialog.Root
+        open={open !== null}
+        onOpenChange={(value) => {
+          if (!value) setOpen(null);
+        }}
+      >
+        <Dialog.Portal>
+          <Dialog.Overlay className="gc-dialog-overlay" />
+          <Dialog.Content
+            className="gc-gallery-dialog"
+            onKeyDown={(e) => {
+              if (e.key === "ArrowLeft")
+                setOpen((i) => (i === null ? 0 : (i + images.length - 1) % images.length));
+              if (e.key === "ArrowRight")
+                setOpen((i) => (i === null ? 0 : (i + 1) % images.length));
+            }}
+          >
+            <Dialog.Title className="sr-only">Moments of restoration</Dialog.Title>
+            <Dialog.Description className="sr-only">
+              Browse the Great Couples photographs. Use the arrow keys or buttons to move between
+              photographs.
+            </Dialog.Description>
+            <Dialog.Close className="gc-gallery-close" aria-label="Close">
+              <X size={24} />
+            </Dialog.Close>
             <button
-              onClick={(event) => {
-                event.stopPropagation();
-                close();
-              }}
-              aria-label="Close"
-              className="absolute right-4 top-4 grid h-11 w-11 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
-            >
-              <X className="h-6 w-6" />
-            </button>
-            <button
-              onClick={(event) => {
-                event.stopPropagation();
-                prev();
-              }}
+              className="gc-gallery-prev"
               aria-label="Previous"
-              className="absolute left-4 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+              onClick={() =>
+                setOpen((i) => (i === null ? 0 : (i + images.length - 1) % images.length))
+              }
             >
-              <ChevronLeft className="h-7 w-7" />
+              <ArrowLeft size={25} />
             </button>
-            <button
-              onClick={(event) => {
-                event.stopPropagation();
-                next();
-              }}
-              aria-label="Next"
-              className="absolute right-4 top-1/2 grid h-12 w-12 -translate-y-1/2 place-items-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
-            >
-              <ChevronRight className="h-7 w-7" />
-            </button>
-            <motion.div
-              key={open}
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.25 }}
-              onClick={(event) => event.stopPropagation()}
-              className="max-h-[85vh] max-w-[92vw] overflow-hidden rounded-2xl shadow-2xl"
-            >
-              <SignedImage
-                src={images[open]}
-                bucket="gallery"
-                alt=""
-                className="h-full w-full object-contain"
+            {open !== null && (
+              <Photo
+                src={images[open] || PHOTOS[0]!}
+                alt={
+                  rows.find((v) => v.src === images[open])?.caption ||
+                  `Great Couples photograph ${open + 1}`
+                }
               />
-            </motion.div>
-          </motion.div>
-        )}
-      </AnimatePresence>
+            )}
+            <button
+              className="gc-gallery-next"
+              aria-label="Next"
+              onClick={() => setOpen((i) => (i === null ? 0 : (i + 1) % images.length))}
+            >
+              <ArrowRight size={25} />
+            </button>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </section>
   );
 }

@@ -1,131 +1,71 @@
-import { Facebook, Youtube, Instagram, Phone, Mail, MapPin } from "lucide-react";
-
+import BeamWordmarkFooter from "@/components/ui/beam-wordmark-footer";
 export function Footer() {
   return (
-    <footer className="gc-footer bg-charcoal text-white">
-      <img
-        className="gc-footer-watermark"
-        src="/images/gc-logo-transparent.png"
-        alt=""
-        aria-hidden="true"
-      />
-      <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20">
-        <div className="grid gap-12 md:grid-cols-[1.35fr_.7fr_1fr]">
-          <div>
-            <a className="gc-footer-name" href="#top">
-              Great Couples<span>International Trust</span>
-            </a>
-            <p className="mt-5 max-w-md text-sm leading-6 text-white/65">
-              Building &amp; Promoting Marriage Foundations — restoring families across Africa and
-              beyond through Christ-centered counselling, outreach and seminars.
-            </p>
-            <div className="mt-6 flex flex-wrap gap-2.5">
-              {[
-                {
-                  icon: Facebook,
-                  url: "https://www.facebook.com/share/1DMYvcv24u/?mibextid=wwXIfr",
-                  label: "Facebook",
-                },
-                { icon: Youtube, url: "https://youtube.com/@greatcouples", label: "YouTube" },
-                {
-                  icon: Instagram,
-                  url: "https://instagram.com/great.couplestrust",
-                  label: "Instagram",
-                },
-              ].map((social) => (
-                <a
-                  key={social.label}
-                  href={social.url}
-                  aria-label={social.label}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="grid h-9 w-9 place-items-center rounded-full bg-white/8 text-white/80 transition hover:bg-accent hover:text-white"
-                >
-                  <social.icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
-          </div>
-
-          <div>
-            <p className="text-[.67rem] font-bold uppercase tracking-[.16em] text-white/45">
-              Explore
-            </p>
-            <ul className="mt-4 space-y-2 text-sm text-white/65">
-              {[
-                ["About", "#about"],
-                ["Values", "#values"],
-                ["Gallery", "#gallery"],
-                ["Social videos", "#videos"],
-                ["Announcements", "#announcements"],
-                ["Groups", "#community"],
-
-                ["Services", "#services"],
-
-                ["Podcast", "#podcast"],
-                ["Facebook", "#facebook"],
-                ["Contact", "#contact"],
-                ["Store", "/store"],
-              ].map(([label, href]) => (
-                <li key={href}>
-                  <a href={href} className="transition hover:text-accent">
-                    {label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-
-          <div>
-            <p className="text-[.67rem] font-bold uppercase tracking-[.16em] text-white/45">
-              Contact information
-            </p>
-            <ul className="mt-4 space-y-3 text-sm leading-6 text-white/65">
-              <li className="flex items-start gap-2.5">
-                <Phone className="mt-1 h-3.5 w-3.5 shrink-0 text-accent" />
-                <a href="tel:+263777308726" className="transition hover:text-accent">
-                  +263 777 308 726
-                </a>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <Mail className="mt-1 h-3.5 w-3.5 shrink-0 text-accent" />
-                <a
-                  href="mailto:greatcouplestrust@gmail.com"
-                  className="break-all transition hover:text-accent"
-                >
-                  greatcouplestrust@gmail.com
-                </a>
-              </li>
-              <li className="flex items-start gap-2.5">
-                <MapPin className="mt-1 h-3.5 w-3.5 shrink-0 text-accent" />
-                <span>15 Norwich Road, Eastlea, Harare</span>
-              </li>
-            </ul>
-          </div>
-        </div>
-
-        <div className="mt-12 flex flex-wrap items-center justify-between gap-3 border-t border-white/10 pt-6 text-xs text-white/45">
-          <p>
-            © {new Date().getFullYear()} Great Couples International Trust{" "}
-            <a href="/admin" aria-label="Site admin" className="mx-1 transition hover:text-white">
-              ·
-            </a>{" "}
-            All rights reserved.
-          </p>
-          <p>"Building and Promoting Marriage Foundations."</p>
-        </div>
-        <div className="mt-3 text-center text-xs text-white/45">
-          Designed and Developed by{" "}
-          <a
-            href="https://www.opuszim.co.zw"
-            target="_blank"
-            rel="noreferrer"
-            className="font-bold text-white/65 transition hover:text-accent"
-          >
-            Opus Zimbabwe
-          </a>
-        </div>
-      </div>
-    </footer>
+    <BeamWordmarkFooter
+      brand="Great Couples"
+      wordmark="Great Couples"
+      company="Great Couples International Trust"
+      background="#211027"
+      accent="#e81957"
+      ink="#fff9fc"
+      muted="#b5a4be"
+      wordTop="#763f8b"
+      wordFoot="#28112f"
+      wordWeight={900}
+      fontSans="Nunito, Arial, sans-serif"
+      cut={0.03}
+      className="gc-beam-footer"
+      socials={[
+        {
+          label: "Facebook",
+          href: "https://www.facebook.com/share/1DMYvcv24u/?mibextid=wwXIfr",
+          icon: <image href="/images/brands/facebook.svg" width="24" height="24" />,
+        },
+        {
+          label: "YouTube",
+          href: "https://youtube.com/@greatcouples",
+          icon: <image href="/images/brands/youtube.svg" width="24" height="24" />,
+        },
+        {
+          label: "TikTok",
+          href: "https://www.tiktok.com/@greatcouplestrust",
+          icon: <image href="/images/brands/tiktok.svg" width="24" height="24" />,
+        },
+        {
+          label: "Instagram",
+          href: "https://instagram.com/great.couplestrust",
+          icon: <image href="/images/brands/instagram.svg" width="24" height="24" />,
+        },
+      ]}
+      credits={[
+        { label: "Building & Promoting Marriage Foundations." },
+        { lead: "Designed & developed by ", label: "Opus Zimbabwe" },
+      ]}
+      columns={[
+        {
+          title: "Explore",
+          links: [
+            { label: "Our story", href: "#about" },
+            { label: "Values", href: "#values" },
+            { label: "Counselling", href: "#services" },
+            { label: "Gallery", href: "#gallery" },
+            { label: "Announcements", href: "#announcements" },
+            { label: "Bookshop", href: "/store" },
+          ],
+        },
+        {
+          title: "Connect",
+          links: [
+            { label: "Podcast", href: "#podcast" },
+            { label: "Social videos", href: "#videos" },
+            { label: "WhatsApp groups", href: "#community" },
+            { label: "Book a session", href: "#contact" },
+            { label: "+263 777 308 726", href: "tel:+263777308726" },
+            { label: "Email Great Couples", href: "mailto:greatcouplestrust@gmail.com" },
+            { label: "15 Norwich Road, Eastlea, Harare", href: "#contact" },
+          ],
+        },
+      ]}
+    />
   );
 }

@@ -1,4 +1,5 @@
-import { createFileRoute, Link } from "@tanstack/react-router";
+import { createFileRoute } from "@tanstack/react-router";
+import * as Dialog from "@radix-ui/react-dialog";
 import { useEffect, useState } from "react";
 import {
   ShoppingCart,
@@ -13,8 +14,14 @@ import {
 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
 import { useBooks, type Book } from "@/lib/db";
-import { supabase } from "@/integrations/supabase/client";
-import { LOGO } from "@/components/site/assets";
+import { getOptionalSupabaseClient } from "@/integrations/supabase/client";
+import { SiteNavigation } from "@/components/site/SiteNavigation";
+import { StoreIntro, StoreCollection } from "@/components/site/StoreFront";
+import { Footer } from "@/components/site/Footer";
+import { AmbientBackdrop } from "@/components/site/AmbientBackdrop";
+import "@/components/site/editorial.css";
+import "@/components/site/experience.css";
+import "@/components/site/store.css";
 import { PAYMENT_METHODS, MethodLogo, type PaymentMethodId } from "@/components/site/PaymentLogos";
 import { startCheckout } from "@/lib/paynow.functions";
 import { getBookDownloadUrl } from "@/lib/downloads.functions";
@@ -39,11 +46,16 @@ function useCoverUrl(coverUrl: string | null) {
       setUrl("");
       return;
     }
-    if (/^https?:/i.test(coverUrl)) {
+    if (/^(https?:|\/)/i.test(coverUrl)) {
       setUrl(coverUrl);
       return;
     }
-    supabase.storage
+    const client = getOptionalSupabaseClient();
+    if (!client) {
+      setUrl("");
+      return;
+    }
+    client.storage
       .from("book-covers")
       .createSignedUrl(coverUrl, 3600)
       .then(({ data, error }) => {
@@ -59,7 +71,7 @@ function useCoverUrl(coverUrl: string | null) {
 }
 
 function StorePage() {
-  const { rows: dbBooks } = useBooks();
+  const { rows: dbBooks, loading } = useBooks();
   const books = dbBooks.filter((book) => book.active);
   const [cart, setCart] = useState<CartItem[]>([]);
   const [cartOpen, setCartOpen] = useState(false);
@@ -91,7 +103,7 @@ function StorePage() {
 
   if (result) {
     return (
-      <main className="min-h-screen bg-muted">
+      <main className="gc-editorial gc-store min-h-screen bg-muted">
         <StoreHeader cartCount={0} onOpenCart={() => {}} />
         <div className="mx-auto max-w-xl px-4 py-24 sm:px-6">
           <div className="rounded-2xl bg-card p-8 text-center shadow-[0_22px_48px_-28px_rgba(42,18,70,.48)] sm:p-10">
@@ -139,97 +151,39 @@ function StorePage() {
   }
 
   return (
-    <main className="min-h-screen bg-background">
+    <main className="gc-editorial gc-store min-h-screen bg-background">
+      <AmbientBackdrop />
       <StoreHeader cartCount={cartCount} onOpenCart={() => setCartOpen(true)} />
 
-      <section className="overflow-hidden bg-muted">
-        <div className="mx-auto max-w-6xl px-4 py-[3.75rem] sm:px-6 sm:py-20">
-          <div className="relative rounded-2xl bg-primary px-6 py-10 text-primary-foreground shadow-[0_22px_46px_-29px_rgba(42,18,70,.58)] sm:px-10 sm:py-12">
-            <span
-              aria-hidden
-              className="absolute -right-16 -top-16 h-48 w-48 rounded-full bg-accent/55"
-            />
-            <span
-              aria-hidden
-              className="absolute -bottom-24 left-[45%] h-40 w-40 rounded-full bg-white/6"
-            />
-            <div className="relative max-w-2xl">
-              <p className="inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-[.6rem] font-bold uppercase tracking-[.14em] text-white/85">
-                <span className="h-1.5 w-1.5 rounded-full bg-accent" /> Great Couples Store
-              </p>
-              <h1 className="mt-5 text-4xl font-bold text-white sm:text-5xl">
-                Books &amp; Resources
-              </h1>
-              <p className="mt-3 max-w-xl text-sm leading-6 text-white/75">
-                Support the ministry and grow your marriage with our curated collection.
-              </p>
-            </div>
-          </div>
-        </div>
-      </section>
+      <div className="gc-store-back">
+        <a href="/">
+          <ArrowLeft size={18} /> Back home
+        </a>
+      </div>
+      <StoreIntro books={books} />
+      <StoreCollection
+        books={books}
+        loading={loading}
+        renderBook={(book) => (
+          <BookCard key={book.id} book={book} onAdd={() => addToCart(book.id)} />
+        )}
+      />
+      <Footer />
 
-      <section className="mx-auto max-w-6xl px-4 py-[4.5rem] sm:px-6 sm:py-20">
-        <div className="flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="section-kicker">Browse the collection</p>
-            <h2 className="mt-4 text-3xl font-bold sm:text-4xl">
-              Resources for stronger relationships.
-            </h2>
-          </div>
-          {cartCount > 0 && (
-            <button
-              onClick={() => setCartOpen(true)}
-              className="inline-flex items-center gap-2 rounded-full border border-primary/12 bg-white px-4 py-2.5 text-xs font-bold text-primary shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-            >
-              <ShoppingCart className="h-4 w-4" /> {cartCount} item{cartCount === 1 ? "" : "s"} in
-              cart
-            </button>
-          )}
-        </div>
-
-        <div className="mt-10 grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {books.map((book) => (
-            <BookCard key={book.id} book={book} onAdd={() => addToCart(book.id)} />
-          ))}
-          {books.length === 0 && (
-            <div className="col-span-full rounded-2xl bg-muted px-6 py-12 text-center text-sm text-muted-foreground">
-              No books available yet.
+      <Dialog.Root open={cartOpen} onOpenChange={setCartOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="gc-dialog-overlay" />
+          <Dialog.Content className={`gc-store-cart-dialog ${checkout ? "is-checkout" : ""}`}>
+            <div className="gc-store-cart-heading">
+              <Dialog.Title>{checkout ? "Complete your order" : "Your cart"}</Dialog.Title>
+              <Dialog.Close aria-label="Close cart">
+                <X size={23} />
+              </Dialog.Close>
             </div>
-          )}
-        </div>
-      </section>
-
-      {cartOpen && (
-        <div
-          className="fixed inset-0 z-[60] grid place-items-center bg-charcoal/55 p-3 backdrop-blur-[2px] sm:p-6"
-          onClick={() => setCartOpen(false)}
-          role="presentation"
-        >
-          <div
-            role="dialog"
-            aria-modal="true"
-            aria-label={checkout ? "Secure checkout" : "Shopping cart"}
-            className={`flex max-h-[calc(100svh-1.5rem)] w-full flex-col overflow-hidden rounded-2xl bg-background shadow-[0_28px_70px_-28px_rgba(15,8,24,.7)] sm:max-h-[calc(100svh-3rem)] ${checkout ? "max-w-5xl" : "max-w-2xl"}`}
-            onClick={(event) => event.stopPropagation()}
-          >
-            <div className="flex items-center justify-between border-b border-primary/8 bg-white px-5 py-4 sm:px-6">
-              <div>
-                <p className="text-[.6rem] font-bold uppercase tracking-[.15em] text-accent">
-                  {checkout ? "Secure checkout" : "Your selection"}
-                </p>
-                <h2 className="mt-0.5 text-xl font-semibold">
-                  {checkout ? "Complete your order" : "Your Cart"}
-                </h2>
-              </div>
-              <button
-                onClick={() => setCartOpen(false)}
-                aria-label="Close cart"
-                className="grid h-9 w-9 place-items-center rounded-full bg-muted text-primary transition hover:bg-primary hover:text-white"
-              >
-                <X className="h-4 w-4" />
-              </button>
-            </div>
-            <div className="min-h-0 flex-1 overflow-y-auto">
+            <Dialog.Description className="sr-only">
+              Review quantities and continue to secure payment.
+            </Dialog.Description>
+            <div className="gc-store-cart-body">
               {checkout ? (
                 <CheckoutForm
                   items={items}
@@ -250,9 +204,9 @@ function StorePage() {
                 />
               )}
             </div>
-          </div>
-        </div>
-      )}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </main>
   );
 }
@@ -351,73 +305,37 @@ function BookCard({ book, onAdd }: { book: Book; onAdd: () => void }) {
   };
 
   return (
-    <article className="group overflow-hidden rounded-2xl border border-primary/7 bg-card shadow-[0_15px_34px_-25px_rgba(42,18,70,.42)] transition duration-200 hover:-translate-y-1.5 hover:border-primary/16 hover:shadow-[0_22px_44px_-25px_rgba(42,18,70,.55)]">
-      <div className="relative bg-gradient-to-br from-primary/10 via-muted to-accent/10 p-3">
-        <div className="aspect-[4/5] overflow-hidden rounded-xl bg-muted shadow-[0_13px_24px_-16px_rgba(42,18,70,.48)]">
-          {coverUrl ? (
-            <img
-              src={coverUrl}
-              alt={book.title}
-              className="h-full w-full object-cover transition duration-700 group-hover:scale-105"
-            />
-          ) : (
-            <div className="grid h-full w-full place-items-center text-sm text-muted-foreground">
-              No cover
-            </div>
-          )}
-        </div>
-        {isDownloadable && (
-          <span className="absolute left-5 top-5 rounded-full bg-primary px-3 py-1.5 text-[.58rem] font-bold uppercase tracking-[.1em] text-primary-foreground shadow-md">
-            {(book.file_kind || "pdf").toUpperCase()} · Free download
-          </span>
+    <article className="gc-store-book">
+      <div className="gc-book-cover">
+        {coverUrl ? (
+          <img src={coverUrl} alt={book.title} loading="lazy" />
+        ) : (
+          <div className="gc-book-type">
+            <span>{book.title}</span>
+            <small>{book.author}</small>
+          </div>
         )}
       </div>
-      <div className="p-5">
-        <div className="flex items-center justify-between gap-3">
-          <p className="text-[.58rem] font-bold uppercase tracking-[.13em] text-accent">
-            Great Couples Resource
-          </p>
-          {!isDownloadable && (
-            <span className="rounded-full bg-primary/7 px-2 py-1 text-[.55rem] font-bold uppercase tracking-[.08em] text-primary">
-              Print
-            </span>
-          )}
-        </div>
-        <h3 className="mt-2 text-lg font-semibold leading-6">{book.title}</h3>
-        <p className="mt-1 text-xs text-muted-foreground">{book.author}</p>
-        {book.isbn && <p className="mt-1 text-[.65rem] text-muted-foreground">ISBN: {book.isbn}</p>}
-        <p className="mt-3 line-clamp-2 text-xs leading-5 text-foreground/75">{book.description}</p>
-        <div className="mt-5 flex items-center justify-between gap-3">
+      <div className="gc-book-details">
+        <h3>{book.title}</h3>
+        <p>{book.author}</p>
+        <p className="gc-book-description">{book.description}</p>
+        <div className="gc-book-purchase">
+          <strong>
+            {isDownloadable ? "Digital edition" : `$${Number(book.price_usd).toFixed(2)}`}
+          </strong>
           {isDownloadable ? (
-            <span className="text-xs font-semibold text-muted-foreground">Digital edition</span>
-          ) : (
-            <span className="text-xl font-bold text-accent">
-              ${Number(book.price_usd).toFixed(2)}
-            </span>
-          )}
-          {isDownloadable ? (
-            <button
-              onClick={download}
-              disabled={busy}
-              className="inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground transition hover:-translate-y-0.5 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-              {busy ? (
-                <Loader2 className="h-3.5 w-3.5 animate-spin" />
-              ) : (
-                <Download className="h-3.5 w-3.5" />
-              )}
+            <button onClick={download} disabled={busy}>
+              {busy ? <Loader2 size={17} className="animate-spin" /> : <Download size={17} />}
               Download
             </button>
           ) : (
-            <button
-              onClick={onAdd}
-              className="rounded-full bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground transition hover:-translate-y-0.5 hover:brightness-105"
-            >
-              Add to cart
+            <button onClick={onAdd} aria-label={`Add ${book.title} to cart`}>
+              Add to cart <Plus size={17} />
             </button>
           )}
         </div>
-        {err && <p className="mt-3 text-xs font-medium text-accent">{err}</p>}
+        {err && <p role="alert">{err}</p>}
       </div>
     </article>
   );
@@ -434,36 +352,20 @@ function CoverThumb({ src, className }: { src: string | null; className?: string
 
 function StoreHeader({ cartCount, onOpenCart }: { cartCount: number; onOpenCart: () => void }) {
   return (
-    <header className="sticky top-0 z-40 border-b border-primary/8 bg-white/95 backdrop-blur-xl">
-      <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-3 sm:px-6">
-        <Link to="/" className="flex items-center gap-2.5">
-          <img
-            src={LOGO}
-            alt="Great Couples"
-            className="h-9 w-9 rounded-full ring-1 ring-primary/12"
-          />
-          <div>
-            <span className="block text-sm font-semibold leading-none text-primary">
-              Great Couples
-            </span>
-            <span className="mt-1 block text-[.56rem] font-bold uppercase tracking-[.14em] text-muted-foreground">
-              Store
-            </span>
-          </div>
-        </Link>
+    <SiteNavigation
+      store
+      action={
         <button
+          className="gc-cart-trigger"
           onClick={onOpenCart}
-          className="relative inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2.5 text-xs font-bold text-primary-foreground shadow-md shadow-primary/15 transition hover:-translate-y-0.5 hover:brightness-105"
+          aria-label={`Open cart, ${cartCount} items`}
         >
-          <ShoppingCart className="h-3.5 w-3.5" /> Cart
-          {cartCount > 0 && (
-            <span className="absolute -right-1.5 -top-1.5 grid h-5 w-5 place-items-center rounded-full bg-accent text-[.58rem] text-white ring-2 ring-white">
-              {cartCount}
-            </span>
-          )}
+          <ShoppingCart size={20} />
+          <span>Cart</span>
+          <b>{cartCount}</b>
         </button>
-      </div>
-    </header>
+      }
+    />
   );
 }
 
@@ -488,7 +390,7 @@ function CheckoutForm({
   const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
   const checkout = useServerFn(startCheckout);
 
-  const methodInfo = PAYMENT_METHODS.find((item) => item.id === method) ?? PAYMENT_METHODS[0];
+  const methodInfo = PAYMENT_METHODS.find((item) => item.id === method) ?? PAYMENT_METHODS[0]!;
   const isMobileMoney = method === "ecocash" || method === "onemoney" || method === "innbucks";
   const isCard = method === "visa" || method === "zimswitch";
   const shown = showAll ? PAYMENT_METHODS : PAYMENT_METHODS.slice(0, 4);
@@ -508,14 +410,15 @@ function CheckoutForm({
     setErr("");
 
     const errors: Record<string, string> = {};
-    if (!name.trim()) errors.name = "Enter the name for the order.";
-    if (!/^\S+@\S+\.\S+$/.test(email.trim())) errors.email = "Enter a valid receipt email address.";
+    if (!name.trim()) errors["name"] = "Enter the name for the order.";
+    if (!/^\S+@\S+\.\S+$/.test(email.trim()))
+      errors["email"] = "Enter a valid receipt email address.";
     if (!phone.trim())
-      errors.phone = isMobileMoney
+      errors["phone"] = isMobileMoney
         ? "Enter the mobile number that will receive the payment prompt."
         : "Enter a contact number.";
     if (phone.trim() && phone.replace(/\D/g, "").length < 8)
-      errors.phone = "Enter a valid phone number.";
+      errors["phone"] = "Enter a valid phone number.";
     if (items.length === 0) setErr("Your cart is empty. Add a resource before checking out.");
     setFieldErrors(errors);
     if (Object.keys(errors).length > 0 || items.length === 0) return;
@@ -532,6 +435,8 @@ function CheckoutForm({
         },
       });
       if (result.kind === "web") {
+        if (!result.redirect_url)
+          throw new Error("The payment provider did not return a checkout link.");
         window.location.assign(result.redirect_url);
         return;
       }
@@ -675,7 +580,7 @@ function CheckoutForm({
                     setPhone(value);
                     setFieldErrors((current) => ({ ...current, phone: "" }));
                   }}
-                  error={fieldErrors.phone}
+                  error={fieldErrors["phone"]}
                   placeholder="e.g. 0771 234 567"
                   inputMode="tel"
                   autoComplete="tel"
@@ -689,7 +594,7 @@ function CheckoutForm({
                     setName(value);
                     setFieldErrors((current) => ({ ...current, name: "" }));
                   }}
-                  error={fieldErrors.name}
+                  error={fieldErrors["name"]}
                   autoComplete="name"
                 />
                 <Field
@@ -700,7 +605,7 @@ function CheckoutForm({
                     setEmail(value);
                     setFieldErrors((current) => ({ ...current, email: "" }));
                   }}
-                  error={fieldErrors.email}
+                  error={fieldErrors["email"]}
                   autoComplete="email"
                 />
               </div>
@@ -746,7 +651,7 @@ function CheckoutForm({
                     setName(value);
                     setFieldErrors((current) => ({ ...current, name: "" }));
                   }}
-                  error={fieldErrors.name}
+                  error={fieldErrors["name"]}
                   autoComplete="name"
                 />
                 <Field
@@ -757,7 +662,7 @@ function CheckoutForm({
                     setEmail(value);
                     setFieldErrors((current) => ({ ...current, email: "" }));
                   }}
-                  error={fieldErrors.email}
+                  error={fieldErrors["email"]}
                   autoComplete="email"
                 />
                 <Field
@@ -767,7 +672,7 @@ function CheckoutForm({
                     setPhone(value);
                     setFieldErrors((current) => ({ ...current, phone: "" }));
                   }}
-                  error={fieldErrors.phone}
+                  error={fieldErrors["phone"]}
                   inputMode="tel"
                   autoComplete="tel"
                 />
@@ -845,7 +750,7 @@ function Field({
   value: string;
   onChange: (value: string) => void;
   type?: string;
-  error?: string;
+  error?: string | undefined;
   placeholder?: string;
   inputMode?: "email" | "tel" | "text" | "numeric" | "decimal" | "search" | "url" | "none";
   autoComplete?: string;

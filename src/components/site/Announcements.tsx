@@ -1,12 +1,11 @@
-import { CalendarDays, MapPin } from "lucide-react";
-import { Reveal } from "./Reveal";
+import { useState } from "react";
+import * as Dialog from "@radix-ui/react-dialog";
+import { ArrowUpRight, X } from "lucide-react";
 import { type Announcement, useAnnouncements, useSignedImageUrl } from "@/lib/db";
-
-function SignedImage({ src, alt, className }: { src: string; alt: string; className?: string }) {
+function Flyer({ src, alt }: { src: string; alt: string }) {
   const url = useSignedImageUrl(src, "announcements");
-  return <img src={url || src} alt={alt} className={className} />;
+  return <img src={url || src} alt={alt} loading="lazy" />;
 }
-
 const ARCHIVE: Announcement[] = [
   {
     id: "archive-seminar",
@@ -42,56 +41,72 @@ const ARCHIVE: Announcement[] = [
 export function Announcements() {
   const { rows } = useAnnouncements();
   const items = rows.length ? rows : ARCHIVE;
-
+  const [selected, setSelected] = useState(0);
+  const [expanded, setExpanded] = useState(false);
+  const active = items[selected] || items[0]!;
   return (
-    <section id="announcements" className="bg-muted py-16 sm:py-24 lg:py-28">
-      <div className="mx-auto max-w-7xl px-4 sm:px-6">
-        <Reveal>
-          <div className="max-w-2xl">
-            <p className="section-kicker">What's on</p>
-            <h2 className="mt-4 text-4xl font-bold sm:text-5xl">Announcements</h2>
-            {!rows.length && (
-              <p className="mt-4 text-sm leading-7 text-muted-foreground">
-                Explore our programme archive. Contact the team for the next event dates.
-              </p>
-            )}
-          </div>
-        </Reveal>
-
-        <div className="mt-12 grid gap-6">
-          {items.map((item, index) => (
-            <Reveal key={item.id} delay={index * 0.08}>
-              <article
-                className={`overflow-hidden rounded-2xl bg-card shadow-[0_16px_38px_-26px_rgba(42,18,70,.45)] ${item.image_url ? "md:grid md:grid-cols-[minmax(15rem,.7fr)_1.3fr]" : ""}`}
-              >
-                {item.image_url && (
-                  <div className="min-h-56 bg-primary/5 md:min-h-full">
-                    <SignedImage
-                      src={item.image_url}
-                      alt=""
-                      className="h-full w-full object-cover"
-                    />
-                  </div>
-                )}
-                <div className="p-7 sm:p-9">
-                  <span className="inline-flex items-center gap-2 text-[.7rem] font-bold uppercase tracking-[.14em] text-accent">
-                    <CalendarDays className="h-4 w-4" /> {item.date_text}
-                  </span>
-                  <h3 className="mt-4 text-2xl sm:text-3xl">{item.title}</h3>
-                  <p className="mt-3 max-w-2xl text-[.96rem] leading-7 text-muted-foreground">
-                    {item.body}
-                  </p>
-                  {item.location && (
-                    <p className="mt-4 inline-flex items-center gap-2 text-sm font-semibold text-primary">
-                      <MapPin className="h-4 w-4 text-accent" /> {item.location}
-                    </p>
-                  )}
-                </div>
+    <section id="announcements" className="gc-announcement-editorial">
+      <div className="gc-announcement-heading">
+        <h2>
+          Good things.
+          <br />
+          <span>Coming together.</span>
+        </h2>
+        <a href="#contact">
+          Talk to our team <ArrowUpRight size={21} />
+        </a>
+      </div>
+      <div className="gc-announcement-feature">
+        <div className="gc-announcement-flyer">
+          {active.image_url ? (
+            <button onClick={() => setExpanded(true)} aria-label={`Enlarge ${active.title} flyer`}>
+              <Flyer src={active.image_url} alt={active.title} />
+              <span>
+                View full flyer <ArrowUpRight size={17} />
+              </span>
+            </button>
+          ) : (
+            <div className="gc-announcement-typography">
+              Great
+              <br />
+              Couples.
+            </div>
+          )}
+        </div>
+        <div className="gc-announcement-story">
+          <h3>{active.title}</h3>
+          <p>{active.body}</p>
+          <p className="gc-event-facts">
+            {rows.length
+              ? [active.date_text, active.location].filter(Boolean).join(" · ")
+              : "From our programme archive. Contact us for the next dates."}
+          </p>
+          <div className="gc-announcement-index" aria-label="Announcements">
+            {items.map((item, i) => (
+              <article key={item.id}>
+                <button aria-pressed={active.id === item.id} onClick={() => setSelected(i)}>
+                  <span>{String(i + 1).padStart(2, "0")}</span>
+                  <h4>{item.title}</h4>
+                  <ArrowUpRight size={21} />
+                </button>
               </article>
-            </Reveal>
-          ))}
+            ))}
+          </div>
         </div>
       </div>
+      <Dialog.Root open={expanded} onOpenChange={setExpanded}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="gc-dialog-overlay" />
+          <Dialog.Content className="gc-flyer-dialog">
+            <Dialog.Title className="sr-only">{active.title}</Dialog.Title>
+            <Dialog.Description className="sr-only">Full announcement flyer</Dialog.Description>
+            <Dialog.Close aria-label="Close announcement flyer">
+              <X size={24} />
+            </Dialog.Close>
+            {active.image_url && <Flyer src={active.image_url} alt={active.title} />}
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </section>
   );
 }

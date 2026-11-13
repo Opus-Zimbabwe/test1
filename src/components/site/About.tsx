@@ -1,4 +1,5 @@
-import { HeartHandshake, ShieldCheck, Telescope, Target, UsersRound, Play } from "lucide-react";
+import { Play } from "lucide-react";
+import { PrincipleMark } from "./PrincipleMark";
 import { Reveal } from "./Reveal";
 import { PHOTOS } from "./assets";
 
@@ -13,16 +14,20 @@ const SERVICES = [
 
 const HIGHLIGHTS = [
   {
-    icon: HeartHandshake,
+    kind: "care" as const,
     title: "Care that listens",
     body: "Support rooted in compassion and dignity.",
   },
   {
-    icon: ShieldCheck,
+    kind: "faith" as const,
     title: "Christian foundations",
     body: "Biblical values for healthy families.",
   },
-  { icon: UsersRound, title: "Community impact", body: "Outreach that reaches beyond the room." },
+  {
+    kind: "community" as const,
+    title: "Community impact",
+    body: "Outreach that reaches beyond the room.",
+  },
 ];
 
 export function About() {
@@ -57,9 +62,9 @@ export function About() {
             <Reveal key={highlight.title} delay={index * 0.05}>
               <article className="flex h-full items-center gap-4 rounded-2xl bg-card p-[1.125rem] shadow-[0_14px_30px_-23px_rgba(42,18,70,.34)] ring-1 ring-primary/5 transition duration-200 hover:-translate-y-1 hover:shadow-[0_18px_34px_-22px_rgba(42,18,70,.48)]">
                 <span
-                  className={`grid h-11 w-11 shrink-0 place-items-center rounded-full ${index === 1 ? "bg-charcoal text-white" : "bg-accent text-white"}`}
+                  className={`gc-principle-emblem grid h-11 w-11 shrink-0 place-items-center rounded-full ${index === 1 ? "bg-charcoal text-white" : "bg-accent text-white"}`}
                 >
-                  <highlight.icon className="h-[1.125rem] w-[1.125rem]" />
+                  <PrincipleMark kind={highlight.kind} />
                 </span>
                 <div>
                   <h3 className="text-[.9rem] font-semibold tracking-[-.025em]">
@@ -75,7 +80,7 @@ export function About() {
         </div>
 
         <Reveal delay={0.08}>
-          <div className="relative mt-10 min-h-[24rem] sm:mt-14 sm:min-h-[30rem]">
+          <div className="gc-about-portraits relative mt-10 min-h-[24rem] sm:mt-14 sm:min-h-[30rem]">
             <img
               src={PHOTOS[7]}
               alt="Great Couples community gathering"
@@ -98,60 +103,37 @@ export function About() {
           </div>
         </Reveal>
 
-        <div className="mt-12 grid gap-5 md:grid-cols-2">
-          <Reveal>
-            <article className="h-full rounded-2xl bg-muted p-6 sm:p-7">
-              <div className="flex items-center gap-3">
-                <span className="grid h-10 w-10 place-items-center rounded-full bg-accent text-white">
-                  <Telescope className="h-[1.125rem] w-[1.125rem]" />
-                </span>
-                <h3 className="text-2xl">Vision</h3>
-              </div>
-              <p className="mt-4 text-sm leading-6 text-muted-foreground">
-                To build strong, healthy, and God-centered families by promoting and strengthening
-                marriage foundations across Africa and beyond.
-              </p>
-            </article>
-          </Reveal>
-          <Reveal delay={0.05}>
-            <article className="h-full rounded-2xl bg-muted p-6 sm:p-7">
-              <div className="flex items-center gap-3">
-                <span className="grid h-10 w-10 place-items-center rounded-full bg-primary text-white">
-                  <Target className="h-[1.125rem] w-[1.125rem]" />
-                </span>
-                <h3 className="text-2xl">Mission</h3>
-              </div>
-              <p className="mt-4 text-sm leading-6 text-muted-foreground">
-                To empower men, women, children, couples, and communities through marriage
-                counselling, family support programs, outreach initiatives, seminars, and practical
-                Christian teachings that foster stable families and transformed societies.
-              </p>
-            </article>
-          </Reveal>
+        <div className="gc-purpose-spread">
+          <article className="gc-purpose-vision">
+            <h3>Vision.</h3>
+            <p>
+              To build strong, healthy, and God-centered families by promoting and strengthening
+              marriage foundations across Africa and beyond.
+            </p>
+          </article>
+          <article className="gc-purpose-mission">
+            <h3>Mission.</h3>
+            <p>
+              To empower men, women, children, couples, and communities through marriage
+              counselling, family support programs, outreach initiatives, seminars, and practical
+              Christian teachings that foster stable families and transformed societies.
+            </p>
+          </article>
         </div>
-
-        <Reveal delay={0.1}>
-          <div className="mt-5 rounded-2xl border border-primary/7 bg-white p-6 shadow-[0_12px_30px_-26px_rgba(42,18,70,.38)] sm:p-7">
-            <div className="grid gap-6 lg:grid-cols-[.75fr_1.25fr] lg:items-start">
-              <div>
-                <p className="section-kicker">Our work</p>
-                <h3 className="mt-4 text-2xl">What We Do</h3>
-                <p className="mt-2 text-sm leading-6 text-muted-foreground">
-                  Founded on Christian values, with a hands-on expert team and transparency at the
-                  heart of every programme.
-                </p>
-              </div>
-              <ul className="grid gap-x-5 gap-y-2.5 text-sm text-foreground/75 sm:grid-cols-2">
-                {SERVICES.map((service) => (
-                  <li key={service} className="flex items-center gap-2">
-                    <span className="h-1.5 w-1.5 shrink-0 rounded-full bg-accent" />
-                    {service}
-                  </li>
-                ))}
-              </ul>
-            </div>
+        <div className="gc-work-editorial">
+          <div>
+            <h3>What We Do.</h3>
+            <p>
+              Founded on Christian values, with a hands-on expert team and transparency at the heart
+              of every programme.
+            </p>
           </div>
-        </Reveal>
+          <ul>
+            {SERVICES.map((service) => (
+              <li key={service}>{service}</li>
+            ))}
+          </ul>
+        </div>
       </div>
     </section>
   );
