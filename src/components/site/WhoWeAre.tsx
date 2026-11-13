@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { PHOTOS } from "./assets";
-const images = [PHOTOS[7]!, PHOTOS[2]!, PHOTOS[0]!, PHOTOS[8]!];
+const images = [PHOTOS[2]!, PHOTOS[7]!, PHOTOS[0]!, PHOTOS[8]!];
 export function WhoWeAre() {
   const [index, setIndex] = useState(0);
   return (
