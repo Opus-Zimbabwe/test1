@@ -7,8 +7,9 @@ import type { Database } from "@/integrations/supabase/types";
 const supabase = _supabase;
 
 export function useSignedImageUrl(src: string | null | undefined, bucket: string) {
-  const [url, setUrl] = useState<string>(src || "");
+  const [url, setUrl] = useState<string>(src && /^(https?:|data:|\/)/i.test(src) ? src : "");
   useEffect(() => {
+    let cancelled = false;
     if (!src) {
       setUrl("");
       return;
@@ -17,21 +18,21 @@ export function useSignedImageUrl(src: string | null | undefined, bucket: string
       setUrl(src);
       return;
     }
+    setUrl("");
     const client = getOptionalSupabaseClient();
-    if (!client) {
-      setUrl("");
-      return;
-    }
+    if (!client) return;
     client.storage
       .from(bucket)
       .createSignedUrl(src, 3600)
-      .then(({ data, error }: { data: { signedUrl: string } | null; error: Error | null }) => {
-        if (data?.signedUrl) setUrl(data.signedUrl);
-        else {
-          console.error(`Signed URL error (${bucket}/${src}):`, error);
-          setUrl("");
-        }
+      .then(({ data }) => {
+        if (!cancelled) setUrl(data?.signedUrl || "");
+      })
+      .catch(() => {
+        if (!cancelled) setUrl("");
       });
+    return () => {
+      cancelled = true;
+    };
   }, [src, bucket]);
   return url;
 }
@@ -100,23 +101,34 @@ function useRealtimeList<T>(
 ) {
   const [rows, setRows] = useState<T[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [tick, setTick] = useState(0);
   const refresh = useCallback(() => setTick((t) => t + 1), []);
   useEffect(() => {
     const client = getOptionalSupabaseClient() as typeof supabase | null;
     if (!client) {
       setRows([]);
+      setError("Content connection is not configured.");
       setLoading(false);
       return;
     }
     let mounted = true;
     const load = async () => {
       try {
-        const { data } = await client.from(table).select("*").order(order, { ascending });
-        if (mounted) setRows((data ?? []) as T[]);
-      } catch {
-        // Offline public content uses the section's bundled fallback.
-        if (mounted) setRows([]);
+        let query = client.from(table).select("*").order(order, { ascending });
+        if (order !== "created_at") query = query.order("created_at", { ascending: false });
+        const { data, error: readError } = await query;
+        if (readError) throw readError;
+        if (mounted) {
+          setRows((data ?? []) as T[]);
+          setError(null);
+        }
+      } catch (readError) {
+        // Keep last-known-good content when a request fails.
+        if (mounted)
+          setError(
+            readError instanceof Error ? readError.message : "Content could not be refreshed.",
+          );
       } finally {
         if (mounted) setLoading(false);
       }
@@ -137,7 +149,7 @@ function useRealtimeList<T>(
       client.removeChannel(channel);
     };
   }, [table, order, ascending, tick]);
-  return { rows, loading, refresh };
+  return { rows, loading, refresh, error };
 }
 
 /** Upload a file straight from the admin's device to storage (fast, no server round-trip). */

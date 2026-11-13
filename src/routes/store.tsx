@@ -13,8 +13,7 @@ import {
   Check,
 } from "lucide-react";
 import { useServerFn } from "@tanstack/react-start";
-import { useBooks, type Book } from "@/lib/db";
-import { getOptionalSupabaseClient } from "@/integrations/supabase/client";
+import { useBooks, useSignedImageUrl, type Book } from "@/lib/db";
 import { SiteNavigation } from "@/components/site/SiteNavigation";
 import { StoreIntro, StoreCollection } from "@/components/site/StoreFront";
 import { Footer } from "@/components/site/Footer";
@@ -39,35 +38,7 @@ type CheckoutResult =
   | { order_id: string; kind: "mobile"; instructions: string; receipt_url: string };
 
 function useCoverUrl(coverUrl: string | null) {
-  const [url, setUrl] = useState<string>(coverUrl || "");
-
-  useEffect(() => {
-    if (!coverUrl) {
-      setUrl("");
-      return;
-    }
-    if (/^(https?:|\/)/i.test(coverUrl)) {
-      setUrl(coverUrl);
-      return;
-    }
-    const client = getOptionalSupabaseClient();
-    if (!client) {
-      setUrl("");
-      return;
-    }
-    client.storage
-      .from("book-covers")
-      .createSignedUrl(coverUrl, 3600)
-      .then(({ data, error }) => {
-        if (data?.signedUrl) setUrl(data.signedUrl);
-        else {
-          console.error("cover signed url", error);
-          setUrl("");
-        }
-      });
-  }, [coverUrl]);
-
-  return url;
+  return useSignedImageUrl(coverUrl, "book-covers");
 }
 
 function StorePage() {

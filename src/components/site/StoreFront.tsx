@@ -1,8 +1,14 @@
 import { useState } from "react";
 import { Search, ArrowDown, ArrowUpRight } from "lucide-react";
-import type { Book } from "@/lib/db";
+import { useSignedImageUrl, type Book } from "@/lib/db";
+function ExhibitCover({ book, index }: { book: Book; index: number }) {
+  const url = useSignedImageUrl(book.cover_url, "book-covers");
+  return url ? (
+    <img src={url} alt="" style={{ "--book-offset": index } as React.CSSProperties} />
+  ) : null;
+}
 export function StoreIntro({ books }: { books: Book[] }) {
-  const covers = books.filter((b) => b.cover_url?.startsWith("https://")).slice(0, 3);
+  const covers = books.filter((b) => !!b.cover_url).slice(0, 3);
   return (
     <section className="gc-store-intro">
       <div>
@@ -21,14 +27,7 @@ export function StoreIntro({ books }: { books: Book[] }) {
       </div>
       <div className="gc-store-exhibit" aria-hidden="true">
         {covers.length ? (
-          covers.map((book, i) => (
-            <img
-              key={book.id}
-              src={book.cover_url!}
-              alt=""
-              style={{ "--book-offset": i } as React.CSSProperties}
-            />
-          ))
+          covers.map((book, i) => <ExhibitCover key={book.id} book={book} index={i} />)
         ) : (
           <div className="gc-store-paper">
             <span>

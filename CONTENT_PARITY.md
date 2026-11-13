@@ -83,3 +83,11 @@ Verified: production build; changed-file lint and type checks; desktop/mobile/ta
 - Added shared video metadata/RPC migration and an admin video workspace with link validation, preview, device-local draft recovery, title/position/placement controls, hide/show, search, and Add to podcast.
 - Homepage podcast/social/Facebook sections merge curated records with existing content and YouTube imports; hidden/manual overrides survive refreshes. No original default videos were removed.
 - Database migration activation and a successful live YouTube workflow remain unverified/blocked by current access. See VIDEO_AUTOMATION_SETUP.md. The admin page does not claim to publish before database setup.
+
+### Live announcements/books connection and admin workspace
+- Configured the test Vercel project's public/browser and server Supabase variables using the existing live content source. No live announcement, book, price, stock, gallery or payment records were changed.
+- Verified all 8 current announcements and all 3 active books. Their storage flyers/covers return HTTP 200. Equal announcement priorities now use newest creation time first; failed refreshes retain last-known-good content.
+- Resolved signed storage book covers in the store opening display as well as catalogue cards; protected against stale asynchronous image results.
+- Added a responsive admin sidebar, larger typography, catalogue view with search/prices/stock and secure book-management link, announcement search/order/refresh/preview tools, and a sign-in readiness guard.
+- Configured a server-only password verifier environment variable and verified the requested credential against the existing database; incorrect credentials fail. The database password itself was already the requested value.
+- Content remains connected to the original CMS: subsequent authenticated edits to shared records affect both sites. Read-only verification and local checks did not publish any content or submit payments. The separate content_videos migration remains required for video publishing.

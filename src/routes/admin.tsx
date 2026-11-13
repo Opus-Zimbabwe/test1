@@ -1,3 +1,5 @@
+import "@/components/site/admin-workspace.css";
+import { AdminBooks } from "@/components/site/AdminBooks";
 import { useVideos } from "@/lib/use-video-library";
 import { AdminVideos } from "@/components/site/AdminVideos";
 import { createFileRoute, Link } from "@tanstack/react-router";
@@ -10,6 +12,10 @@ import {
   Image as ImageIcon,
   Images,
   LayoutDashboard,
+  BookOpen,
+  Search,
+  RefreshCw,
+  ArrowUpRight,
   Loader2,
   LogOut,
   Megaphone,
@@ -23,6 +29,7 @@ import { LOGO } from "@/components/site/assets";
 import { ImagePicker } from "@/components/site/ImagePicker";
 import {
   useAnnouncements,
+  useBooks,
   useGalleryImages,
   useSignedImageUrl,
   uploadImageToBucket,
@@ -47,7 +54,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type Tab = "announcements" | "gallery" | "videos";
+type Tab = "announcements" | "gallery" | "videos" | "books";
 type GalleryRow = GalleryImage;
 type AnnouncementRow = Announcement;
 
@@ -73,6 +80,8 @@ function AdminPage() {
 
 function LoginGate({ onOk }: { onOk: () => void }) {
   const [code, setCode] = useState("");
+  const [ready, setReady] = useState(false);
+  useEffect(() => setReady(true), []);
   const [err, setErr] = useState("");
   const [busy, setBusy] = useState(false);
   const verify = useServerFn(verifySiteAdminPasscode);
@@ -117,6 +126,7 @@ function LoginGate({ onOk }: { onOk: () => void }) {
           </span>
           <input
             type="password"
+            disabled={!ready || busy}
             value={code}
             onChange={(event) => setCode(event.target.value)}
             autoComplete="current-password"
@@ -133,11 +143,11 @@ function LoginGate({ onOk }: { onOk: () => void }) {
           </p>
         )}
         <button
-          disabled={busy}
+          disabled={busy || !ready}
           className="mt-5 inline-flex w-full items-center justify-center gap-2 rounded-full bg-primary px-5 py-3.5 text-xs font-bold text-primary-foreground shadow-lg shadow-primary/15 transition hover:-translate-y-0.5 hover:brightness-105 disabled:cursor-not-allowed disabled:opacity-60"
         >
           {busy && <Loader2 className="h-4 w-4 animate-spin" />}{" "}
-          {busy ? "Signing in…" : "Open content admin"}
+          {busy ? "Signing in…" : ready ? "Open content admin" : "Preparing sign-in…"}
         </button>
       </form>
     </main>
@@ -150,9 +160,10 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
   const [tab, setTab] = useState<Tab>("announcements");
   const { rows: announcements } = useAnnouncements();
   const { rows: gallery } = useGalleryImages();
+  const { rows: books } = useBooks();
 
   return (
-    <main className="min-h-screen bg-muted">
+    <main className="gc-admin-shell min-h-screen bg-muted">
       <header className="sticky top-0 z-30 border-b border-primary/8 bg-white/95 backdrop-blur-xl">
         <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 py-3 sm:px-6">
           <Link to="/" className="flex min-w-0 items-center gap-2.5">
@@ -188,60 +199,65 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
       </header>
 
       <div className="mx-auto max-w-6xl px-4 py-7 sm:px-6 sm:py-10">
-        <section className="relative overflow-hidden rounded-2xl bg-primary px-6 py-8 text-white shadow-[0_22px_46px_-28px_rgba(42,18,70,.58)] sm:px-8 sm:py-9">
-          <span
-            aria-hidden
-            className="absolute -right-12 -top-16 h-44 w-44 rounded-full bg-accent/60"
-          />
+        <section className="gc-admin-overview relative overflow-hidden rounded-2xl bg-primary px-6 py-8 text-white sm:px-8 sm:py-9">
           <div className="relative flex flex-wrap items-end justify-between gap-6">
             <div>
               <p className="inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-[.6rem] font-bold uppercase tracking-[.14em] text-white/85">
                 <LayoutDashboard className="h-3 w-3" /> Content workspace
               </p>
               <h1 className="mt-4 text-3xl font-bold text-white sm:text-4xl">
-                Keep the website fresh.
+                Your website, in your hands.
               </h1>
               <p className="mt-2 max-w-xl text-sm leading-6 text-white/75">
-                Publish news and curate the moments that appear on the Great Couples website.
+                Announcements, books, gallery and conversations. Everything in one workspace.
               </p>
             </div>
-            <div className="flex gap-3">
+            <div className="gc-admin-overview-stats flex gap-3">
               <AdminStat icon={Megaphone} label="Announcements" value={announcements.length} />
               <AdminStat icon={Images} label="Gallery images" value={gallery.length} />
+              <AdminStat
+                icon={BookOpen}
+                label="Books"
+                value={books.filter((book) => book.active).length}
+              />
             </div>
           </div>
         </section>
 
-        <nav
-          aria-label="Content sections"
-          className="mt-6 flex w-full gap-2 overflow-x-auto rounded-2xl bg-white p-2 shadow-sm"
-        >
-          {(
-            [
-              ["announcements", "Announcements", Megaphone, announcements.length],
-              ["gallery", "Gallery", ImageIcon, gallery.length],
-              ["videos", "Videos & podcast", Images, podcastVideos.length + socialVideos.length],
-            ] as [Tab, string, typeof Megaphone, number][]
-          ).map(([id, label, Icon, count]) => (
-            <button
-              key={id}
-              onClick={() => setTab(id)}
-              className={`inline-flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-bold transition ${tab === id ? "bg-primary text-primary-foreground shadow-md shadow-primary/15" : "text-muted-foreground hover:bg-muted hover:text-primary"}`}
-            >
-              <Icon className="h-4 w-4" /> {label}{" "}
-              <span
-                className={`grid min-w-5 place-items-center rounded-full px-1.5 py-0.5 text-[.58rem] ${tab === id ? "bg-white/16 text-white" : "bg-primary/8 text-primary"}`}
+        <div className="gc-admin-layout">
+          <nav
+            aria-label="Content sections"
+            className="gc-admin-sidebar mt-6 flex w-full gap-2 overflow-x-auto rounded-2xl bg-white p-2"
+          >
+            {(
+              [
+                ["announcements", "Announcements", Megaphone, announcements.length],
+                ["gallery", "Gallery", ImageIcon, gallery.length],
+                ["books", "Books & resources", BookOpen, books.length],
+                ["videos", "Videos & podcast", Images, podcastVideos.length + socialVideos.length],
+              ] as [Tab, string, typeof Megaphone, number][]
+            ).map(([id, label, Icon, count]) => (
+              <button
+                key={id}
+                onClick={() => setTab(id)}
+                className={`inline-flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-bold transition ${tab === id ? "bg-primary text-primary-foreground shadow-md shadow-primary/15" : "text-muted-foreground hover:bg-muted hover:text-primary"}`}
               >
-                {count}
-              </span>
-            </button>
-          ))}
-        </nav>
+                <Icon className="h-4 w-4" /> {label}{" "}
+                <span
+                  className={`grid min-w-5 place-items-center rounded-full px-1.5 py-0.5 text-[.58rem] ${tab === id ? "bg-white/16 text-white" : "bg-primary/8 text-primary"}`}
+                >
+                  {count}
+                </span>
+              </button>
+            ))}
+          </nav>
 
-        <div className="mt-6">
-          {tab === "announcements" && <AnnouncementsTab />}
-          {tab === "gallery" && <GalleryTab />}
-          {tab === "videos" && <AdminVideos />}
+          <div className="gc-admin-pane mt-6">
+            {tab === "announcements" && <AnnouncementsTab />}
+            {tab === "gallery" && <GalleryTab />}
+            {tab === "videos" && <AdminVideos />}
+            {tab === "books" && <AdminBooks />}
+          </div>
         </div>
       </div>
     </main>
@@ -296,7 +312,15 @@ function Thumb({
 function AnnouncementsTab() {
   const save = useServerFn(saveAnnouncement);
   const remove = useServerFn(deleteAnnouncement);
-  const { rows: items, loading, refresh } = useAnnouncements();
+  const { rows: items, loading, refresh, error: contentError } = useAnnouncements();
+  const [search, setSearch] = useState("");
+  const [recentFirst, setRecentFirst] = useState(false);
+  const matches = items.filter((item) =>
+    `${item.title} ${item.body} ${item.date_text} ${item.location || ""}`
+      .toLowerCase()
+      .includes(search.toLowerCase()),
+  );
+  if (recentFirst) matches.sort((a, b) => Date.parse(b.created_at) - Date.parse(a.created_at));
   const [editing, setEditing] = useState<Partial<AnnouncementRow> | null>(null);
   const [notice, setNotice] = useState("");
   const [error, setError] = useState("");
@@ -341,11 +365,50 @@ function AnnouncementsTab() {
         </button>
       </div>
 
-      {(notice || error) && <Feedback notice={notice} error={error} />}
+      <div className="gc-admin-video-tools">
+        <label className="gc-admin-video-search">
+          <Search size={18} />
+          <input
+            aria-label="Search announcements"
+            placeholder="Search title, date or location"
+            value={search}
+            onChange={(event) => setSearch(event.target.value)}
+          />
+        </label>
+        <label className="gc-admin-announcement-sort">
+          <span className="sr-only">Announcement order</span>
+          <select
+            aria-label="Announcement order"
+            value={recentFirst ? "recent" : "website"}
+            onChange={(event) => setRecentFirst(event.target.value === "recent")}
+          >
+            <option value="website">Website order</option>
+            <option value="recent">Recently added</option>
+          </select>
+        </label>
+        <button className="gc-admin-refresh" onClick={refresh}>
+          <RefreshCw size={17} />
+          Refresh
+        </button>
+        <a
+          className="gc-admin-refresh"
+          href="/#announcements"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          Preview section <ArrowUpRight size={17} />
+        </a>
+      </div>
+      {(notice || error || contentError) && (
+        <Feedback notice={notice} error={error || contentError || ""} />
+      )}
       {loading ? (
         <LoadingState label="Loading announcements…" />
       ) : (
         <div className="mt-6 grid gap-3">
+          {items.length > 0 && matches.length === 0 && (
+            <p className="gc-admin-video-empty">No announcements match your search.</p>
+          )}
           {items.length === 0 && (
             <EmptyState
               icon={Megaphone}
@@ -353,7 +416,7 @@ function AnnouncementsTab() {
               detail="Create your first update to share it with visitors."
             />
           )}
-          {items.map((item) => (
+          {matches.map((item) => (
             <article
               key={item.id}
               className="group flex flex-col gap-4 rounded-2xl border border-primary/8 bg-card p-4 transition hover:border-primary/18 sm:flex-row sm:items-center"
@@ -362,7 +425,7 @@ function AnnouncementsTab() {
                 <Thumb
                   src={item.image_url}
                   bucket="announcements"
-                  className="h-20 w-full rounded-xl object-cover sm:w-24 sm:shrink-0"
+                  className="gc-admin-announcement-thumb h-20 w-full rounded-xl object-contain sm:w-24 sm:shrink-0"
                 />
               ) : (
                 <span className="grid h-20 w-full place-items-center rounded-xl bg-muted text-primary/45 sm:w-24 sm:shrink-0">

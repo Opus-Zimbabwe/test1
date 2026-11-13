@@ -4,10 +4,12 @@ import { z } from "zod";
 // Only the verifier is stored in source; never send it to the browser.
 async function assertPasscode(code: string) {
   const { createHash, timingSafeEqual } = await import("node:crypto");
-  const expected = Buffer.from(
-    "094fb170f2881ac8006d8a3bafdacf695062b6cd24a00e62b43eb50b856ac1f8",
-    "hex",
-  );
+  const verifier =
+    process.env["SITE_ADMIN_PASSWORD_SHA256"] ||
+    "094fb170f2881ac8006d8a3bafdacf695062b6cd24a00e62b43eb50b856ac1f8";
+  if (!/^[a-f0-9]{64}$/i.test(verifier))
+    throw new Error("Admin sign-in is temporarily unavailable.");
+  const expected = Buffer.from(verifier, "hex");
   const actual = createHash("sha256").update(code).digest();
   if (!timingSafeEqual(actual, expected)) throw new Error("Invalid passcode");
 }
