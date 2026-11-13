@@ -43,7 +43,13 @@ export function SiteNavigation({ store = false, action }: { store?: boolean; act
           document.querySelectorAll<HTMLElement>("main section[id]").forEach((section) => {
             const r = section.getBoundingClientRect();
             if (r.top < innerHeight * 0.3 && r.bottom > innerHeight * 0.2)
-              current = "#" + section.id;
+              current =
+                "#" +
+                (section.id.startsWith("podcast-")
+                  ? "podcast"
+                  : section.id.startsWith("videos-")
+                    ? "videos"
+                    : section.id);
           });
           setActive(current);
         }
