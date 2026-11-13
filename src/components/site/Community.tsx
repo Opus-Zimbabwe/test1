@@ -1,4 +1,4 @@
-import { Facebook, Youtube, Instagram } from "lucide-react";
+import { Facebook, Youtube, Instagram, ArrowUpRight } from "lucide-react";
 import { Reveal } from "./Reveal";
 
 function WhatsAppIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -37,11 +37,36 @@ const SOCIALS = [
 ];
 
 const WHATSAPP = [
-  { region: "International & Zimbabwe", url: "https://chat.whatsapp.com/Lb8qKiv5ZSbJBUqrOJF7zX" },
-  { region: "Great Men (Men's Group)", url: "https://chat.whatsapp.com/DIX2abr71daIqLNzTqyXEG" },
-  { region: "Kenya", url: "https://chat.whatsapp.com/HPmCi3XHlbODdPqcrMJNy6" },
-  { region: "Malawi", url: "https://chat.whatsapp.com/ERSFxmmiCpi2GR6fmcXwGn" },
-  { region: "Zambia", url: "https://chat.whatsapp.com/FwIAtxJgHnYBj3QZsIwExi" },
+  {
+    flag: "zw",
+    country: "Zimbabwe",
+    region: "International & Zimbabwe",
+    url: "https://chat.whatsapp.com/Lb8qKiv5ZSbJBUqrOJF7zX",
+  },
+  {
+    flag: null,
+    country: null,
+    region: "Great Men (Men's Group)",
+    url: "https://chat.whatsapp.com/DIX2abr71daIqLNzTqyXEG",
+  },
+  {
+    flag: "ke",
+    country: "Kenya",
+    region: "Kenya",
+    url: "https://chat.whatsapp.com/HPmCi3XHlbODdPqcrMJNy6",
+  },
+  {
+    flag: "mw",
+    country: "Malawi",
+    region: "Malawi",
+    url: "https://chat.whatsapp.com/ERSFxmmiCpi2GR6fmcXwGn",
+  },
+  {
+    flag: "zm",
+    country: "Zambia",
+    region: "Zambia",
+    url: "https://chat.whatsapp.com/FwIAtxJgHnYBj3QZsIwExi",
+  },
 ];
 
 function TikTokIcon(props: React.SVGProps<SVGSVGElement>) {
@@ -93,33 +118,44 @@ export function Community() {
         </div>
 
         <Reveal delay={0.1}>
-          <div className="relative mt-12 overflow-hidden rounded-2xl bg-primary px-7 py-8 text-primary-foreground shadow-[0_20px_42px_-26px_rgba(42,18,70,.6)] sm:px-10 sm:py-10">
-            <span
-              aria-hidden
-              className="absolute -right-24 -top-24 h-64 w-64 rounded-full bg-accent/35"
-            />
-            <div className="relative flex flex-wrap items-end justify-between gap-6">
-              <div>
-                <span className="inline-flex items-center gap-2 rounded-full bg-white/12 px-3 py-1.5 text-[.67rem] font-bold uppercase tracking-[.14em] text-white/90">
-                  <WhatsAppIcon className="h-3.5 w-3.5" /> WhatsApp Groups
-                </span>
-                <h3 className="mt-4 text-3xl text-white sm:text-4xl">
-                  Find your region · join the family
-                </h3>
-              </div>
+          <div className="gc-groups" aria-labelledby="gc-groups-heading">
+            <div className="gc-groups-heading">
+              <h3 id="gc-groups-heading">
+                Find your people.
+                <br />
+                <span>Grow together.</span>
+              </h3>
+              <p>Join the Great Couples WhatsApp family, wherever you call home.</p>
             </div>
-            <div className="relative mt-8 grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
-              {WHATSAPP.map((group) => (
+            <div className="gc-groups-grid">
+              {WHATSAPP.map((group, index) => (
                 <a
                   key={group.region}
                   href={group.url}
                   target="_blank"
-                  rel="noreferrer"
-                  className="group flex items-center justify-between rounded-xl border border-white/15 bg-white/8 px-4 py-3.5 text-sm font-semibold text-white transition hover:bg-white/16"
+                  rel="noopener noreferrer"
+                  className="gc-country-group"
+                  style={{ "--group-delay": `${index * 65}ms` } as React.CSSProperties}
                 >
-                  <span>{group.region}</span>
-                  <span className="text-xs text-white/70 transition group-hover:translate-x-0.5 group-hover:text-white">
-                    Join →
+                  <span className="gc-country-emblem">
+                    {group.flag ? (
+                      <img
+                        src={`/images/flags/${group.flag}.svg`}
+                        alt={`${group.country} flag`}
+                        width="48"
+                        height="32"
+                        loading="lazy"
+                      />
+                    ) : (
+                      <WhatsAppIcon aria-hidden="true" className="h-6 w-6" />
+                    )}
+                  </span>
+                  <span className="gc-country-name">{group.region}</span>
+                  <span className="gc-country-join">
+                    Join{" "}
+                    <span aria-hidden="true">
+                      <ArrowUpRight size={15} />
+                    </span>
                   </span>
                 </a>
               ))}

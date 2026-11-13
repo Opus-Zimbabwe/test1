@@ -30,18 +30,22 @@ export function Services() {
       <div className="gc-reference-grid">
         {services.map((service) => (
           <article className="gc-reference-card" key={service.title}>
-            <div className="gc-card-title">
-              <h3>{service.title}</h3>
-              <a href="#contact" aria-label={`Enquire about ${service.title}`}>
-                <ArrowUpRight size={16} />
-              </a>
-            </div>
-            <div className="gc-card-photo">
+            <a
+              className="gc-service-link"
+              href="#contact"
+              aria-label={`Enquire about ${service.title}`}
+            >
               <img src={service.img} alt={service.alt} loading="lazy" />
-              <div className="gc-card-description">
+              <div className="gc-service-shape">
+                <div className="gc-service-heading">
+                  <h3>{service.title}</h3>
+                  <span className="gc-service-arrow">
+                    <ArrowUpRight size={20} />
+                  </span>
+                </div>
                 <p>{service.body}</p>
               </div>
-            </div>
+            </a>
           </article>
         ))}
       </div>

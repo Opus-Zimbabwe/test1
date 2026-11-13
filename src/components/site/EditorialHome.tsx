@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SignatureHero } from "./SignatureHero";
 import { WhoWeAre } from "./WhoWeAre";
 import { ArrowRight, Menu, X } from "lucide-react";
@@ -28,13 +28,20 @@ const links = [
 const reel = "https://www.facebook.com/reel/29635817456011458/";
 export function EditorialHome() {
   const [open, setOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
+  useEffect(() => {
+    const update = () => setScrolled(window.scrollY > 24);
+    update();
+    window.addEventListener("scroll", update, { passive: true });
+    return () => window.removeEventListener("scroll", update);
+  }, []);
   return (
     <main className="gc-editorial" id="top">
-      <header className="gc-nav">
+      <header className={`gc-nav${scrolled ? " is-scrolled" : ""}`}>
         <div className="gc-nav-main">
           <a className="gc-brand" href="#top" aria-label="Great Couples home">
             <img
-              src="/cdn/cbb32bda-7bdd-4316-8ee2-a08473075ba3/gc-logo.png"
+              src="/images/gc-logo-transparent.png"
               alt="Great Couples — Building & Promoting Marriage Foundations"
             />
           </a>

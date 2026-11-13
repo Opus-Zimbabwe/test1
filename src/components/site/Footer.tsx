@@ -2,15 +2,18 @@ import { Facebook, Youtube, Instagram, Phone, Mail, MapPin } from "lucide-react"
 
 export function Footer() {
   return (
-    <footer className="bg-charcoal text-white">
+    <footer className="gc-footer bg-charcoal text-white">
+      <img
+        className="gc-footer-watermark"
+        src="/images/gc-logo-transparent.png"
+        alt=""
+        aria-hidden="true"
+      />
       <div className="mx-auto max-w-7xl px-4 py-16 sm:px-6 sm:py-20">
         <div className="grid gap-12 md:grid-cols-[1.35fr_.7fr_1fr]">
           <div>
-            <a className="gc-footer-brand" href="#top" aria-label="Great Couples home">
-              <img
-                src="/cdn/cbb32bda-7bdd-4316-8ee2-a08473075ba3/gc-logo.png"
-                alt="Great Couples — Building & Promoting Marriage Foundations"
-              />
+            <a className="gc-footer-name" href="#top">
+              Great Couples<span>International Trust</span>
             </a>
             <p className="mt-5 max-w-md text-sm leading-6 text-white/65">
               Building &amp; Promoting Marriage Foundations — restoring families across Africa and
