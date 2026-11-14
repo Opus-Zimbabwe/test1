@@ -1,3 +1,4 @@
+import heroImages from "@/data/hero-images.json";
 import {
   HERO_PATHS,
   MOBILE_HERO_PATHS,
@@ -10,6 +11,10 @@ import { AnimatePresence, motion, useReducedMotion, useInView } from "framer-mot
 import { useSiteExperience } from "@/lib/use-site-experience";
 import type { HeroSlide } from "@/lib/site-experience";
 import "./morph-hero.css";
+function heroImage(source: string) {
+  return (heroImages as Record<string, { src: string; srcSet: string }>)[source];
+}
+const heroImageSizes = "(max-width: 700px) 100vw, 62vw";
 function TexturedTitle({ slide }: { slide: HeroSlide }) {
   const start = slide.emphasis
     ? slide.title.toLowerCase().indexOf(slide.emphasis.toLowerCase())
@@ -61,7 +66,12 @@ export function SignatureHero() {
       const preload = new Image();
       preload.decoding = "async";
       preload.fetchPriority = "low";
-      preload.src = next.image;
+      const enhanced = heroImage(next.image);
+      if (enhanced) {
+        preload.srcset = enhanced.srcSet;
+        preload.sizes = heroImageSizes;
+      }
+      preload.src = enhanced?.src ?? next.image;
     }
   }, [current, slides]);
   useEffect(() => {
@@ -195,7 +205,9 @@ export function SignatureHero() {
           {
             <motion.img
               key={slide.image}
-              src={slide.image}
+              src={heroImage(slide.image)?.src ?? slide.image}
+              srcSet={heroImage(slide.image)?.srcSet}
+              sizes={heroImage(slide.image) ? heroImageSizes : undefined}
               alt="Great Couples members sharing a moment together"
               initial={{ opacity: 0, scale: reduced ? 1 : 1.035 }}
               animate={{ opacity: 1, scale: 1 }}

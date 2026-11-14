@@ -1,0 +1,42 @@
+{
+  "/cdn/e32ef967-c74f-42e5-a8c6-2fe75d3bbf4f/gc-1.jpg": {
+    "src": "/images/hero/foundations-1280.webp",
+    "srcSet": "/images/hero/foundations-640.webp 640w, /images/hero/foundations-1280.webp 1280w",
+    "originalWidth": 640,
+    "originalHeight": 960,
+    "width": 1280,
+    "height": 1920
+  },
+  "/cdn/b5678dc9-e94a-4d2d-b51e-96ace5f5536b/gc-3.jpg": {
+    "src": "/images/hero/counselling-1280.webp",
+    "srcSet": "/images/hero/counselling-640.webp 640w, /images/hero/counselling-1280.webp 1280w",
+    "originalWidth": 640,
+    "originalHeight": 960,
+    "width": 1280,
+    "height": 1920
+  },
+  "/cdn/c5595e7d-a55a-4f51-ba90-f6e0b83598b0/gc-2.jpg": {
+    "src": "/images/hero/pre-marital-1280.webp",
+    "srcSet": "/images/hero/pre-marital-640.webp 640w, /images/hero/pre-marital-1280.webp 1280w",
+    "originalWidth": 640,
+    "originalHeight": 960,
+    "width": 1280,
+    "height": 1920
+  },
+  "/cdn/e3a272ad-7998-440d-9e48-60b21150a0eb/gc-5.jpg": {
+    "src": "/images/hero/outreach-1280.webp",
+    "srcSet": "/images/hero/outreach-640.webp 640w, /images/hero/outreach-1280.webp 1280w, /images/hero/outreach-1920.webp 1920w, /images/hero/outreach-3840.webp 3840w",
+    "originalWidth": 1920,
+    "originalHeight": 645,
+    "width": 3840,
+    "height": 1290
+  },
+  "/cdn/4edf1fff-1d53-405c-b8f3-66f688fbc4ad/gc-8.jpg": {
+    "src": "/images/hero/enjoy-marriage-1280.webp",
+    "srcSet": "/images/hero/enjoy-marriage-640.webp 640w, /images/hero/enjoy-marriage-1280.webp 1280w, /images/hero/enjoy-marriage-1920.webp 1920w, /images/hero/enjoy-marriage-2560.webp 2560w",
+    "originalWidth": 1280,
+    "originalHeight": 1920,
+    "width": 2560,
+    "height": 3840
+  }
+}
