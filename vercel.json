@@ -29,6 +29,33 @@
           "value": "public, max-age=3600, stale-while-revalidate=86400"
         }
       ]
+    },
+    {
+      "source": "/downloads/website-preview/(.*)",
+      "headers": [
+        {
+          "key": "X-Robots-Tag",
+          "value": "noindex, nofollow"
+        }
+      ]
+    },
+    {
+      "source": "/downloads/website-preview/:filename.png",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment"
+        }
+      ]
+    },
+    {
+      "source": "/downloads/website-preview/:filename.zip",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment"
+        }
+      ]
     }
   ]
 }
