@@ -56,6 +56,15 @@
           "value": "attachment"
         }
       ]
+    },
+    {
+      "source": "/downloads/website-preview/:filename.mp4",
+      "headers": [
+        {
+          "key": "Content-Disposition",
+          "value": "attachment"
+        }
+      ]
     }
   ]
 }
