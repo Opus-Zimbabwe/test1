@@ -1482,22 +1482,9 @@
 .gc-orbit-nav nav a[aria-current] {
   color: #552064;
 }
-.gc-reading-progress {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: var(--gc-reading, 0%);
-  height: 2px;
-  background: linear-gradient(90deg, #552064, #df174e);
-  transition: width 0.1s linear;
-  max-width: 100%;
-  pointer-events: none;
-}
-.gc-orbit-nav.is-scrolled .gc-reading-progress {
-  left: 2%;
-  max-width: 96%;
-  border-radius: 2px;
-}
+.gc-reading-progress {position:absolute;bottom:0;left:0;right:0;height:3px;overflow:hidden;pointer-events:none;background:transparent;}
+.gc-reading-progress>span{display:block;width:100%;height:100%;transform-origin:left center;background:linear-gradient(90deg,#61217d 0%,#e91859 100%);border-radius:4px;will-change:transform}
+.gc-orbit-nav.is-scrolled .gc-reading-progress{left:2%;right:2%;border-radius:5px}
 .gc-nav-action {
   margin-left: 20px;
 }

@@ -106,3 +106,7 @@ Verified: production build; changed-file lint and type checks; desktop/mobile/ta
 - TikTok uses cached official poster metadata when supplied, otherwise visible-only genuine previews, with background previews removed during playback. The provider currently returns no poster metadata for the supplied clips; no unrelated images were added.
 - Rebuilt the store as a reading room with a selectable book display, alternating full-width product presentations and book-detail-to-cart flow. All data and existing checkout logic are retained.
 - Linked the whole developer credit to https://opuszim.co.zw/.
+
+### Scroll progress refinement
+- Replaced width-stepped progress with a spring-smoothed transform running left to right, using the requested purple-to-reddish-pink gradient. Document/window resizing updates the target, while reduced-motion visitors receive direct progress updates.
+- Verified a genuine intermediate animation position, the settled reading fraction, and both gradient endpoints in the browser.

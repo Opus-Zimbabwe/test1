@@ -1,5 +1,5 @@
-import { useEffect, useRef, useState, type ReactNode } from "react";
-import { motion, useReducedMotion } from "framer-motion";
+import { useEffect, useState, type ReactNode } from "react";
+import { motion, useReducedMotion, useMotionValue, useSpring } from "framer-motion";
 import { Menu, X, LockKeyhole } from "lucide-react";
 const homeLinks = [
   ["#about", "Our story"],
@@ -17,8 +17,14 @@ export function SiteNavigation({ store = false, action }: { store?: boolean; act
   const [scrolled, setScrolled] = useState(false);
   const [active, setActive] = useState(store ? "/store" : "");
   const [hovered, setHovered] = useState<string | null>(null);
-  const header = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
+  const readingTarget = useMotionValue(0);
+  const readingProgress = useSpring(readingTarget, {
+    stiffness: 140,
+    damping: 28,
+    mass: 0.5,
+    restDelta: 0.0001,
+  });
   const links = store
     ? [
         ["/", "Home"],
@@ -34,10 +40,7 @@ export function SiteNavigation({ store = false, action }: { store?: boolean; act
       frame = requestAnimationFrame(() => {
         setScrolled(scrollY > 24);
         const height = document.documentElement.scrollHeight - innerHeight;
-        header.current?.style.setProperty(
-          "--gc-reading",
-          `${height > 0 ? (scrollY / height) * 100 : 0}%`,
-        );
+        readingTarget.set(height > 0 ? Math.max(0, Math.min(1, scrollY / height)) : 0);
         if (!store) {
           let current = "";
           document.querySelectorAll<HTMLElement>("main section[id]").forEach((section) => {
@@ -57,12 +60,17 @@ export function SiteNavigation({ store = false, action }: { store?: boolean; act
       });
     };
     window.addEventListener("scroll", update, { passive: true });
+    window.addEventListener("resize", update);
+    const observer = typeof ResizeObserver === "undefined" ? null : new ResizeObserver(update);
+    observer?.observe(document.body);
     update();
     return () => {
       window.removeEventListener("scroll", update);
+      window.removeEventListener("resize", update);
+      observer?.disconnect();
       cancelAnimationFrame(frame);
     };
-  }, [store]);
+  }, [store, readingTarget]);
   useEffect(() => {
     if (!open) return;
     const close = (e: KeyboardEvent) => {
@@ -72,7 +80,7 @@ export function SiteNavigation({ store = false, action }: { store?: boolean; act
     return () => window.removeEventListener("keydown", close);
   }, [open]);
   return (
-    <header ref={header} className={`gc-nav gc-orbit-nav${scrolled ? " is-scrolled" : ""}`}>
+    <header className={`gc-nav gc-orbit-nav${scrolled ? " is-scrolled" : ""}`}>
       <div className="gc-nav-main">
         <a className="gc-brand" href={store ? "/" : "#top"} aria-label="Great Couples home">
           <img src="/images/gc-logo-transparent.png" alt="Great Couples" />
@@ -123,7 +131,9 @@ export function SiteNavigation({ store = false, action }: { store?: boolean; act
           {open ? <X /> : <Menu />}
         </button>
       </div>
-      <div className="gc-reading-progress" aria-hidden="true" />
+      <div className="gc-reading-progress" aria-hidden="true">
+        <motion.span style={{ scaleX: reduced ? readingTarget : readingProgress }} />
+      </div>
     </header>
   );
 }
