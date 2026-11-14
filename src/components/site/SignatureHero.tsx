@@ -82,6 +82,7 @@ export function SignatureHero() {
       className="gc-signature-hero gc-morph-hero"
       data-shape={isHeart(slide) ? "heart" : slide.shape}
       data-long-title={slide.title.length > 36}
+      data-foundations={slide.id === "foundations"}
       aria-label="Great Couples stories"
       aria-roledescription="carousel"
       tabIndex={0}
@@ -127,6 +128,29 @@ export function SignatureHero() {
               transition={{ duration: reduced ? 0 : 1.25, ease: [0.22, 0.68, 0.1, 1] }}
             />
           </clipPath>
+          <mask
+            id={`gc-heart-extension-${uid}`}
+            maskUnits="objectBoundingBox"
+            maskContentUnits="objectBoundingBox"
+            x="0"
+            y="0"
+            width="1"
+            height="1"
+            style={{ maskType: "luminance" }}
+          >
+            <path
+              fill="white"
+              d="M .19 0 L 1 0 L 1 1 L .50 .98 C .51 .98 .52 .97 .54 .95 C .76 .75 1 .50 1 .28 C 1 .04 .82 -.12 .54 .19 C .52 .21 .515 .225 .50 .225 C .485 .225 .48 .21 .46 .19 C .35 .07 .26 .02 .19 .02 Z"
+            />
+            <path
+              d={HEART_HERO_PATH}
+              fill="black"
+              stroke="black"
+              strokeWidth=".035"
+              strokeLinejoin="round"
+            />
+            <path d={HEART_HERO_PATH} fill="white" />
+          </mask>
         </defs>
       </svg>
       <div
@@ -135,6 +159,7 @@ export function SignatureHero() {
           {
             "--gc-desktop-clip": `url(#gc-morph-${uid})`,
             "--gc-mobile-clip": `url(#gc-morph-mobile-${uid})`,
+            "--gc-heart-extension": `url(#gc-heart-extension-${uid})`,
           } as React.CSSProperties
         }
       >

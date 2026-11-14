@@ -63,3 +63,20 @@
 @media(max-width:700px){
   .gc-morph-hero[data-shape=heart] .gc-morph-photograph{width:100%;flex:none}
 }
+
+/* Bring the imagery closer, keeping a reserved column for the copy. */
+@media(min-width:701px){
+  .gc-morph-photograph{left:40%}
+  .gc-morph-copy{width:40%;padding-right:26px}
+  .gc-morph-hero[data-shape=heart] .gc-morph-photograph{left:38%;width:62%;top:0;transform:none;max-height:100%}
+  .gc-morph-hero[data-shape=heart] .gc-morph-copy{width:38%;padding-right:24px}
+}
+/* The same photograph continues beyond the heart, separated by an open gutter. */
+.gc-morph-hero[data-shape=heart] .gc-morph-photograph{
+  clip-path:none!important;
+  mask-image:var(--gc-heart-extension);
+  mask-size:100% 100%;mask-repeat:no-repeat;
+}
+.gc-morph-hero[data-foundations=true] .gc-morph-photograph{
+  mask-image:linear-gradient(135deg,#000 0%,#000 48.8%,transparent 48.8%,transparent 50.2%,#000 50.2%,#000 100%);
+}
