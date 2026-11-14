@@ -154,12 +154,12 @@ export function SignatureHero() {
             animate={{
               d:
                 slide.shape === "diagonal"
-                  ? "M -30 50 L 160 120 L 320 -25 L 500 55"
+                  ? "M -20 170 C 160 35 280 20 430 -40"
                   : slide.shape === "arch"
-                    ? "M -30 100 L 110 -30 L 300 80 L 470 -45"
+                    ? "M -30 450 C 10 130 120 25 390 -30"
                     : slide.shape === "ribbon"
-                      ? "M -30 40 L 150 105 L 330 -25 L 510 65"
-                      : "M -30 120 L 160 -30 L 300 90 L 480 -50",
+                      ? "M -10 50 C 180 220 190 100 370 -40"
+                      : "M -20 190 C 210 280 210 100 370 -30",
             }}
             transition={{ duration: reduced ? 0 : 1.25 }}
           />

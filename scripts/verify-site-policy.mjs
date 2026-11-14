@@ -29,8 +29,8 @@ test("maintenance blocks every public page including receipts, retaining protect
 test("hero paths have compatible interpolation topology and distinct compositions", () => {
   const paths = Object.values(HERO_PATHS);
   assert.ok(
-    paths.every((path) => !/[CQ]/.test(path)),
-    "Reference compositions use straight cuts",
+    paths.every((path) => /C/.test(path)),
+    "Hero compositions use curved Bézier masks",
   );
   assert.equal(new Set(Object.values(MOBILE_HERO_PATHS)).size, 4);
   assert.equal(new Set(paths).size, 4);
