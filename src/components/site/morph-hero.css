@@ -87,3 +87,25 @@
   .gc-morph-hero[data-shape=heart] .gc-morph-photograph{height:100%;bottom:0;aspect-ratio:auto}
 }
 .gc-morph-hero[data-shape=heart] .gc-morph-photograph{border-bottom-right-radius:22px}
+
+/* One persistent mask and drawing space: no discrete clipping/layout swaps. */
+.gc-morph-photograph,
+.gc-morph-hero[data-shape=heart] .gc-morph-photograph,
+.gc-morph-hero[data-foundations=true] .gc-morph-photograph{
+  clip-path:none!important;mask-image:var(--gc-flow-mask);mask-size:100% 100%;mask-repeat:no-repeat;
+  border-radius:0 22px 22px 0;background:transparent;
+}
+.gc-mask-mobile{display:none}
+@media(min-width:701px){
+  .gc-morph-photograph,.gc-morph-hero[data-shape=heart] .gc-morph-photograph{
+    left:38%;right:0;top:0;bottom:0;width:62%;height:100%;max-height:none;aspect-ratio:auto;transform:none;
+  }
+  .gc-morph-copy,.gc-morph-hero[data-shape=heart] .gc-morph-copy{width:38%;padding-right:24px}
+  .gc-morph-copy h1,.gc-morph-hero[data-long-title=true] .gc-morph-copy h1,.gc-morph-hero[data-shape=heart] .gc-morph-copy h1{font-size:clamp(36px,3.8vw,64px)}
+}
+@media(max-width:700px){
+  .gc-mask-mobile{display:inline}.gc-mask-desktop{display:none}
+  .gc-morph-photograph,.gc-morph-hero[data-shape=heart] .gc-morph-photograph{height:clamp(300px,96vw,520px);aspect-ratio:auto;width:100%}
+}
+
+.gc-morph-photograph>img,.gc-morph-hero[data-shape=heart] .gc-morph-photograph>img{object-position:50% 0%}

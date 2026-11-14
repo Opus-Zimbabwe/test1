@@ -1,27 +1,27 @@
 {
   "/cdn/e32ef967-c74f-42e5-a8c6-2fe75d3bbf4f/gc-1.jpg": {
     "src": "/images/hero/foundations-1280.webp",
-    "srcSet": "/images/hero/foundations-640.webp 640w, /images/hero/foundations-1280.webp 1280w",
+    "srcSet": "/images/hero/foundations-640.webp 640w, /images/hero/foundations-1280.webp 1280w, /images/hero/foundations-1920.webp 1920w, /images/hero/foundations-2560.webp 2560w",
     "originalWidth": 640,
     "originalHeight": 960,
-    "width": 1280,
-    "height": 1920
+    "width": 2560,
+    "height": 3840
   },
   "/cdn/b5678dc9-e94a-4d2d-b51e-96ace5f5536b/gc-3.jpg": {
     "src": "/images/hero/counselling-1280.webp",
-    "srcSet": "/images/hero/counselling-640.webp 640w, /images/hero/counselling-1280.webp 1280w",
+    "srcSet": "/images/hero/counselling-640.webp 640w, /images/hero/counselling-1280.webp 1280w, /images/hero/counselling-1920.webp 1920w, /images/hero/counselling-2560.webp 2560w",
     "originalWidth": 640,
     "originalHeight": 960,
-    "width": 1280,
-    "height": 1920
+    "width": 2560,
+    "height": 3840
   },
   "/cdn/c5595e7d-a55a-4f51-ba90-f6e0b83598b0/gc-2.jpg": {
     "src": "/images/hero/pre-marital-1280.webp",
-    "srcSet": "/images/hero/pre-marital-640.webp 640w, /images/hero/pre-marital-1280.webp 1280w",
+    "srcSet": "/images/hero/pre-marital-640.webp 640w, /images/hero/pre-marital-1280.webp 1280w, /images/hero/pre-marital-1920.webp 1920w, /images/hero/pre-marital-2560.webp 2560w",
     "originalWidth": 640,
     "originalHeight": 960,
-    "width": 1280,
-    "height": 1920
+    "width": 2560,
+    "height": 3840
   },
   "/cdn/e3a272ad-7998-440d-9e48-60b21150a0eb/gc-5.jpg": {
     "src": "/images/hero/outreach-1280.webp",

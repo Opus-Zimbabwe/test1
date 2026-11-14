@@ -1,5 +1,5 @@
 """Regenerate the five hero images: PYTHONPATH=<Pillow install> python scripts/upscale-hero-images.py.
-Original photographs are preserved. Lanczos enlarges pixels; it does not restore lost detail.
+Original photographs are preserved. Outputs have at least a 3840px long edge. Lanczos enlarges pixels; it does not restore lost detail.
 """
 import json
 from pathlib import Path
@@ -14,7 +14,8 @@ for slide in json.loads((ROOT / 'src/data/hero-slides.json').read_text()):
     with Image.open(source) as original:
         image = ImageOps.exif_transpose(original).convert('RGB')
         original_size = image.size
-        enlarged = image.resize((image.width * 2, image.height * 2), Image.Resampling.LANCZOS)
+        scale = max(2, 3840 / max(image.size))
+        enlarged = image.resize((round(image.width * scale), round(image.height * scale)), Image.Resampling.LANCZOS)
         enlarged = enlarged.filter(ImageFilter.UnsharpMask(radius=1, percent=60, threshold=3))
         widths = sorted({min(640, enlarged.width), min(1280, enlarged.width), min(1920, enlarged.width), enlarged.width})
         variants = []

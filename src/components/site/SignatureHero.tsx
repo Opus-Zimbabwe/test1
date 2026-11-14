@@ -61,8 +61,9 @@ export function SignatureHero() {
   const mobilePath = (item: HeroSlide) =>
     isHeart(item) ? MOBILE_HEART_HERO_PATH : MOBILE_HERO_PATHS[item.shape];
   useEffect(() => {
-    const next = slides[(current + 1) % slides.length];
-    if (next) {
+    for (const offset of [1, -1]) {
+      const next = slides[(current + offset + slides.length) % slides.length];
+      if (!next) continue;
       const preload = new Image();
       preload.decoding = "async";
       preload.fetchPriority = "low";
@@ -124,22 +125,8 @@ export function SignatureHero() {
     >
       <svg width="0" height="0" aria-hidden="true" className="gc-hero-clip-defs">
         <defs>
-          <clipPath id={`gc-morph-${uid}`} clipPathUnits="objectBoundingBox">
-            <motion.path
-              initial={{ d: desktopPath(slides[0]!) }}
-              animate={{ d: desktopPath(slide) }}
-              transition={{ duration: reduced ? 0 : 1.25, ease: [0.22, 0.68, 0.1, 1] }}
-            />
-          </clipPath>
-          <clipPath id={`gc-morph-mobile-${uid}`} clipPathUnits="objectBoundingBox">
-            <motion.path
-              initial={{ d: mobilePath(slides[0]!) }}
-              animate={{ d: mobilePath(slide) }}
-              transition={{ duration: reduced ? 0 : 1.25, ease: [0.22, 0.68, 0.1, 1] }}
-            />
-          </clipPath>
           <mask
-            id={`gc-heart-extension-${uid}`}
+            id={`gc-flow-${uid}`}
             maskUnits="objectBoundingBox"
             maskContentUnits="objectBoundingBox"
             x="0"
@@ -148,18 +135,43 @@ export function SignatureHero() {
             height="1"
             style={{ maskType: "luminance" }}
           >
-            <path
+            <motion.path
               fill="white"
+              initial={false}
+              animate={{ opacity: isHeart(slide) ? 1 : 0 }}
+              transition={{ duration: reduced ? 0 : 1.6 }}
               d="M .19 0 L 1 0 L 1 1 L .565 1 Q .525 1 .55 .968 C .76 .75 1 .50 1 .28 C 1 .04 .82 -.12 .54 .19 C .52 .21 .515 .225 .50 .225 C .485 .225 .48 .21 .46 .19 C .35 .07 .26 .02 .19 .02 Z"
             />
-            <path
-              d={HEART_HERO_PATH}
+            {(["desktop", "mobile"] as const).map((viewport) => {
+              const path = viewport === "desktop" ? desktopPath : mobilePath;
+              return (
+                <g key={viewport} className={`gc-mask-${viewport}`}>
+                  <motion.path
+                    fill="black"
+                    stroke="black"
+                    strokeWidth=".035"
+                    strokeLinejoin="round"
+                    initial={{ d: path(slides[0]!), opacity: isHeart(slides[0]!) ? 1 : 0 }}
+                    animate={{ d: path(slide), opacity: isHeart(slide) ? 1 : 0 }}
+                    transition={{ duration: reduced ? 0 : 1.6, ease: [0.45, 0, 0.2, 1] }}
+                  />
+                  <motion.path
+                    fill="white"
+                    initial={{ d: path(slides[0]!) }}
+                    animate={{ d: path(slide) }}
+                    transition={{ duration: reduced ? 0 : 1.6, ease: [0.45, 0, 0.2, 1] }}
+                  />
+                </g>
+              );
+            })}
+            <motion.path
               fill="black"
-              stroke="black"
-              strokeWidth=".035"
-              strokeLinejoin="round"
+              filter={`url(#gc-diagonal-soft-${uid})`}
+              initial={false}
+              animate={{ opacity: slide.id === "foundations" ? 1 : 0 }}
+              transition={{ duration: reduced ? 0 : 1.6 }}
+              d="M -.03 1.03 C .12 .72 .53 .86 .57 .57 C .61 .28 .87 .30 1.02 -.02 Q 1.04 -.04 1.05 -.02 C .91 .35 .65 .32 .61 .60 C .57 .91 .17 .77 .01 1.05 Q -.02 1.07 -.03 1.03 Z"
             />
-            <path d={HEART_HERO_PATH} fill="white" />
           </mask>
           <filter
             id={`gc-diagonal-soft-${uid}`}
@@ -171,33 +183,13 @@ export function SignatureHero() {
           >
             <feGaussianBlur stdDeviation=".0015" />
           </filter>
-          <mask
-            id={`gc-diagonal-${uid}`}
-            maskUnits="objectBoundingBox"
-            maskContentUnits="objectBoundingBox"
-            x="0"
-            y="0"
-            width="1"
-            height="1"
-            style={{ maskType: "luminance" }}
-          >
-            <rect width="1" height="1" fill="white" />
-            <path
-              fill="black"
-              filter={`url(#gc-diagonal-soft-${uid})`}
-              d="M -.03 1.03 C .12 .72 .53 .86 .57 .57 C .61 .28 .87 .30 1.02 -.02 Q 1.04 -.04 1.05 -.02 C .91 .35 .65 .32 .61 .60 C .57 .91 .17 .77 .01 1.05 Q -.02 1.07 -.03 1.03 Z"
-            />
-          </mask>
         </defs>
       </svg>
       <div
         className="gc-morph-photograph"
         style={
           {
-            "--gc-desktop-clip": `url(#gc-morph-${uid})`,
-            "--gc-mobile-clip": `url(#gc-morph-mobile-${uid})`,
-            "--gc-heart-extension": `url(#gc-heart-extension-${uid})`,
-            "--gc-diagonal-cut": `url(#gc-diagonal-${uid})`,
+            "--gc-flow-mask": `url(#gc-flow-${uid})`,
           } as React.CSSProperties
         }
       >
