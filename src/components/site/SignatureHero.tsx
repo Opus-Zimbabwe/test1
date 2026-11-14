@@ -62,6 +62,13 @@ export function SignatureHero() {
   const mobilePath = (item: HeroSlide) =>
     isHeart(item) ? MOBILE_HEART_HERO_PATH : MOBILE_HERO_PATHS[item.shape];
   useEffect(() => {
+    // The server-rendered hero can finish loading before React hydrates.
+    const image = [
+      ...(container.current?.querySelectorAll<HTMLImageElement>("img[data-hero-source]") || []),
+    ].find((item) => item.dataset.heroSource === slide.image);
+    if (image?.complete && image.naturalWidth > 0) setLoadedImage(slide.image);
+  }, [slide.image, ready]);
+  useEffect(() => {
     if (loadedImage !== slide.image || !inView || hidden) return;
     const timer = window.setTimeout(() => {
       for (const offset of [1, -1]) {
@@ -214,6 +221,7 @@ export function SignatureHero() {
               src={heroImage(slide.image)?.src ?? slide.image}
               srcSet={heroImage(slide.image)?.srcSet}
               sizes={heroImage(slide.image) ? heroImageSizes : undefined}
+              data-hero-source={slide.image}
               onLoad={() => setLoadedImage(slide.image)}
               decoding="async"
               alt="Great Couples members sharing a moment together"
