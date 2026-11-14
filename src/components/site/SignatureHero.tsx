@@ -1,4 +1,9 @@
-import { HERO_PATHS, MOBILE_HERO_PATHS } from "./hero-shapes";
+import {
+  HERO_PATHS,
+  MOBILE_HERO_PATHS,
+  HEART_HERO_PATH,
+  MOBILE_HEART_HERO_PATH,
+} from "./hero-shapes";
 import { useEffect, useId, useRef, useState, useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion, useInView } from "framer-motion";
@@ -44,6 +49,12 @@ export function SignatureHero() {
   const uid = useId().replace(/:/g, "");
   const current = index % slides.length;
   const slide = slides[current]!;
+  const isHeart = (item: HeroSlide) =>
+    item.id === "enjoy-marriage" || /you deserve to enjoy your marriage/i.test(item.title);
+  const desktopPath = (item: HeroSlide) =>
+    isHeart(item) ? HEART_HERO_PATH : HERO_PATHS[item.shape];
+  const mobilePath = (item: HeroSlide) =>
+    isHeart(item) ? MOBILE_HEART_HERO_PATH : MOBILE_HERO_PATHS[item.shape];
   useEffect(() => {
     const next = slides[(current + 1) % slides.length];
     if (next) {
@@ -69,7 +80,8 @@ export function SignatureHero() {
     <section
       ref={container}
       className="gc-signature-hero gc-morph-hero"
-      data-shape={slide.shape}
+      data-shape={isHeart(slide) ? "heart" : slide.shape}
+      data-long-title={slide.title.length > 36}
       aria-label="Great Couples stories"
       aria-roledescription="carousel"
       tabIndex={0}
@@ -103,15 +115,15 @@ export function SignatureHero() {
         <defs>
           <clipPath id={`gc-morph-${uid}`} clipPathUnits="objectBoundingBox">
             <motion.path
-              initial={{ d: HERO_PATHS[slides[0]!.shape] }}
-              animate={{ d: HERO_PATHS[slide.shape] }}
+              initial={{ d: desktopPath(slides[0]!) }}
+              animate={{ d: desktopPath(slide) }}
               transition={{ duration: reduced ? 0 : 1.25, ease: [0.22, 0.68, 0.1, 1] }}
             />
           </clipPath>
           <clipPath id={`gc-morph-mobile-${uid}`} clipPathUnits="objectBoundingBox">
             <motion.path
-              initial={{ d: MOBILE_HERO_PATHS[slides[0]!.shape] }}
-              animate={{ d: MOBILE_HERO_PATHS[slide.shape] }}
+              initial={{ d: mobilePath(slides[0]!) }}
+              animate={{ d: mobilePath(slide) }}
               transition={{ duration: reduced ? 0 : 1.25, ease: [0.22, 0.68, 0.1, 1] }}
             />
           </clipPath>
@@ -141,29 +153,6 @@ export function SignatureHero() {
           }
         </AnimatePresence>
         <div className="gc-morph-photo-wash" />
-        <svg
-          className="gc-morph-seam"
-          viewBox="0 0 1000 800"
-          preserveAspectRatio="none"
-          aria-hidden="true"
-        >
-          <motion.path
-            fill="none"
-            stroke="white"
-            strokeWidth="18"
-            animate={{
-              d:
-                slide.shape === "diagonal"
-                  ? "M -20 170 C 160 35 280 20 430 -40"
-                  : slide.shape === "arch"
-                    ? "M -30 450 C 10 130 120 25 390 -30"
-                    : slide.shape === "ribbon"
-                      ? "M -10 50 C 180 220 190 100 370 -40"
-                      : "M -20 190 C 210 280 210 100 370 -30",
-            }}
-            transition={{ duration: reduced ? 0 : 1.25 }}
-          />
-        </svg>
       </div>
       <div className="gc-morph-copy" aria-live={focused ? "polite" : "off"}>
         <AnimatePresence mode="wait" initial={false}>

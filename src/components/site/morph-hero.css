@@ -28,3 +28,20 @@
 .gc-morph-photograph{clip-path:var(--gc-desktop-clip)}
 @media(max-width:700px){.gc-morph-photograph{clip-path:var(--gc-mobile-clip)!important;border-radius:16px 16px 0 0}}
 @media(max-width:700px){.gc-morph-copy h1{min-height:150px}.gc-morph-copy p{min-height:84px}}
+
+/* The image edge opens directly into the page; copy has its own clear column. */
+@media(min-width:701px){
+  .gc-morph-photograph{left:46%}
+  .gc-morph-copy{width:46%;padding-right:28px}
+  .gc-morph-copy>div{width:100%;min-width:0}
+  .gc-morph-copy h1{overflow-wrap:break-word;font-size:clamp(42px,4.3vw,72px)}
+  .gc-morph-hero[data-long-title=true] .gc-morph-copy h1{font-size:clamp(40px,4vw,66px)}
+  .gc-morph-hero[data-shape=heart] .gc-morph-photograph{background:transparent}
+}
+@media(min-width:701px) and (max-width:1050px){
+  .gc-morph-copy{width:48%;padding-left:26px;padding-right:20px}
+  .gc-morph-photograph{left:48%}
+  .gc-morph-copy h1,.gc-morph-hero[data-long-title=true] .gc-morph-copy h1{font-size:clamp(36px,4.8vw,50px)}
+}
+
+.gc-morph-hero[data-shape=heart] .gc-morph-photograph>img{object-position:50% 0%}
