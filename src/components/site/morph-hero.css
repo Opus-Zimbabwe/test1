@@ -78,5 +78,12 @@
   mask-size:100% 100%;mask-repeat:no-repeat;
 }
 .gc-morph-hero[data-foundations=true] .gc-morph-photograph{
-  mask-image:linear-gradient(135deg,#000 0%,#000 48.8%,transparent 48.8%,transparent 50.2%,#000 50.2%,#000 100%);
+  mask-image:var(--gc-diagonal-cut);
+  mask-size:100% 100%;mask-repeat:no-repeat;
 }
+
+/* Fill the hero corner instead of leaving a strip below the image fragment. */
+@media(min-width:701px){
+  .gc-morph-hero[data-shape=heart] .gc-morph-photograph{height:100%;bottom:0;aspect-ratio:auto}
+}
+.gc-morph-hero[data-shape=heart] .gc-morph-photograph{border-bottom-right-radius:22px}

@@ -140,7 +140,7 @@ export function SignatureHero() {
           >
             <path
               fill="white"
-              d="M .19 0 L 1 0 L 1 1 L .50 .98 C .51 .98 .52 .97 .54 .95 C .76 .75 1 .50 1 .28 C 1 .04 .82 -.12 .54 .19 C .52 .21 .515 .225 .50 .225 C .485 .225 .48 .21 .46 .19 C .35 .07 .26 .02 .19 .02 Z"
+              d="M .19 0 L 1 0 L 1 1 L .565 1 Q .525 1 .55 .968 C .76 .75 1 .50 1 .28 C 1 .04 .82 -.12 .54 .19 C .52 .21 .515 .225 .50 .225 C .485 .225 .48 .21 .46 .19 C .35 .07 .26 .02 .19 .02 Z"
             />
             <path
               d={HEART_HERO_PATH}
@@ -151,6 +151,33 @@ export function SignatureHero() {
             />
             <path d={HEART_HERO_PATH} fill="white" />
           </mask>
+          <filter
+            id={`gc-diagonal-soft-${uid}`}
+            primitiveUnits="objectBoundingBox"
+            x="-.1"
+            y="-.1"
+            width="1.2"
+            height="1.2"
+          >
+            <feGaussianBlur stdDeviation=".0015" />
+          </filter>
+          <mask
+            id={`gc-diagonal-${uid}`}
+            maskUnits="objectBoundingBox"
+            maskContentUnits="objectBoundingBox"
+            x="0"
+            y="0"
+            width="1"
+            height="1"
+            style={{ maskType: "luminance" }}
+          >
+            <rect width="1" height="1" fill="white" />
+            <path
+              fill="black"
+              filter={`url(#gc-diagonal-soft-${uid})`}
+              d="M -.03 1.03 C .28 .72 .70 .30 1.02 -.02 Q 1.04 -.04 1.05 -.02 C .73 .33 .30 .76 -.01 1.05 Q -.04 1.07 -.03 1.03 Z"
+            />
+          </mask>
         </defs>
       </svg>
       <div
@@ -160,6 +187,7 @@ export function SignatureHero() {
             "--gc-desktop-clip": `url(#gc-morph-${uid})`,
             "--gc-mobile-clip": `url(#gc-morph-mobile-${uid})`,
             "--gc-heart-extension": `url(#gc-heart-extension-${uid})`,
+            "--gc-diagonal-cut": `url(#gc-diagonal-${uid})`,
           } as React.CSSProperties
         }
       >
