@@ -10,14 +10,16 @@ export const HERO_PATHS = {
 
 // Keep faces clear on mobile while the lower edge morphs smoothly.
 export const MOBILE_HERO_PATHS = {
-  embrace: "M 0 0 L 1 0 L 1 .86 C .85 .91 .87 1 .68 1 C .43 1 .18 .98 0 .86 L 0 0 Z",
-  diagonal: "M 0 0 L 1 0 L 1 .78 C .83 .82 .79 .89 .65 .92 C .42 .99 .20 1 0 1 L 0 0 Z",
-  arch: "M 0 0 L 1 0 L 1 1 C .78 1 .62 .99 .48 .92 C .29 .82 .14 .80 0 .84 L 0 0 Z",
-  ribbon: "M 0 0 L 1 0 L 1 .88 C .79 .98 .69 1 .52 .92 C .31 .81 .17 .91 0 .98 L 0 0 Z",
+  embrace:
+    "M 0 0 C .33 0 .66 0 1 0 C 1 .30 1 .60 1 .86 C .85 .91 .87 1 .68 1 C .43 1 .18 .98 0 .86 L 0 0 L 0 0 Z",
+  diagonal:
+    "M 0 0 C .33 0 .66 0 1 0 C 1 .30 1 .60 1 .78 C .83 .82 .79 .89 .65 .92 C .42 .99 .20 1 0 1 L 0 0 L 0 0 Z",
+  arch: "M 0 0 L 1 0 L 1 1 C .78 1 .62 .99 .48 .92 C .29 .82 .14 .80 0 .84 L 0 0 L 0 0 Z",
+  ribbon:
+    "M 0 0 C .33 0 .66 0 1 0 C 1 .30 1 .60 1 .88 C .79 .98 .69 1 .52 .92 C .31 .81 .17 .91 0 .98 L 0 0 L 0 0 Z",
 };
 
 // Matching cubic segments keep the heart transition continuous.
 export const HEART_HERO_PATH =
-  "M .50 .20 C .20 0 .02 .02 .02 .28 C .02 .55 .30 .80 .50 .96 C .70 .80 .98 .55 .98 .28 C .98 .02 .80 0 .50 .20 L .50 .20 L .50 .20 Z";
-export const MOBILE_HEART_HERO_PATH =
-  "M 0 0 L 1 0 L 1 .78 C .88 .87 .66 .96 .50 1 C .34 .96 .12 .87 0 .78 L 0 0 Z";
+  "M .50 .24 C .22 -.08 0 .02 0 .28 C 0 .52 .22 .74 .50 .98 C .78 .74 1 .52 1 .28 C 1 .02 .78 -.08 .50 .24 L .50 .24 L .50 .24 Z";
+export const MOBILE_HEART_HERO_PATH = HEART_HERO_PATH;

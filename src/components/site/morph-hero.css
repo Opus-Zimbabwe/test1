@@ -45,3 +45,21 @@
 }
 
 .gc-morph-hero[data-shape=heart] .gc-morph-photograph>img{object-position:50% 0%}
+
+/* A square drawing space keeps both lobes identical at every breakpoint. */
+.gc-morph-hero[data-shape=heart] .gc-morph-photograph{
+  aspect-ratio:1.04;
+  height:auto;
+  border-radius:0;
+  background:transparent;
+}
+@media(min-width:701px){
+  .gc-morph-hero[data-shape=heart] .gc-morph-photograph{
+    left:42%;right:0;top:50%;bottom:auto;width:58%;max-height:96%;transform:translateY(-50%);
+  }
+  .gc-morph-hero[data-shape=heart] .gc-morph-copy{width:42%;padding-right:24px}
+  .gc-morph-hero[data-shape=heart] .gc-morph-copy h1{font-size:clamp(36px,3.8vw,64px)}
+}
+@media(max-width:700px){
+  .gc-morph-hero[data-shape=heart] .gc-morph-photograph{width:100%;flex:none}
+}
