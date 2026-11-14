@@ -55,9 +55,9 @@
 }
 @media(min-width:701px){
   .gc-morph-hero[data-shape=heart] .gc-morph-photograph{
-    left:42%;right:0;top:50%;bottom:auto;width:58%;max-height:96%;transform:translateY(-50%);
+    left:40%;right:0;top:50%;bottom:auto;width:60%;max-height:99%;transform:translateY(-50%);
   }
-  .gc-morph-hero[data-shape=heart] .gc-morph-copy{width:42%;padding-right:24px}
+  .gc-morph-hero[data-shape=heart] .gc-morph-copy{width:40%;padding-right:24px}
   .gc-morph-hero[data-shape=heart] .gc-morph-copy h1{font-size:clamp(36px,3.8vw,64px)}
 }
 @media(max-width:700px){
