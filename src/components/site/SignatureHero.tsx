@@ -1,4 +1,4 @@
-import { HERO_PATHS } from "./hero-shapes";
+import { HERO_PATHS, MOBILE_HERO_PATHS } from "./hero-shapes";
 import { useEffect, useId, useRef, useState, useMemo } from "react";
 import { ArrowRight } from "lucide-react";
 import { AnimatePresence, motion, useReducedMotion, useInView } from "framer-motion";
@@ -108,9 +108,24 @@ export function SignatureHero() {
               transition={{ duration: reduced ? 0 : 1.25, ease: [0.22, 0.68, 0.1, 1] }}
             />
           </clipPath>
+          <clipPath id={`gc-morph-mobile-${uid}`} clipPathUnits="objectBoundingBox">
+            <motion.path
+              initial={{ d: MOBILE_HERO_PATHS[slides[0]!.shape] }}
+              animate={{ d: MOBILE_HERO_PATHS[slide.shape] }}
+              transition={{ duration: reduced ? 0 : 1.25, ease: [0.22, 0.68, 0.1, 1] }}
+            />
+          </clipPath>
         </defs>
       </svg>
-      <div className="gc-morph-photograph" style={{ clipPath: `url(#gc-morph-${uid})` }}>
+      <div
+        className="gc-morph-photograph"
+        style={
+          {
+            "--gc-desktop-clip": `url(#gc-morph-${uid})`,
+            "--gc-mobile-clip": `url(#gc-morph-mobile-${uid})`,
+          } as React.CSSProperties
+        }
+      >
         <AnimatePresence initial={false}>
           {
             <motion.img
@@ -139,12 +154,12 @@ export function SignatureHero() {
             animate={{
               d:
                 slide.shape === "diagonal"
-                  ? "M -20 170 C 160 35 280 20 430 -40"
+                  ? "M -30 50 L 160 120 L 320 -25 L 500 55"
                   : slide.shape === "arch"
-                    ? "M -30 450 C 10 130 120 25 390 -30"
+                    ? "M -30 100 L 110 -30 L 300 80 L 470 -45"
                     : slide.shape === "ribbon"
-                      ? "M -10 50 C 180 220 190 100 370 -40"
-                      : "M -20 190 C 210 280 210 100 370 -30",
+                      ? "M -30 40 L 150 105 L 330 -25 L 510 65"
+                      : "M -30 120 L 160 -30 L 300 90 L 480 -50",
             }}
             transition={{ duration: reduced ? 0 : 1.25 }}
           />

@@ -98,3 +98,11 @@ Verified: production build; changed-file lint and type checks; desktop/mobile/ta
 - Added an uncluttered hero editor and reversible, confirmed maintenance control under Website controls. Settings are scoped to the test site; atomic section writes prevent hero changes from toggling availability. No live shutdown was performed.
 - Maintenance returns public 503 responses, preserves admin/account/receipt access and guards checkout server-side. New settings require the documented site_experience migration; disabled controls clearly report pending setup.
 - Preserved both actual admin routes and account authorization, and refined the bookshop console's presentation and navigation. See SITE_EXPERIENCE_SETUP.md for activation and limitations.
+
+### Angular/mobile hero, reading room, admin restoration and strict off mode
+- Replaced wavy photo masks with compatible polygon cuts and added independent changing mobile masks. The five original headings remain intact.
+- Restored the separate `/auth` account-admin entry without altering authentication or role-gated book/order functions. The `/admin` content workspace stays separate.
+- Off mode now blocks all public pages including receipts, plus public receipt/download actions. Protected admin recovery and signed provider POST notifications remain available; the previous public-receipt exception was removed. Control activation still needs the settings migration.
+- TikTok uses cached official poster metadata when supplied, otherwise visible-only genuine previews, with background previews removed during playback. The provider currently returns no poster metadata for the supplied clips; no unrelated images were added.
+- Rebuilt the store as a reading room with a selectable book display, alternating full-width product presentations and book-detail-to-cart flow. All data and existing checkout logic are retained.
+- Linked the whole developer credit to https://opuszim.co.zw/.

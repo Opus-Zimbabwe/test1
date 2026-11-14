@@ -1,21 +1,58 @@
+import { useRef, useState } from "react";
+import { useInView } from "framer-motion";
+import { useQuery } from "@tanstack/react-query";
+import { useServerFn } from "@tanstack/react-start";
+import { getTikTokPreview } from "@/lib/tiktok-preview.functions";
 import type { MediaClip } from "./media";
 import { clipEmbed } from "./media";
 import { BrandLogo } from "./BrandLogo";
-export function MediaArtwork({ clip }: { clip: MediaClip }) {
+export function MediaArtwork({
+  clip,
+  previewPaused = false,
+}: {
+  clip: MediaClip;
+  previewPaused?: boolean;
+}) {
+  const container = useRef<HTMLDivElement>(null);
+  const near = useInView(container, { margin: "600px", once: true });
+  const visible = useInView(container, { margin: "100px 0px", amount: 0.15 });
+  const getPreview = useServerFn(getTikTokPreview);
+  const [failedSource, setFailedSource] = useState<string | null>(null);
+  const { data } = useQuery({
+    queryKey: ["tiktok-preview", clip.id],
+    queryFn: () => getPreview({ data: { id: clip.id } }),
+    enabled: clip.platform === "tiktok" && near,
+    staleTime: 1800000,
+    retry: false,
+  });
+  const source =
+    clip.platform === "youtube"
+      ? `https://i.ytimg.com/vi/${clip.id}/hqdefault.jpg`
+      : clip.platform === "tiktok"
+        ? data?.thumbnail
+        : null;
   return (
-    <div className={`gc-media-artwork provider-${clip.platform}`} data-preview-id={clip.id}>
-      {clip.platform === "youtube" ? (
+    <div
+      ref={container}
+      className={`gc-media-artwork provider-${clip.platform}`}
+      data-preview-id={clip.id}
+    >
+      {source && source !== failedSource && (
         <img
-          key={clip.id}
+          key={source}
           className="gc-episode-image"
-          src={`https://i.ytimg.com/vi/${clip.id}/hqdefault.jpg`}
+          src={source}
           alt=""
           loading="lazy"
-          onError={(event) => {
-            event.currentTarget.style.display = "none";
-          }}
+          decoding="async"
+          onError={() => setFailedSource(source)}
         />
-      ) : (
+      )}
+      {(clip.platform === "facebook" ||
+        (clip.platform === "tiktok" &&
+          visible &&
+          !previewPaused &&
+          (!source || source === failedSource))) && (
         <iframe
           key={clip.id}
           className="gc-provider-preview"

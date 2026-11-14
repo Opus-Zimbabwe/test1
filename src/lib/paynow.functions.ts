@@ -94,6 +94,8 @@ export const getReceipt = createServerFn({ method: "GET" })
     z.object({ order_id: z.string().uuid(), token: z.string().min(16) }).parse(d),
   )
   .handler(async ({ data }) => {
+    const { assertWebsiteOpen } = await import("./site-experience.server");
+    await assertWebsiteOpen();
     const { createServerPublicSupabase } = await import("./supabase-public.server");
     const supabase = createServerPublicSupabase();
     const { data: receipt, error } = await supabase.rpc("get_public_receipt", {

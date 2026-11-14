@@ -1,17 +1,42 @@
-import { useState } from "react";
-import { Search, ArrowDown, ArrowUpRight } from "lucide-react";
+import { useState, useEffect } from "react";
+import { Search, ArrowDown, ArrowUpRight, ArrowLeft, ArrowRight } from "lucide-react";
 import { useSignedImageUrl, type Book } from "@/lib/db";
-function ExhibitCover({ book, index }: { book: Book; index: number }) {
+function DisplayBook({
+  book,
+  position,
+  selected,
+  onSelect,
+}: {
+  book: Book;
+  position: number;
+  selected: boolean;
+  onSelect: () => void;
+}) {
   const url = useSignedImageUrl(book.cover_url, "book-covers");
-  return url ? (
-    <img src={url} alt="" style={{ "--book-offset": index } as React.CSSProperties} />
-  ) : null;
+  return (
+    <button
+      className={`gc-display-book${selected ? " is-selected" : ""}`}
+      style={{ "--display-position": position } as React.CSSProperties}
+      onClick={onSelect}
+      aria-label={`Feature ${book.title}`}
+      aria-pressed={selected}
+    >
+      {url ? <img src={url} alt={`${book.title} cover`} /> : <span>{book.title}</span>}
+      <i aria-hidden="true" />
+    </button>
+  );
 }
 export function StoreIntro({ books }: { books: Book[] }) {
-  const covers = books.filter((b) => !!b.cover_url).slice(0, 3);
+  const [index, setIndex] = useState(0);
+  const featured = books[index % Math.max(books.length, 1)];
+  useEffect(() => {
+    if (index >= books.length) setIndex(0);
+  }, [index, books.length]);
+  const step = (direction: number) =>
+    setIndex((value) => (value + direction + books.length) % books.length);
   return (
-    <section className="gc-store-intro">
-      <div>
+    <section className="gc-store-intro gc-reading-room">
+      <div className="gc-reading-copy">
         <h1>
           A new chapter.
           <br />
@@ -22,26 +47,53 @@ export function StoreIntro({ books }: { books: Book[] }) {
           going.
         </p>
         <a href="#collection">
-          Explore the collection <ArrowDown size={18} />
+          Find your next chapter <ArrowDown size={20} />
         </a>
       </div>
-      <div className="gc-store-exhibit" aria-hidden="true">
-        {covers.length ? (
-          covers.map((book, i) => <ExhibitCover key={book.id} book={book} index={i} />)
-        ) : (
-          <div className="gc-store-paper">
-            <span>
-              Great
-              <br />
-              Couples.
-            </span>
-            <span>
-              Read.
-              <br />
-              Reflect.
-              <br />
-              Grow.
-            </span>
+      <div className="gc-reading-display">
+        <span className="gc-reading-word" aria-hidden="true">
+          READ
+        </span>
+        <div className="gc-store-exhibit gc-book-stage" aria-label="Featured books">
+          {books.length ? (
+            books.map((book, i) => (
+              <DisplayBook
+                key={book.id}
+                book={book}
+                position={i - index}
+                selected={i === index}
+                onSelect={() => setIndex(i)}
+              />
+            ))
+          ) : (
+            <div className="gc-reading-empty">
+              <span>
+                Stories that
+                <br />
+                bring us closer.
+              </span>
+            </div>
+          )}
+          <div className="gc-reading-plinth" aria-hidden="true" />
+        </div>
+        {featured && (
+          <div className="gc-featured-caption" aria-live="polite">
+            <div>
+              <h2>
+                <a href={`#book-${featured.id}`}>{featured.title}</a>
+              </h2>
+              <p>{featured.author}</p>
+            </div>
+            {books.length > 1 && (
+              <div className="gc-featured-controls">
+                <button onClick={() => step(-1)} aria-label="Previous featured book">
+                  <ArrowLeft size={21} />
+                </button>
+                <button onClick={() => step(1)} aria-label="Next featured book">
+                  <ArrowRight size={21} />
+                </button>
+              </div>
+            )}
           </div>
         )}
       </div>

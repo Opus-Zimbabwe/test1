@@ -123,7 +123,7 @@ if (!passcode) throw Error("Provide GC_TEST_ADMIN_PASSCODE privately.");
         defaults[i].title,
       );
       assert.equal(await p.locator(".gc-morph-hero").getAttribute("data-shape"), defaults[i].shape);
-      assert.ok(await p.locator(".gc-hero-clip-defs path").getAttribute("d"));
+      assert.ok(await p.locator(".gc-hero-clip-defs path").first().getAttribute("d"));
     }
     await p.setViewportSize({ width: 390, height: 844 });
     assert.ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
@@ -172,7 +172,11 @@ if (!passcode) throw Error("Provide GC_TEST_ADMIN_PASSCODE privately.");
     });
     await shopper.goto(base + "/store");
     await shopper
-      .getByRole("button", { name: "Add Local test resource to cart", exact: true })
+      .getByRole("button", { name: "Read about Local test resource", exact: true })
+      .click();
+    await shopper
+      .getByRole("dialog", { name: "Local test resource", exact: true })
+      .getByRole("button", { name: "Add to cart", exact: true })
       .click();
     await shopper.getByRole("button", { name: "Checkout securely", exact: true }).click();
     await shopper
@@ -222,7 +226,11 @@ if (!passcode) throw Error("Provide GC_TEST_ADMIN_PASSCODE privately.");
     assert.equal(offline.headers.get("cache-control"), "no-store");
     assert.ok((await offline.text()).includes("Fixture maintenance &amp; recovery."));
     assert.equal((await fetch(base + "/admin")).status, 200);
+    assert.equal((await fetch(base + "/store")).status, 503);
+    assert.equal((await fetch(base + "/store/receipt/example")).status, 503);
     assert.equal((await fetch(base + "/auth")).status, 200);
+    assert.equal((await fetch(base + "/api/public/paynow-result")).status, 503);
+    assert.equal((await fetch(base + "/api/public/paynow-result", { method: "POST" })).status, 400);
     await shopper.getByRole("button", { name: "Send OneMoney prompt", exact: true }).click();
     await shopper
       .getByText("The website is temporarily unavailable. Please try again later.", { exact: true })

@@ -14,10 +14,10 @@ import { saveSiteExperience } from "@/lib/site-admin.functions";
 import { HERO_PATHS } from "./hero-shapes";
 import "./admin-experience.css";
 const shapeNames = {
-  embrace: "Interlocking curves",
+  embrace: "Interlocking diagonals",
   diagonal: "Sweeping diagonal",
-  arch: "Open arch",
-  ribbon: "Flowing ribbon",
+  arch: "Architectural cut",
+  ribbon: "Folded diagonal",
 };
 export function AdminExperience() {
   const { data, settings, refetch } = useSiteExperience();
@@ -113,7 +113,7 @@ export function AdminExperience() {
     if (
       !confirm(
         enabled
-          ? "Turn off public access to the test website? Visitors will see the maintenance page. Admin sign-in stays available."
+          ? "Turn off the entire public test website, including checkout and receipts? Protected admin recovery stays available."
           : "Restore public access to the test website?",
       )
     )
@@ -341,8 +341,8 @@ export function AdminExperience() {
             </strong>
           </div>
           <p>
-            This controls the test website only. Admin sign-in and existing receipt links remain
-            accessible.
+            This turns off every public page of the test website, including checkout and receipts.
+            Only protected administration stays available.
           </p>
           <label>
             Message visitors will see

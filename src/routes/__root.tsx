@@ -103,6 +103,8 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "icon", href: "/favicon.svg?v=gc-2", type: "image/svg+xml" },
       { rel: "apple-touch-icon", href: "/apple-touch-icon.png?v=gc-2" },
       { rel: "manifest", href: "/site.webmanifest" },
+      { rel: "preconnect", href: "https://www.tiktok.com" },
+      { rel: "dns-prefetch", href: "https://www.tiktokcdn.com" },
       { rel: "preconnect", href: "https://fonts.googleapis.com" },
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {

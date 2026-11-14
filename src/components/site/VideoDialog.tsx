@@ -1,3 +1,4 @@
+import { BrandLogo } from "./BrandLogo";
 import { useRef, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import { Expand, X } from "lucide-react";
@@ -5,12 +6,14 @@ import { clipEmbed, clipLink, type MediaClip } from "./media";
 export function VideoDialog({ clip, onClose }: { clip: MediaClip | null; onClose: () => void }) {
   const player = useRef<HTMLDivElement>(null);
   const [message, setMessage] = useState("");
+  const [loadedId, setLoadedId] = useState<string | null>(null);
   return (
     <Dialog.Root
       open={!!clip}
       onOpenChange={(open) => {
         if (!open) {
           onClose();
+          setLoadedId(null);
           setMessage("");
         }
       }}
@@ -47,8 +50,15 @@ export function VideoDialog({ clip, onClose }: { clip: MediaClip | null; onClose
             ref={player}
             className={`gc-player ${clip?.platform === "tiktok" ? "gc-player-portrait" : ""}`}
           >
+            {clip && loadedId !== clip.id && (
+              <div className="gc-video-opening" role="status">
+                <BrandLogo brand={clip.platform} size={56} />
+                <span>Opening video…</span>
+              </div>
+            )}
             {clip && (
               <iframe
+                onLoad={() => setLoadedId(clip.id)}
                 title={clip.title}
                 src={clipEmbed(clip)}
                 allow="autoplay; encrypted-media; fullscreen; picture-in-picture"

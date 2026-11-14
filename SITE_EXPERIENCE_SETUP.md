@@ -24,7 +24,7 @@ Select a slide to change the heading, textured words, description, image URL or 
 
 **Website controls → Site availability** provides a visitor message, confirmation and reversible off/on actions. It does not delete the project or DNS. Availability writes are separate from hero writes; saving a hero draft cannot silently toggle availability. Saving a visitor message also preserves availability.
 
-Public page requests return HTTP 503 with no-store and retry headers during maintenance. Admin sign-in, account management, existing receipt links and required assets remain reachable. Already-open public pages check for changes periodically. New checkout requests are also checked server-side before any payment/order creation. The existing production website's checkout remains independent.
+Public page requests return HTTP 503 with no-store and retry headers during maintenance. Only protected administration and required assets remain reachable. Public receipts and downloads are blocked along with the store and checkout. Signed payment-provider notifications can still settle existing transactions. Already-open public pages check for changes periodically. New checkout requests are also checked server-side before any payment/order creation. The existing production website's checkout remains independent. The account-admin entry at `/auth` is restored in the public navigation; its original role checks and privileges are unchanged.
 
 The runtime caches settings for up to 15 seconds, and browsers refresh them every 30 seconds. Failed refreshes retain last-known-good settings in the running server instance. If an owner uses the optional `SITE_MAINTENANCE_MODE=true` deployment variable as an emergency override, it must be cleared through deployment settings to restore public access.
 
@@ -34,3 +34,13 @@ The runtime caches settings for up to 15 seconds, and browsers refresh them ever
 - Checkout scrolling is checked for EcoCash, card payment and OneMoney. No real prompt, purchase or live shutdown is performed.
 - Pure policy tests check path exceptions, animation topology and original-heading parity.
 - The current public Supabase key cannot create tables/functions. Live control activation remains a separate database-owner step.
+
+## Updated presentation and loading
+
+The hero now uses straight-sided SVG compositions inspired by the supplied reference, with independent mobile lower-edge masks that also change on every slide. Both variants keep compatible polygon topology for interpolation. The account administrator's original `/auth` entry is restored in the navigation, separately from `/admin`; account authentication, role checks and book/order privileges were not changed.
+
+TikTok no longer starts every preview embed across the whole page. Official oEmbed metadata is cached and requested near the viewport; where TikTok supplies a thumbnail, a lightweight image is used. For these links the provider currently returns no poster metadata, so genuine player previews mount only on visible cards and unload when they leave view. Background previews stop while the selected clip plays. Provider restrictions and network speed still affect playback; unrelated website photos are never substituted.
+
+The store's reading-room display supports selecting real featured books, opening full-description panels and adding to the existing cart. Alternating book presentations replace the repeated card grid. Catalogue data, prices, descriptions and payment/order processing remain unchanged.
+
+The entire “Designed & developed by Opus Zimbabwe” credit links to `https://opuszim.co.zw/`.

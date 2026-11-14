@@ -17,7 +17,7 @@ export function Videos() {
         </h2>
       </div>
       {(["youtube", "tiktok"] as const).map((platform) => (
-        <SocialChannel key={platform} platform={platform} onPlay={setActive} />
+        <SocialChannel key={platform} platform={platform} paused={!!active} onPlay={setActive} />
       ))}
       <VideoDialog clip={active} onClose={() => setActive(null)} />
     </section>
@@ -26,8 +26,10 @@ export function Videos() {
 function SocialChannel({
   platform,
   onPlay,
+  paused,
 }: {
   platform: MediaClip["platform"];
+  paused: boolean;
   onPlay: (clip: MediaClip) => void;
 }) {
   const clips = useVideos("social", platform);
@@ -72,7 +74,7 @@ function SocialChannel({
               className="gc-social-video"
               aria-label={`Play ${platform} video ${i + 1}`}
             >
-              <MediaArtwork clip={clip} />
+              <MediaArtwork clip={clip} previewPaused={paused} />
               <span className="gc-reel-play">
                 <Play fill="currentColor" size={23} />
               </span>

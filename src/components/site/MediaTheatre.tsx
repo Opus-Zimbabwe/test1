@@ -149,7 +149,7 @@ function PodcastRotation({
             onClick={() => onPlay(clip)}
             aria-label={`Play ${name} podcast ${i + 1}`}
           >
-            <MediaArtwork clip={clip} />
+            <MediaArtwork clip={clip} previewPaused={paused} />
             <span className="gc-rotation-play">
               <Play size={24} fill="currentColor" />
             </span>

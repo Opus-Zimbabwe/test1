@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import { motion, useReducedMotion } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LockKeyhole } from "lucide-react";
 const homeLinks = [
   ["#about", "Our story"],
   ["#services", "Counselling"],
@@ -106,6 +106,14 @@ export function SiteNavigation({ store = false, action }: { store?: boolean; act
           ))}
         </nav>
         {action && <div className="gc-nav-action">{action}</div>}
+        <a
+          href="/auth"
+          className="gc-account-admin-entry"
+          aria-label="Account admin sign in"
+          title="Account admin sign in"
+        >
+          <LockKeyhole size={19} />
+        </a>
         <button
           className="gc-menu"
           aria-label={open ? "Close navigation" : "Open navigation"}

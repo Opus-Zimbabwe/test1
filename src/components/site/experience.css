@@ -2342,3 +2342,12 @@
 .gc-admin-link-error{color:#bc194d;font-size:14px;margin-top:-10px;margin-bottom:18px}
 .gc-podcast-clip .gc-rotation-title{right:20px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
 @media(max-width:650px){.gc-admin-sync{align-items:flex-start;flex-wrap:wrap}.gc-admin-video-list article{grid-template-columns:80px 1fr;gap:15px}.gc-admin-video-thumb{width:80px;height:100px}.gc-admin-video-actions{grid-column:1/-1;flex-direction:row;flex-wrap:wrap}.gc-admin-video-editor{inset:12px;padding:22px}.gc-admin-video-editor-grid{grid-template-columns:1fr;gap:15px}.gc-admin-video-detail h3{font-size:17px}.gc-admin-video-tools [role=group]{width:100%;justify-content:center}}
+.gc-account-admin-entry{display:grid;place-items:center;flex:none;width:40px;height:40px;border:1px solid #6c3b7d35;border-radius:50%;color:#5b276f;margin-left:10px;transition:background .2s}
+.gc-account-admin-entry:hover{background:#efe5f5}
+.gc-account-admin-entry:focus-visible{outline:3px solid #b67bc9;outline-offset:3px}
+@media(max-width:760px){.gc-account-admin-entry{width:36px;height:36px;margin-left:0}.gc-orbit-nav .gc-nav-main{gap:10px}.gc-nav-action{margin-left:auto}}
+.provider-tiktok .gc-media-fallback{z-index:0;background:linear-gradient(145deg,#26132e,#3b2146);flex-direction:column;gap:22px;padding:35px;text-align:center}
+.provider-tiktok .gc-episode-image{z-index:1}
+.gc-video-opening{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;gap:20px;flex-direction:column;background:#24142b;color:#ead8f2;font-size:16px;pointer-events:none}
+.gc-player{position:relative}
+.gc-player>iframe{position:relative;z-index:1}

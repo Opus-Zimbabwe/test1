@@ -16,7 +16,16 @@ export function Footer() {
       fontSans="Nunito, Arial, sans-serif"
       cut={0.03}
       className="gc-beam-footer"
-      utility={<a href="/admin" className="gc-admin-entry" aria-label="Content admin sign in" title="Content admin sign in"><LockKeyhole size={15}/></a>}
+      utility={
+        <a
+          href="/admin"
+          className="gc-admin-entry"
+          aria-label="Content admin sign in"
+          title="Content admin sign in"
+        >
+          <LockKeyhole size={15} />
+        </a>
+      }
       socials={[
         {
           label: "Facebook",
@@ -41,30 +50,30 @@ export function Footer() {
       ]}
       credits={[
         { label: "Building & Promoting Marriage Foundations." },
-        { lead: "Designed & developed by ", label: "Opus Zimbabwe" },
+        { label: "Designed & developed by Opus Zimbabwe", href: "https://opuszim.co.zw/" },
       ]}
       columns={[
         {
           title: "Explore",
           links: [
-            { label: "Our story", href: "#about" },
-            { label: "Values", href: "#values" },
-            { label: "Counselling", href: "#services" },
-            { label: "Gallery", href: "#gallery" },
-            { label: "Announcements", href: "#announcements" },
+            { label: "Our story", href: "/#about" },
+            { label: "Values", href: "/#values" },
+            { label: "Counselling", href: "/#services" },
+            { label: "Gallery", href: "/#gallery" },
+            { label: "Announcements", href: "/#announcements" },
             { label: "Bookshop", href: "/store" },
           ],
         },
         {
           title: "Connect",
           links: [
-            { label: "Podcast", href: "#podcast" },
-            { label: "Social videos", href: "#videos" },
-            { label: "WhatsApp groups", href: "#community" },
-            { label: "Book a session", href: "#contact" },
+            { label: "Podcast", href: "/#podcast" },
+            { label: "Social videos", href: "/#videos" },
+            { label: "WhatsApp groups", href: "/#community" },
+            { label: "Book a session", href: "/#contact" },
             { label: "+263 777 308 726", href: "tel:+263777308726" },
             { label: "Email Great Couples", href: "mailto:greatcouplestrust@gmail.com" },
-            { label: "15 Norwich Road, Eastlea, Harare", href: "#contact" },
+            { label: "15 Norwich Road, Eastlea, Harare", href: "/#contact" },
           ],
         },
       ]}

@@ -1,11 +1,11 @@
-export function maintenanceExempt(path: string) {
+export function maintenanceExempt(path: string, method = "GET") {
   return (
     path === "/admin" ||
     path === "/auth" ||
     path === "/client-admin" ||
     path.startsWith("/client-admin/") ||
     path.startsWith("/_serverFn/") ||
-    path.startsWith("/store/receipt/") ||
+    (path === "/api/public/paynow-result" && method === "POST") ||
     path.startsWith("/assets/") ||
     path.startsWith("/fonts/") ||
     path.startsWith("/images/") ||

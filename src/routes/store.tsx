@@ -7,6 +7,7 @@ import {
   Plus,
   Minus,
   ArrowLeft,
+  ArrowRight,
   CheckCircle2,
   Loader2,
   Download,
@@ -260,6 +261,7 @@ function BookCard({ book, onAdd }: { book: Book; onAdd: () => void }) {
   const getDownload = useServerFn(getBookDownloadUrl);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [detailsOpen, setDetailsOpen] = useState(false);
   const isDownloadable = !!book.file_url;
 
   const download = async () => {
@@ -276,7 +278,7 @@ function BookCard({ book, onAdd }: { book: Book; onAdd: () => void }) {
   };
 
   return (
-    <article className="gc-store-book">
+    <article className="gc-store-book" id={`book-${book.id}`}>
       <div className="gc-book-cover">
         {coverUrl ? (
           <img src={coverUrl} alt={book.title} loading="lazy" />
@@ -291,6 +293,13 @@ function BookCard({ book, onAdd }: { book: Book; onAdd: () => void }) {
         <h3>{book.title}</h3>
         <p>{book.author}</p>
         <p className="gc-book-description">{book.description}</p>
+        <button
+          className="gc-book-discover"
+          aria-label={`Read about ${book.title}`}
+          onClick={() => setDetailsOpen(true)}
+        >
+          Inside this book <ArrowRight size={19} />
+        </button>
         <div className="gc-book-purchase">
           <strong>
             {isDownloadable ? "Digital edition" : `$${Number(book.price_usd).toFixed(2)}`}
@@ -308,6 +317,43 @@ function BookCard({ book, onAdd }: { book: Book; onAdd: () => void }) {
         </div>
         {err && <p role="alert">{err}</p>}
       </div>
+      <Dialog.Root open={detailsOpen} onOpenChange={setDetailsOpen}>
+        <Dialog.Portal>
+          <Dialog.Overlay className="gc-dialog-overlay" />
+          <Dialog.Content className="gc-book-detail-dialog">
+            <Dialog.Close aria-label="Close book details" className="gc-book-detail-close">
+              <X size={23} />
+            </Dialog.Close>
+            <div className="gc-book-detail-art">
+              {coverUrl && <img src={coverUrl} alt={`${book.title} cover`} />}
+            </div>
+            <div className="gc-book-detail-copy">
+              <p>{book.author}</p>
+              <Dialog.Title>{book.title}</Dialog.Title>
+              <Dialog.Description>{book.description}</Dialog.Description>
+              <strong>
+                {isDownloadable ? "Digital edition" : `$${Number(book.price_usd).toFixed(2)}`}
+              </strong>
+              <button
+                className="gc-button"
+                disabled={busy}
+                onClick={() => {
+                  if (isDownloadable) {
+                    download();
+                    return;
+                  }
+                  setDetailsOpen(false);
+                  requestAnimationFrame(onAdd);
+                }}
+              >
+                {isDownloadable ? "Download" : "Add to cart"}
+                {isDownloadable ? <Download size={20} /> : <Plus size={20} />}
+              </button>
+              {err && <p role="alert">{err}</p>}
+            </div>
+          </Dialog.Content>
+        </Dialog.Portal>
+      </Dialog.Root>
     </article>
   );
 }

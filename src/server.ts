@@ -49,7 +49,7 @@ export default {
     try {
       const { maintenanceExempt, maintenanceState, maintenanceResponse } =
         await import("./lib/site-experience.server");
-      if (!maintenanceExempt(new URL(request.url).pathname)) {
+      if (!maintenanceExempt(new URL(request.url).pathname, request.method)) {
         const state = await maintenanceState();
         if (state.enabled) return maintenanceResponse(state.message);
       }
