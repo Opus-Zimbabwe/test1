@@ -23,7 +23,7 @@ for slide in json.loads((ROOT / 'src/data/hero-slides.json').read_text()):
             height = round(enlarged.height * width / enlarged.width)
             output = enlarged if width == enlarged.width else enlarged.resize((width, height), Image.Resampling.LANCZOS)
             name = f"{slide['id']}-{width}.webp"
-            output.save(DEST / name, 'WEBP', quality=95 if width == enlarged.width else 90, method=6)
+            output.save(DEST / name, 'WEBP', quality=95 if width == enlarged.width else 82, method=6)
             with Image.open(DEST / name) as check:
                 assert check.size == (width, height) and check.format == 'WEBP'
             variants.append({'src': f'/images/hero/{name}', 'width': width})

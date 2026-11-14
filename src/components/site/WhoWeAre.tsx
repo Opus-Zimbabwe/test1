@@ -22,17 +22,23 @@ export function WhoWeAre() {
       </div>
       <div className="gc-blur-gallery" aria-label="Great Couples photo stories">
         <img
+          loading="lazy"
+          decoding="async"
           className="gc-blur-prev"
           src={images[(index + images.length - 1) % images.length]}
           alt=""
           aria-hidden="true"
         />
         <img
+          loading="lazy"
+          decoding="async"
           className="gc-blur-current"
           src={images[index]}
           alt={`Great Couples community photograph ${index + 1}`}
         />
         <img
+          loading="lazy"
+          decoding="async"
           className="gc-blur-next"
           src={images[(index + 1) % images.length]}
           alt=""

@@ -1276,34 +1276,6 @@
   }
 }
 
-@font-face {
-  font-family: Nunito;
-  src: url("/fonts/nunito-600.ttf") format("truetype");
-  font-weight: 600;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: Nunito;
-  src: url("/fonts/nunito-700.ttf") format("truetype");
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: Nunito;
-  src: url("/fonts/nunito-800.ttf") format("truetype");
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: Nunito;
-  src: url("/fonts/nunito-900.ttf") format("truetype");
-  font-weight: 900;
-  font-style: normal;
-  font-display: swap;
-}
 .gc-signature-hero {
   touch-action: pan-y;
 }

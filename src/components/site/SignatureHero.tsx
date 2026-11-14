@@ -43,6 +43,7 @@ export function SignatureHero() {
   );
   const [index, setIndex] = useState(0);
   const [ready, setReady] = useState(false);
+  const [loadedImage, setLoadedImage] = useState<string | null>(null);
   useEffect(() => setReady(true), []);
   const [hovered, setHovered] = useState(false);
   const [focused, setFocused] = useState(false);
@@ -61,20 +62,24 @@ export function SignatureHero() {
   const mobilePath = (item: HeroSlide) =>
     isHeart(item) ? MOBILE_HEART_HERO_PATH : MOBILE_HERO_PATHS[item.shape];
   useEffect(() => {
-    for (const offset of [1, -1]) {
-      const next = slides[(current + offset + slides.length) % slides.length];
-      if (!next) continue;
-      const preload = new Image();
-      preload.decoding = "async";
-      preload.fetchPriority = "low";
-      const enhanced = heroImage(next.image);
-      if (enhanced) {
-        preload.srcset = enhanced.srcSet;
-        preload.sizes = heroImageSizes;
+    if (loadedImage !== slide.image || !inView || hidden) return;
+    const timer = window.setTimeout(() => {
+      for (const offset of [1, -1]) {
+        const next = slides[(current + offset + slides.length) % slides.length];
+        if (!next) continue;
+        const preload = new Image();
+        preload.decoding = "async";
+        preload.fetchPriority = "low";
+        const enhanced = heroImage(next.image);
+        if (enhanced) {
+          preload.srcset = enhanced.srcSet;
+          preload.sizes = heroImageSizes;
+        }
+        preload.src = enhanced?.src ?? next.image;
       }
-      preload.src = enhanced?.src ?? next.image;
-    }
-  }, [current, slides]);
+    }, 1200);
+    return () => clearTimeout(timer);
+  }, [current, slides, loadedImage, slide.image, inView, hidden]);
   useEffect(() => {
     const changed = () => setHidden(document.hidden);
     document.addEventListener("visibilitychange", changed);
@@ -209,6 +214,8 @@ export function SignatureHero() {
               src={heroImage(slide.image)?.src ?? slide.image}
               srcSet={heroImage(slide.image)?.srcSet}
               sizes={heroImage(slide.image) ? heroImageSizes : undefined}
+              onLoad={() => setLoadedImage(slide.image)}
+              decoding="async"
               alt="Great Couples members sharing a moment together"
               initial={{ opacity: 0, scale: reduced ? 1 : 1.035 }}
               animate={{ opacity: 1, scale: 1 }}

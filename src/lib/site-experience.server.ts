@@ -52,7 +52,7 @@ export function maintenanceResponse(message: string) {
     (char) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" })[char]!,
   );
   return new Response(
-    `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Back soon — Great Couples</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f9f5fa;color:#40204d;font:20px/1.7 system-ui,sans-serif}main{max-width:650px;padding:45px}h1{font-size:clamp(45px,9vw,80px);line-height:1.05;letter-spacing:-.05em}a{color:#ad1752;font-size:16px}img{width:190px}</style><main><img src="/images/gc-logo-transparent.png" alt="Great Couples"><h1>We’ll be back soon.</h1><p>${safe}</p><a href="/admin">Admin sign in</a></main></html>`,
+    `<!doctype html><html lang="en"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex"><title>Back soon — Great Couples</title><style>body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f9f5fa;color:#40204d;font:20px/1.7 system-ui,sans-serif}main{max-width:650px;padding:45px}h1{font-size:clamp(45px,9vw,80px);line-height:1.05;letter-spacing:-.05em}a{color:#ad1752;font-size:16px}img{width:190px}</style><main><img src="/images/gc-logo-transparent.webp" alt="Great Couples"><h1>We’ll be back soon.</h1><p>${safe}</p><a href="/admin">Admin sign in</a></main></html>`,
     {
       status: 503,
       headers: {

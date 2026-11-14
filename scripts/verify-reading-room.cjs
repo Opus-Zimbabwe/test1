@@ -33,17 +33,17 @@ const assert = require("node:assert/strict");
     await p.setViewportSize({ width: 390, height: 844 });
     assert.ok(
       (
-        await p.locator(".gc-morph-photograph").evaluate((el) => getComputedStyle(el).clipPath)
-      ).includes("gc-morph-mobile-"),
+        await p.locator(".gc-morph-photograph").evaluate((el) => getComputedStyle(el).maskImage)
+      ).includes("gc-flow-"),
     );
-    const before = await p.locator('[id*="gc-morph-mobile-"] path').getAttribute("d");
+    const before = await p.locator('.gc-mask-mobile path[fill="white"]').getAttribute("d");
     await p.getByRole("button", { name: "Show hero slide 2", exact: true }).click();
     await p.waitForFunction(
-      (old) => document.querySelector('[id*="gc-morph-mobile-"] path')?.getAttribute("d") !== old,
+      (old) => document.querySelector('.gc-mask-mobile path[fill="white"]')?.getAttribute("d") !== old,
       before,
     );
     assert.ok(await p.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1));
-    await p.screenshot({ path: "/workspace/artifacts/angular-hero-mobile.png" });
+    await p.screenshot({ path: "/workspace/artifacts/bezier-hero-mobile.png" });
     await p.setViewportSize({ width: 1440, height: 1000 });
     await p.locator("#podcast-tiktok .gc-podcast-rail").scrollIntoViewIfNeeded();
     await p.waitForTimeout(400);
@@ -108,7 +108,7 @@ const assert = require("node:assert/strict");
     await p.goto(base + "/client-admin");
     await p.waitForURL(/\/auth(?:\?|$)/);
     console.log(
-      "PASS separate admin links and unchanged login gate; referral credit; angular mobile changes; visible-only TikTok resource budget and one active player; featured-book navigation, details-to-cart, catalogue search and responsive reading room. No payments.",
+      "PASS separate admin links and unchanged login gate; referral credit; Bézier mobile changes; visible-only TikTok resource budget and one active player; featured-book navigation, details-to-cart, catalogue search and responsive reading room. No payments.",
     );
   } finally {
     await b.close();

@@ -82,6 +82,8 @@ export function About() {
         <Reveal delay={0.08}>
           <div className="gc-about-portraits relative mt-10 min-h-[24rem] sm:mt-14 sm:min-h-[30rem]">
             <img
+              loading="lazy"
+              decoding="async"
               src={PHOTOS[7]}
               alt="Great Couples community gathering"
               className="absolute inset-y-0 left-0 h-[calc(100%-1rem)] w-[74%] rounded-2xl object-cover shadow-[0_24px_52px_-30px_rgba(42,18,70,.5)] sm:h-full"
@@ -91,6 +93,8 @@ export function About() {
               className="group absolute bottom-0 right-0 block h-[58%] w-[48%] overflow-hidden rounded-2xl border-[5px] border-white bg-charcoal shadow-[0_22px_44px_-25px_rgba(42,18,70,.58)]"
             >
               <img
+                loading="lazy"
+                decoding="async"
                 src={PHOTOS[2]}
                 alt="Great Couples gathering"
                 className="h-full w-full object-cover transition duration-500 group-hover:scale-105"

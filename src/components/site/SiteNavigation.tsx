@@ -93,7 +93,7 @@ export function SiteNavigation({ store = false, action }: { store?: boolean; act
     <header className={`gc-nav gc-orbit-nav${scrolled ? " is-scrolled" : ""}`}>
       <div className="gc-nav-main">
         <a className="gc-brand" href={store ? "/" : "#top"} aria-label="Great Couples home">
-          <img src="/images/gc-logo-transparent.png" alt="Great Couples" />
+          <img src="/images/gc-logo-transparent.webp" alt="Great Couples" />
         </a>
         <nav
           className={open ? "is-open" : ""}
