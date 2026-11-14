@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import * as Dialog from "@radix-ui/react-dialog";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
   ShoppingCart,
   X,
@@ -351,6 +351,18 @@ function CheckoutForm({
   onBack: () => void;
   onResult: (result: CheckoutResult) => void;
 }) {
+  const detailsRef = useRef<HTMLElement>(null);
+  const [scrollRequest, setScrollRequest] = useState(0);
+  useEffect(() => {
+    if (!scrollRequest) return;
+    const frame = requestAnimationFrame(() =>
+      detailsRef.current?.scrollIntoView({
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth",
+        block: "start",
+      }),
+    );
+    return () => cancelAnimationFrame(frame);
+  }, [scrollRequest]);
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -501,6 +513,7 @@ function CheckoutForm({
                     onChange={() => {
                       setMethod(paymentMethod.id);
                       setErr("");
+                      setScrollRequest((value) => value + 1);
                     }}
                   />
                   <span className="flex h-7 items-center">
@@ -527,6 +540,8 @@ function CheckoutForm({
           {isMobileMoney ? (
             <section
               className="rounded-2xl border border-primary/8 bg-muted/65 p-4 sm:p-5"
+              ref={detailsRef}
+              style={{ scrollMarginTop: 24 }}
               aria-labelledby="mobile-details-heading"
             >
               <div className="flex items-start gap-3">
@@ -584,6 +599,8 @@ function CheckoutForm({
           ) : (
             <section
               className="rounded-2xl border border-primary/8 bg-muted/65 p-4 sm:p-5"
+              ref={detailsRef}
+              style={{ scrollMarginTop: 24 }}
               aria-labelledby="card-details-heading"
             >
               <div className="flex items-start gap-3">

@@ -1,3 +1,4 @@
+import { siteExperienceSchema } from "./site-experience";
 import { createServerFn } from "@tanstack/react-start";
 import { z } from "zod";
 
@@ -225,4 +226,37 @@ export const saveContentVideo = createServerFn({ method: "POST" })
           : error.message,
       );
     return record as unknown as import("./video-library").VideoRecord;
+  });
+
+export const saveSiteExperience = createServerFn({ method: "POST" })
+  .inputValidator((input) => {
+    return z
+      .object({
+        passcode: z.string(),
+        section: z.enum(["hero", "availability", "message"]),
+        settings: siteExperienceSchema,
+      })
+      .parse(input);
+  })
+  .handler(async ({ data }) => {
+    await assertPasscode(data.passcode);
+    const { siteInstanceId, clearExperienceCache } = await import("./site-experience.server");
+    const { createServerPublicSupabase } = await import("./supabase-public.server");
+    const { error } = await createServerPublicSupabase().rpc(
+      "site_admin_save_experience" as never,
+      {
+        _passcode: data.passcode,
+        _site_key: siteInstanceId(),
+        _section: data.section,
+        _settings: data.settings,
+      } as never,
+    );
+    if (error)
+      throw Error(
+        error.code === "PGRST202"
+          ? "Website controls need the site_experience database migration. Nothing has been changed."
+          : error.message,
+      );
+    clearExperienceCache();
+    return { ok: true };
   });

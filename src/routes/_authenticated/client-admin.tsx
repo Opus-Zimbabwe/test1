@@ -1,3 +1,5 @@
+import "@/components/site/admin-workspace.css";
+import "@/components/site/bookshop-console.css";
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useRef, useState } from "react";
 import {
@@ -33,7 +35,7 @@ function ClientAdminPage() {
   };
 
   return (
-    <main className="min-h-screen bg-muted/30">
+    <main className="gc-bookshop-console min-h-screen bg-muted/30">
       <header className="sticky top-0 z-30 border-b bg-white/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between px-4 sm:px-6 py-3">
           <Link to="/" className="flex items-center gap-2">
@@ -43,9 +45,9 @@ function ClientAdminPage() {
               <p className="text-xs text-muted-foreground">Store manager</p>
             </div>
           </Link>
-          <button onClick={logout} className="inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs"><LogOut className="h-3.5 w-3.5" /> Logout</button>
+          <div className="gc-bookshop-header-actions"><Link to="/admin" className="gc-admin-refresh">Website controls</Link><button onClick={logout} className="inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-xs"><LogOut className="h-3.5 w-3.5" /> Logout</button></div>
         </div>
-        <nav className="mx-auto max-w-7xl px-4 sm:px-6 pb-2 flex gap-1 overflow-x-auto">
+        <nav aria-label="Bookshop management" className="mx-auto max-w-7xl px-4 sm:px-6 pb-2 flex gap-1 overflow-x-auto">
           {([
             ["books", "Books", Package],
             ["orders", "Orders", ShoppingBag],
@@ -59,6 +61,7 @@ function ClientAdminPage() {
         </nav>
       </header>
       <div className="mx-auto max-w-7xl px-4 sm:px-6 py-8">
+        <div className="gc-bookshop-intro"><h1>Bookshop workspace.</h1><p>Manage your books, customer orders and account security.</p></div>
         {tab === "books" && <BooksTab />}
         {tab === "orders" && <OrdersTab />}
         {tab === "notifications" && <NotificationsTab />}

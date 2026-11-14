@@ -1,3 +1,4 @@
+import { AdminExperience } from "@/components/site/AdminExperience";
 import "@/components/site/admin-workspace.css";
 import { AdminBooks } from "@/components/site/AdminBooks";
 import { useVideos } from "@/lib/use-video-library";
@@ -13,6 +14,7 @@ import {
   Images,
   LayoutDashboard,
   BookOpen,
+  Settings2,
   Search,
   RefreshCw,
   ArrowUpRight,
@@ -54,7 +56,7 @@ export const Route = createFileRoute("/admin")({
   component: AdminPage,
 });
 
-type Tab = "announcements" | "gallery" | "videos" | "books";
+type Tab = "announcements" | "gallery" | "videos" | "books" | "experience";
 type GalleryRow = GalleryImage;
 type AnnouncementRow = Announcement;
 
@@ -234,8 +236,9 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                 ["announcements", "Announcements", Megaphone, announcements.length],
                 ["gallery", "Gallery", ImageIcon, gallery.length],
                 ["books", "Books & resources", BookOpen, books.length],
+                ["experience", "Website controls", Settings2, null],
                 ["videos", "Videos & podcast", Images, podcastVideos.length + socialVideos.length],
-              ] as [Tab, string, typeof Megaphone, number][]
+              ] as [Tab, string, typeof Megaphone, number | null][]
             ).map(([id, label, Icon, count]) => (
               <button
                 key={id}
@@ -243,11 +246,13 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
                 className={`inline-flex flex-1 items-center justify-center gap-2 rounded-xl px-4 py-3 text-xs font-bold transition ${tab === id ? "bg-primary text-primary-foreground shadow-md shadow-primary/15" : "text-muted-foreground hover:bg-muted hover:text-primary"}`}
               >
                 <Icon className="h-4 w-4" /> {label}{" "}
-                <span
-                  className={`grid min-w-5 place-items-center rounded-full px-1.5 py-0.5 text-[.58rem] ${tab === id ? "bg-white/16 text-white" : "bg-primary/8 text-primary"}`}
-                >
-                  {count}
-                </span>
+                {count !== null && (
+                  <span
+                    className={`grid min-w-5 place-items-center rounded-full px-1.5 py-0.5 text-[.58rem] ${tab === id ? "bg-white/16 text-white" : "bg-primary/8 text-primary"}`}
+                  >
+                    {count}
+                  </span>
+                )}
               </button>
             ))}
           </nav>
@@ -257,6 +262,7 @@ function Dashboard({ onLogout }: { onLogout: () => void }) {
             {tab === "gallery" && <GalleryTab />}
             {tab === "videos" && <AdminVideos />}
             {tab === "books" && <AdminBooks />}
+            {tab === "experience" && <AdminExperience />}
           </div>
         </div>
       </div>

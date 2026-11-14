@@ -91,3 +91,10 @@ Verified: production build; changed-file lint and type checks; desktop/mobile/ta
 - Added a responsive admin sidebar, larger typography, catalogue view with search/prices/stock and secure book-management link, announcement search/order/refresh/preview tools, and a sign-in readiness guard.
 - Configured a server-only password verifier environment variable and verified the requested credential against the existing database; incorrect credentials fail. The database password itself was already the requested value.
 - Content remains connected to the original CMS: subsequent authenticated edits to shared records affect both sites. Read-only verification and local checks did not publish any content or submit payments. The separate content_videos migration remains required for video publishing.
+
+### Morphing hero, checkout handoff and website controls
+- Replaced the three rewritten hero captions with all five exact headings/descriptions verified in the live site's route bundle. Added compatible morphing photo masks, printed-text emphasis, reduced-motion behavior and accessible carousel navigation. Original people/photos remain; mobile keeps faces above the copy.
+- Checkout selection scrolls to the appropriate form, with the official OneMoney logo bundled from its own website. Catalogue descriptions are unchanged source data.
+- Added an uncluttered hero editor and reversible, confirmed maintenance control under Website controls. Settings are scoped to the test site; atomic section writes prevent hero changes from toggling availability. No live shutdown was performed.
+- Maintenance returns public 503 responses, preserves admin/account/receipt access and guards checkout server-side. New settings require the documented site_experience migration; disabled controls clearly report pending setup.
+- Preserved both actual admin routes and account authorization, and refined the bookshop console's presentation and navigation. See SITE_EXPERIENCE_SETUP.md for activation and limitations.

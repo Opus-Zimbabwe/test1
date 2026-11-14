@@ -1,0 +1,47 @@
+[
+  {
+    "id": "foundations",
+    "image": "/cdn/e32ef967-c74f-42e5-a8c6-2fe75d3bbf4f/gc-1.jpg",
+    "title": "Building & Promoting Marriage Foundations",
+    "emphasis": "Marriage Foundations",
+    "body": "God-centered families across Africa and beyond.",
+    "shape": "embrace",
+    "active": true
+  },
+  {
+    "id": "counselling",
+    "image": "/cdn/b5678dc9-e94a-4d2d-b51e-96ace5f5536b/gc-3.jpg",
+    "title": "Marriage Counselling Sessions",
+    "emphasis": "Counselling",
+    "body": "Compassionate, biblical counselling for couples in every season.",
+    "shape": "diagonal",
+    "active": true
+  },
+  {
+    "id": "pre-marital",
+    "image": "/cdn/c5595e7d-a55a-4f51-ba90-f6e0b83598b0/gc-2.jpg",
+    "title": "Pre-Marital Counselling",
+    "emphasis": "Pre-Marital",
+    "body": "Lay a firm foundation before you say I do.",
+    "shape": "arch",
+    "active": true
+  },
+  {
+    "id": "outreach",
+    "image": "/cdn/e3a272ad-7998-440d-9e48-60b21150a0eb/gc-5.jpg",
+    "title": "Prison & Community Outreach",
+    "emphasis": "Community",
+    "body": "Restoring hope in Harare Central, Chikurubi, Mutoko, Hwedza and beyond.",
+    "shape": "ribbon",
+    "active": true
+  },
+  {
+    "id": "enjoy-marriage",
+    "image": "/cdn/4edf1fff-1d53-405c-b8f3-66f688fbc4ad/gc-8.jpg",
+    "title": "You Deserve to Enjoy Your Marriage",
+    "emphasis": "Enjoy Your Marriage",
+    "body": "Book your session today. We're one call away.",
+    "shape": "embrace",
+    "active": true
+  }
+]

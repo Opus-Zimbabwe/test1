@@ -1,0 +1,44 @@
+.gc-experience-admin{background:white}
+.gc-experience-tabs{display:flex;gap:5px;background:#f4eff6;border-radius:999px;padding:5px;margin:28px 0;width:fit-content;max-width:100%}
+.gc-experience-tabs button{border-radius:999px;padding:12px 20px;font-size:15px;font-weight:900}
+.gc-experience-tabs button[aria-pressed=true]{background:#632679;color:white}
+.gc-experience-editor{display:grid;grid-template-columns:minmax(200px,.85fr) minmax(0,1.15fr);gap:28px;align-items:start;margin-top:24px}
+.gc-experience-slide-list{display:grid;gap:12px}
+.gc-experience-slide-list>div{border:1px solid #eee5f2;border-radius:16px;padding:9px}
+.gc-experience-slide-list>div.selected{border-color:#9155aa;background:#faf6fc}
+.gc-experience-slide-select{display:flex;gap:12px;align-items:center;text-align:left;width:100%;font-size:14px;font-weight:900;line-height:1.4}
+.gc-experience-slide-select img{width:56px;height:70px;object-fit:cover;object-position:top;border-radius:10px;flex:none}
+.gc-experience-slide-select small{display:block;font-size:12px;color:#94859d;font-weight:700;margin-top:7px}
+.gc-experience-slide-tools{display:flex;justify-content:flex-end;gap:4px;margin-top:4px}
+.gc-experience-slide-tools button{display:grid;place-items:center;width:38px;height:38px;border-radius:50%;color:#765284}
+.gc-experience-slide-tools button:hover{background:#ede3f1}
+.gc-experience-slide-tools button:disabled{opacity:.25}
+.gc-experience-slide-form label,.gc-site-availability label{display:block;font-size:14px;font-weight:900;margin-bottom:19px}
+.gc-experience-admin textarea,.gc-experience-admin input,.gc-experience-admin select{display:block;width:100%;min-width:0;border:1px solid #e4daea;border-radius:12px;padding:12px 14px;margin-top:8px;font-family:inherit;font-size:15px;font-weight:700;background:white}
+.gc-experience-preview{height:200px;position:relative;overflow:hidden;background:#fefcff;border:1px solid #f1e9f5;border-radius:18px;margin-bottom:25px;display:flex;align-items:center}
+.gc-experience-preview>img{position:absolute;inset:0 0 0 36%;width:64%;height:100%;object-fit:cover;object-position:top}
+.gc-experience-preview>strong{position:relative;font-size:clamp(20px,2vw,30px);font-weight:900;line-height:1.05;letter-spacing:-.05em;padding:15px;width:55%}
+.gc-experience-save{display:flex;justify-content:space-between;align-items:center;gap:18px;margin-top:24px;border-top:1px solid #ede4f1;padding-top:24px;flex-wrap:wrap}
+.gc-experience-save p{font-size:13px;color:#887591}
+.gc-experience-recovery{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-size:14px;background:#f7f0fa;padding:15px;border-radius:12px}
+.gc-experience-recovery button{font-weight:900;color:#733489}
+.gc-site-availability{max-width:680px;padding-top:10px}
+.gc-site-availability>div:first-child{display:flex;gap:12px;align-items:center;font-size:23px;font-weight:900}
+.gc-site-availability>div:first-child span{width:12px;height:12px;border-radius:50%;background:#2c805e}
+.gc-site-availability>div.is-offline span{background:#b62d55}
+.gc-site-availability>p{color:#8a7895;font-size:15px;line-height:1.8;margin:16px 0 26px}
+.gc-availability-preview{background:#f8f2fa;border-radius:18px;padding:25px;margin:25px 0}
+.gc-availability-preview h3{font-size:30px;font-weight:900;margin-bottom:15px}
+.gc-availability-preview p{font-size:17px;color:#8c7297;line-height:1.7}
+.gc-maintenance-danger{display:inline-flex;align-items:center;gap:10px;padding:14px 22px;border:1px solid #cf3764;color:#b21b4d;font-size:15px;font-weight:900;border-radius:999px}
+.gc-maintenance-danger:disabled{opacity:.35}
+@media(max-width:850px){.gc-experience-editor{grid-template-columns:1fr}.gc-experience-slide-list{grid-template-columns:repeat(2,minmax(0,1fr))}.gc-experience-slide-select{font-size:13px;align-items:flex-start}.gc-experience-slide-select img{width:40px;height:55px}.gc-experience-slide-tools button{width:34px;height:34px}.gc-experience-preview{height:240px}.gc-experience-preview>strong{font-size:31px}.gc-experience-tabs button{font-size:13px;padding:12px 15px}}
+@media(max-width:420px){.gc-experience-slide-list{grid-template-columns:1fr}.gc-experience-preview>strong{font-size:25px}}
+/* Keep the workspace introduction compact; editing is the main focus. */
+.gc-admin-shell .gc-admin-overview{padding:24px 28px}.gc-admin-overview h1{font-size:clamp(27px,3vw,36px)}.gc-admin-overview-stats>div{padding:10px 14px}.gc-admin-overview-stats>div>p:first-of-type{font-size:24px}
+.gc-site-availability>button{margin-right:15px;margin-top:15px}
+.gc-maintenance-screen{min-height:100svh;background:#f9f4fb;color:#4b235b;display:flex;flex-direction:column;justify-content:center;padding:clamp(25px,8vw,120px);align-items:flex-start;font-family:Nunito,Arial,sans-serif}
+.gc-maintenance-screen>img{width:190px;margin-bottom:40px}
+.gc-maintenance-screen h1{font-size:clamp(45px,8vw,85px);font-weight:900;line-height:1.05;letter-spacing:-.05em;max-width:800px}
+.gc-maintenance-screen p{font-size:22px;line-height:1.7;color:#8f759a;max-width:650px;margin-block:30px}
+.gc-maintenance-screen a{color:#bf245c;font-weight:800;font-size:16px}

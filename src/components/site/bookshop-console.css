@@ -1,0 +1,17 @@
+.gc-bookshop-console{font-family:Nunito,Arial,sans-serif;background:#f7f3f9;color:#382340}
+.gc-bookshop-console>header{border-color:#e8dfed;background:#fffdfdee;backdrop-filter:blur(20px)}
+.gc-bookshop-header-actions{display:flex;align-items:center;gap:12px}
+.gc-bookshop-header-actions>button{padding:11px 16px;font-size:14px;font-weight:800}
+.gc-bookshop-console>header nav{gap:7px;padding-block:12px}
+.gc-bookshop-console>header nav button{font-size:15px;font-weight:900;padding:12px 21px}
+.gc-bookshop-intro{margin-bottom:32px;padding-block:15px 25px;border-bottom:1px solid #e9dfed}
+.gc-bookshop-intro h1{font-size:clamp(30px,4vw,46px);line-height:1.1;letter-spacing:-.045em;font-weight:900}
+.gc-bookshop-intro p{font-size:17px;line-height:1.6;color:#907c9b;margin-top:13px}
+.gc-bookshop-console h2{font-size:27px;font-weight:900;letter-spacing:-.03em}
+.gc-bookshop-console h3{font-size:20px;font-weight:900}
+.gc-bookshop-console table{background:white;font-size:15px}
+.gc-bookshop-console th{font-size:13px;font-weight:900;padding-block:15px;color:#886b98}
+.gc-bookshop-console td{padding-block:16px}
+.gc-bookshop-console table button{min-height:38px;font-size:13px}
+.gc-bookshop-console input,.gc-bookshop-console select,.gc-bookshop-console textarea{font-size:16px}
+@media(max-width:600px){.gc-bookshop-header-actions{gap:5px}.gc-bookshop-header-actions .gc-admin-refresh{font-size:12px;padding:9px}.gc-bookshop-header-actions>button{padding:9px;font-size:12px}.gc-bookshop-console>header>div>a p:first-child{font-size:15px}.gc-bookshop-console>header nav button{font-size:13px;padding:11px 16px}.gc-bookshop-intro{margin-bottom:24px}}

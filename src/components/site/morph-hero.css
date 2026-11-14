@@ -1,0 +1,22 @@
+.gc-editorial .gc-morph-hero{position:relative;isolation:isolate;background:#fff;min-height:740px;height:min(820px,calc(100svh - 125px));max-height:none;color:#38213f;overflow:hidden;border-radius:36px 36px 105px 36px;margin-top:0}
+.gc-morph-photograph{position:absolute;inset:0 0 0 34%;background:#f0e7ed;overflow:hidden;z-index:0;will-change:clip-path}
+.gc-morph-photograph>img{position:absolute;width:100%;height:100%;object-fit:cover;object-position:50% 20%}
+.gc-morph-photo-wash{position:absolute;inset:0;background:linear-gradient(0deg,#4218422b,transparent 40%)}
+.gc-morph-seam{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.gc-morph-inside{position:absolute;width:260px;height:130px;top:-72px;left:27%;overflow:visible;opacity:.85;pointer-events:none}
+.gc-morph-photo-fragment{width:100%;height:100%;background-size:cover;background-position:center 5%;border:14px solid white;box-sizing:content-box}
+.gc-morph-copy{position:relative;z-index:2;width:49%;padding:clamp(65px,8vw,115px) 0 80px clamp(25px,4vw,70px);min-height:700px;display:flex;align-items:center}
+.gc-morph-copy h1{font-family:Nunito,Arial,sans-serif;font-size:clamp(44px,4.6vw,76px);line-height:1.04;letter-spacing:-.055em;font-weight:900;color:#38213f;text-align:left;margin:0;overflow-wrap:normal}
+.gc-morph-copy .gc-grain-type{display:inline;background-color:#842856;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Cpath fill='%23d52362' d='M0 0h180v180H0z'/%3E%3Cpath filter='url(%23n)' opacity='.20' d='M0 0h180v180H0z'/%3E%3C/svg%3E");background-size:150px;-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.gc-morph-copy p{color:#817187;font-size:clamp(17px,1.5vw,21px);line-height:1.7;max-width:420px;margin:25px 0 32px;font-weight:700}
+.gc-morph-copy .gc-button{background:#df1155;color:#fff;min-height:53px;font-size:16px;font-weight:900;padding:16px 25px;border-radius:999px;box-shadow:none}
+.gc-morph-navigation{position:absolute;bottom:23px;left:clamp(25px,4vw,70px);z-index:3}
+.gc-morph-navigation .gc-hero-dots{display:flex;gap:2px;align-items:center}
+.gc-morph-navigation .gc-hero-dots button{height:44px;width:44px;min-width:44px;min-height:44px;display:grid;place-items:center;border:0;border-radius:0;background:transparent;padding:8px}
+.gc-morph-navigation .gc-hero-dots button span{display:block;width:24px;height:4px;border-radius:9px;background:#d7c8df;transition:background .3s,transform .3s}
+.gc-morph-navigation .gc-hero-dots button[aria-pressed=true] span{background:#d91356;transform:scaleX(1.2)}
+.gc-morph-hero:focus-visible,.gc-morph-navigation button:focus-visible{outline:3px solid #a66cb9;outline-offset:4px}
+@media(min-width:1600px){.gc-morph-copy{width:47%;padding-right:15px}}
+@media(max-width:1050px) and (min-width:701px){.gc-editorial .gc-morph-hero{min-height:680px;height:720px}.gc-morph-copy{width:51%;min-height:650px}.gc-morph-copy h1{font-size:clamp(42px,5.7vw,60px)}.gc-morph-photograph{left:40%}.gc-morph-inside{left:28%;width:190px}}
+@media(max-width:700px){.gc-editorial .gc-morph-hero{height:auto;min-height:0;display:flex;flex-direction:column;border-radius:26px 26px 60px 26px;background:#fff;margin-inline:12px}.gc-morph-photograph{position:relative;inset:auto;width:100%;height:340px;clip-path:none!important;border-radius:24px 24px 85px 24px;flex:none}.gc-morph-photograph>img{object-position:50% 15%}.gc-morph-seam{display:none}.gc-morph-inside{display:none}.gc-morph-copy{width:100%;min-height:0;padding:32px 25px 85px;display:block;text-align:center}.gc-morph-copy h1{font-size:clamp(36px,8.9vw,54px);text-align:center;letter-spacing:-.045em;line-height:1.07}.gc-morph-copy p{font-size:17px;margin:20px auto 24px;line-height:1.65}.gc-morph-copy .gc-button{font-size:15px}.gc-morph-navigation{left:50%;bottom:15px;transform:translateX(-50%)}.gc-morph-navigation .gc-hero-dots{gap:0}}
+@media(prefers-reduced-motion:reduce){.gc-morph-photograph{will-change:auto}.gc-morph-navigation .gc-hero-dots button span{transition:none}}

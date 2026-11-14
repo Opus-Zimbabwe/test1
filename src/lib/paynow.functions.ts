@@ -22,6 +22,8 @@ function originFromRequest(req: Request): string {
 export const startCheckout = createServerFn({ method: "POST" })
   .inputValidator((d) => checkoutSchema.parse(d))
   .handler(async ({ data }) => {
+    const { assertWebsiteOpen } = await import("./site-experience.server");
+    await assertWebsiteOpen();
     const { getRequest } = await import("@tanstack/react-start/server");
     const { createServerPublicSupabase } = await import("./supabase-public.server");
     const request = getRequest();
@@ -54,7 +56,12 @@ export const startCheckout = createServerFn({ method: "POST" })
           _instructions: r.instructions,
           _status: "pending",
         });
-        return { order_id: orderId, kind: "mobile" as const, instructions: r.instructions, receipt_url: receiptUrl };
+        return {
+          order_id: orderId,
+          kind: "mobile" as const,
+          instructions: r.instructions,
+          receipt_url: receiptUrl,
+        };
       }
       const r = await paynow.initiateWebPayment(fields);
       await supabase.rpc("update_checkout_paynow_details", {
@@ -64,7 +71,12 @@ export const startCheckout = createServerFn({ method: "POST" })
         _instructions: undefined,
         _status: "pending",
       });
-      return { order_id: orderId, kind: "web" as const, redirect_url: r.browserUrl, receipt_url: receiptUrl };
+      return {
+        order_id: orderId,
+        kind: "web" as const,
+        redirect_url: r.browserUrl,
+        receipt_url: receiptUrl,
+      };
     } catch (e) {
       await supabase.rpc("update_checkout_paynow_details", {
         _order_id: orderId,
@@ -78,7 +90,9 @@ export const startCheckout = createServerFn({ method: "POST" })
   });
 
 export const getReceipt = createServerFn({ method: "GET" })
-  .inputValidator((d) => z.object({ order_id: z.string().uuid(), token: z.string().min(16) }).parse(d))
+  .inputValidator((d) =>
+    z.object({ order_id: z.string().uuid(), token: z.string().min(16) }).parse(d),
+  )
   .handler(async ({ data }) => {
     const { createServerPublicSupabase } = await import("./supabase-public.server");
     const supabase = createServerPublicSupabase();

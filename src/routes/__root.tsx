@@ -1,3 +1,4 @@
+import { SiteAvailabilityGate } from "@/components/site/SiteAvailabilityGate";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import {
   Outlet,
@@ -134,7 +135,9 @@ function RootComponent() {
   const { queryClient } = Route.useRouteContext();
   return (
     <QueryClientProvider client={queryClient}>
-      <Outlet />
+      <SiteAvailabilityGate>
+        <Outlet />
+      </SiteAvailabilityGate>
     </QueryClientProvider>
   );
 }
