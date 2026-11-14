@@ -82,7 +82,7 @@ export function SignatureHero() {
   }, []);
   useEffect(() => {
     if (!inView || hovered || focused || hidden || reduced || slides.length < 2) return;
-    const timer = setTimeout(() => setIndex((value) => (value + 1) % slides.length), 7500);
+    const timer = setTimeout(() => setIndex((value) => (value + 1) % slides.length), 5200);
     return () => clearTimeout(timer);
   }, [current, slides.length, hovered, focused, hidden, reduced, inView]);
   const step = (direction: number) =>
@@ -139,7 +139,7 @@ export function SignatureHero() {
               fill="white"
               initial={false}
               animate={{ opacity: isHeart(slide) ? 1 : 0 }}
-              transition={{ duration: reduced ? 0 : 1.6 }}
+              transition={{ duration: reduced ? 0 : 0.95 }}
               d="M .19 0 L 1 0 L 1 1 L .565 1 Q .525 1 .55 .968 C .76 .75 1 .50 1 .28 C 1 .04 .82 -.12 .54 .19 C .52 .21 .515 .225 .50 .225 C .485 .225 .48 .21 .46 .19 C .35 .07 .26 .02 .19 .02 Z"
             />
             {(["desktop", "mobile"] as const).map((viewport) => {
@@ -153,24 +153,33 @@ export function SignatureHero() {
                     strokeLinejoin="round"
                     initial={{ d: path(slides[0]!), opacity: isHeart(slides[0]!) ? 1 : 0 }}
                     animate={{ d: path(slide), opacity: isHeart(slide) ? 1 : 0 }}
-                    transition={{ duration: reduced ? 0 : 1.6, ease: [0.45, 0, 0.2, 1] }}
+                    transition={{ duration: reduced ? 0 : 0.95, ease: [0.45, 0, 0.2, 1] }}
                   />
                   <motion.path
                     fill="white"
                     initial={{ d: path(slides[0]!) }}
                     animate={{ d: path(slide) }}
-                    transition={{ duration: reduced ? 0 : 1.6, ease: [0.45, 0, 0.2, 1] }}
+                    transition={{ duration: reduced ? 0 : 0.95, ease: [0.45, 0, 0.2, 1] }}
                   />
                 </g>
               );
             })}
             <motion.path
-              fill="black"
+              fill="none"
+              stroke="black"
+              strokeWidth=".035"
+              strokeLinecap="round"
+              strokeLinejoin="round"
               filter={`url(#gc-diagonal-soft-${uid})`}
               initial={false}
-              animate={{ opacity: slide.id === "foundations" ? 1 : 0 }}
-              transition={{ duration: reduced ? 0 : 1.6 }}
-              d="M -.03 1.03 C .12 .72 .53 .86 .57 .57 C .61 .28 .87 .30 1.02 -.02 Q 1.04 -.04 1.05 -.02 C .91 .35 .65 .32 .61 .60 C .57 .91 .17 .77 .01 1.05 Q -.02 1.07 -.03 1.03 Z"
+              animate={{
+                opacity: slide.id === "foundations" ? 1 : 0,
+                d:
+                  slide.id === "foundations"
+                    ? "M .025 .975 C .15 .72 .55 .87 .59 .585 C .63 .30 .89 .32 .985 .025"
+                    : "M .50 .50 C .50 .50 .50 .50 .50 .50 C .50 .50 .50 .50 .50 .50",
+              }}
+              transition={{ duration: reduced ? 0 : 0.95, ease: [0.45, 0, 0.2, 1] }}
             />
           </mask>
           <filter
@@ -204,7 +213,7 @@ export function SignatureHero() {
               initial={{ opacity: 0, scale: reduced ? 1 : 1.035 }}
               animate={{ opacity: 1, scale: 1 }}
               exit={{ opacity: 0 }}
-              transition={{ duration: reduced ? 0 : 1.3 }}
+              transition={{ duration: reduced ? 0 : 0.95 }}
               fetchPriority={current === 0 ? "high" : "auto"}
             />
           }
