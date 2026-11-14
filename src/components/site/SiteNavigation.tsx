@@ -43,17 +43,27 @@ export function SiteNavigation({ store = false, action }: { store?: boolean; act
         readingTarget.set(height > 0 ? Math.max(0, Math.min(1, scrollY / height)) : 0);
         if (!store) {
           let current = "";
+          // Keep the last reached section active through gaps and tall sections.
+          const sectionLinks: Record<string, string> = {
+            "who-we-are": "#about",
+            values: "#about",
+            facebook: "#videos",
+          };
           document.querySelectorAll<HTMLElement>("main section[id]").forEach((section) => {
-            const r = section.getBoundingClientRect();
-            if (r.top < innerHeight * 0.3 && r.bottom > innerHeight * 0.2)
-              current =
-                "#" +
-                (section.id.startsWith("podcast-")
-                  ? "podcast"
-                  : section.id.startsWith("videos-")
-                    ? "videos"
-                    : section.id);
+            const href =
+              sectionLinks[section.id] ||
+              (section.id.startsWith("podcast-")
+                ? "#podcast"
+                : section.id.startsWith("videos-")
+                  ? "#videos"
+                  : "#" + section.id);
+            if (
+              section.getBoundingClientRect().top <= innerHeight * 0.3 &&
+              homeLinks.some(([link]) => link === href)
+            )
+              current = href;
           });
+          if (height > 0 && scrollY >= height - 4) current = "#contact";
           setActive(current);
         }
         frame = 0;
@@ -110,6 +120,16 @@ export function SiteNavigation({ store = false, action }: { store?: boolean; act
                 />
               )}
               <span>{label}</span>
+              {active === href && (
+                <motion.span
+                  className="gc-nav-section-marker"
+                  layoutId="gc-navigation-section-marker"
+                  aria-hidden="true"
+                  transition={
+                    reduced ? { duration: 0 } : { type: "spring", stiffness: 260, damping: 30 }
+                  }
+                />
+              )}
             </a>
           ))}
         </nav>

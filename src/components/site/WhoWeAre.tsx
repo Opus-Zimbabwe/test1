@@ -5,7 +5,7 @@ const images = [PHOTOS[2]!, PHOTOS[7]!, PHOTOS[0]!, PHOTOS[8]!];
 export function WhoWeAre() {
   const [index, setIndex] = useState(0);
   return (
-    <section className="gc-who" aria-labelledby="gc-who-title">
+    <section id="who-we-are" className="gc-who" aria-labelledby="gc-who-title">
       <div className="gc-who-copy">
         <h2 id="gc-who-title">Who we are.</h2>
         <p>
